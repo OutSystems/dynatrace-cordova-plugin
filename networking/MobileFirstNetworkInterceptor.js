@@ -30,10 +30,10 @@ exports.MobileFirstRequestInterceptor = {
         return isNetworkIntercepted;
     },
     enableInterceptor: function () {
-        if (!dT_ && !dtrum) {
+        if (typeof dT_ === "undefined" && typeof dtrum === "undefined") {
             console.log("Missing Dynatrace Javascript Agent API! MFP Interceptor not enabled!");
         }
-        if (!WLResourceRequest && !WL) {
+        if (typeof WLResourceRequest === "undefined" && typeof WL === "undefined") {
             console.log("Missing Mobile First API! MFP Interceptor not enabled!");
             return;
         }
@@ -53,7 +53,7 @@ exports.MobileFirstRequestInterceptor = {
             request.send = function send(content) {
                 var actionId = tagSendRequest(this);
                 if (actionId != -1) {
-                    return originalSend.apply(this, content)
+                    return originalSend.apply(this, [content])
                         .then(function (response) {
                         NativeNetworkInterceptorUtils.leaveNativeRequestAction(actionId);
                         return response;
@@ -63,13 +63,13 @@ exports.MobileFirstRequestInterceptor = {
                     });
                 }
                 else {
-                    return originalSend.apply(this, content);
+                    return originalSend.apply(this, [content]);
                 }
             };
             request.sendFormParameters = function sendFormParameters(json) {
                 var actionId = tagSendRequest(this);
                 if (actionId != -1) {
-                    return originalSendFormParameters.apply(this, json)
+                    return originalSendFormParameters.apply(this, [json])
                         .then(function (response) {
                         NativeNetworkInterceptorUtils.leaveNativeRequestAction(actionId);
                         return response;
@@ -79,7 +79,7 @@ exports.MobileFirstRequestInterceptor = {
                     });
                 }
                 else {
-                    return originalSendFormParameters.apply(this, json);
+                    return originalSendFormParameters.apply(this, [json]);
                 }
             };
             return request;

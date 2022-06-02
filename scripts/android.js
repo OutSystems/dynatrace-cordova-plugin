@@ -1,17 +1,22 @@
-#!/usr/bin/env node
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.writeGradleConfig = exports.instrumentAndroidPlatform = exports.GRADLE_APPLY_BUILDSCRIPT = exports.GRADLE_DYNATRACE_FILE = void 0;
-var logger_1 = require("./logger");
-var fileOperation = require("./fileOperationHelper");
-var pathConstants = require("./pathsConstants");
-var path = require("path");
+exports.writeGradleConfig = exports.instrumentAndroidPlatform = exports.getGradleApplyBuildScript = exports.getGradleApplyDynatraceScript = void 0;
+var fileHelper_1 = require("./helpers/fileHelper");
+var Logger_1 = require("./logger/Logger");
+var path_1 = require("path");
+var pathHelper_1 = require("./helpers/pathHelper");
 var GRADLE_CONFIG_IDENTIFIER = "// AUTO - INSERTED";
-exports.GRADLE_DYNATRACE_FILE = "apply from: \"" + pathConstants.getDynatraceGradleFile().split(path.sep).join("" + (path.sep + path.sep)) + "\"";
 var GRADLE_BUILDSCRIPT_IDENTIFIER = "buildscript";
-exports.GRADLE_APPLY_BUILDSCRIPT = "apply from: \"" + pathConstants.getDynatracePluginGradleFile().split(path.sep).join("" + (path.sep + path.sep)) + "\", to: buildscript";
+function getGradleApplyDynatraceScript() {
+    return "apply from: \"" + pathHelper_1.getDynatraceGradleFile().split(path_1.sep).join("" + (path_1.sep + path_1.sep)) + "\"";
+}
+exports.getGradleApplyDynatraceScript = getGradleApplyDynatraceScript;
+function getGradleApplyBuildScript() {
+    return "apply from: \"" + pathHelper_1.getDynatracePluginGradleFile().split(path_1.sep).join("" + (path_1.sep + path_1.sep)) + "\", to: buildscript";
+}
+exports.getGradleApplyBuildScript = getGradleApplyBuildScript;
 function instrumentAndroidPlatform(pathToGradle, remove) {
-    var path = fileOperation.checkIfFileExistsSync(pathToGradle);
+    var path = fileHelper_1.checkIfFileExistsSync(pathToGradle);
     if (!path.endsWith(".gradle")) {
         throw new Error("Can't find .gradle file. gradle path must also include the gradle file!");
     }
@@ -19,7 +24,7 @@ function instrumentAndroidPlatform(pathToGradle, remove) {
 }
 exports.instrumentAndroidPlatform = instrumentAndroidPlatform;
 function changeCordovaBuildGradleFile(pathToGradle, remove) {
-    var gradleFileContent = fileOperation.readTextFromFileSync(pathToGradle);
+    var gradleFileContent = fileHelper_1.readTextFromFileSync(pathToGradle);
     var gradleFileContentLines = gradleFileContent.split("\n");
     var gradlePluginFileIndex = -1;
     var gradleDynatraceFileIndex = -1;
@@ -42,7 +47,7 @@ function changeCordovaBuildGradleFile(pathToGradle, remove) {
             modified = true;
         }
         if (modified) {
-            logger_1.default.logMessageSync("Removed Dynatrace modifications from build.gradle: " + pathToGradle, logger_1.default.INFO);
+            Logger_1.Logger.getInstance().logInfo("Removed Dynatrace modifications from build.gradle: " + pathToGradle);
         }
     }
     else {
@@ -57,31 +62,31 @@ function changeCordovaBuildGradleFile(pathToGradle, remove) {
             if (gradleFileCordovaIndex === -1) {
                 throw new Error("Could not find Buildscript block in build.gradle.");
             }
-            gradleFileContentLines.splice(gradleFileCordovaIndex + 1, 0, exports.GRADLE_APPLY_BUILDSCRIPT);
+            gradleFileContentLines.splice(gradleFileCordovaIndex + 1, 0, getGradleApplyBuildScript());
             modified = true;
         }
         if (gradleDynatraceFileIndex === -1) {
-            gradleFileContentLines.splice(gradleFileContentLines.length, 0, exports.GRADLE_DYNATRACE_FILE);
+            gradleFileContentLines.splice(gradleFileContentLines.length, 0, getGradleApplyDynatraceScript());
             modified = true;
         }
         if (modified) {
-            logger_1.default.logMessageSync("Added Dynatrace plugin.gradle to the build.gradle: " + pathToGradle, logger_1.default.INFO);
+            Logger_1.Logger.getInstance().logInfo("Added Dynatrace plugin.gradle to the build.gradle: " + pathToGradle);
         }
         else {
-            logger_1.default.logMessageSync("Dynatrace plugin & agent already added to build.gradle", logger_1.default.INFO);
+            Logger_1.Logger.getInstance().logInfo("Dynatrace plugin & agent already added to build.gradle");
         }
     }
     if (modified) {
         var fullGradleFile = gradleFileContentLines.join("\n");
-        fileOperation.writeTextToFileSync(pathToGradle, fullGradleFile);
+        fileHelper_1.writeTextToFileSync(pathToGradle, fullGradleFile);
     }
 }
 function writeGradleConfig(androidConfig) {
-    if (androidConfig === undefined || androidConfig.config === undefined) {
-        logger_1.default.logMessageSync("Can't write configuration of Android agent because it is missing!", logger_1.default.WARNING);
+    if (!androidConfig.isConfigurationAvailable()) {
+        Logger_1.Logger.getInstance().logWarning("Can't write configuration of Android agent because it is missing!");
         return;
     }
-    var gradleFileContent = fileOperation.readTextFromFileSync(pathConstants.getDynatraceGradleFile());
+    var gradleFileContent = fileHelper_1.readTextFromFileSync(pathHelper_1.getDynatraceGradleFile());
     var gradleFileContentLines = removeOldGradleConfig(gradleFileContent);
     var gradleFileIndex = -1;
     for (var i = 0; i < gradleFileContentLines.length; i++) {
@@ -90,10 +95,10 @@ function writeGradleConfig(androidConfig) {
             break;
         }
     }
-    gradleFileContentLines.splice(gradleFileIndex + 1, 0, androidConfig.config);
+    gradleFileContentLines.splice(gradleFileIndex + 1, 0, androidConfig.getConfiguration());
     var fullGradleFile = gradleFileContentLines.join("\n");
-    fileOperation.writeTextToFileSync(pathConstants.getDynatraceGradleFile(), fullGradleFile);
-    logger_1.default.logMessageSync("Replaced old configuration with current configuration in dynatrace.gradle", logger_1.default.INFO);
+    fileHelper_1.writeTextToFileSync(pathHelper_1.getDynatraceGradleFile(), fullGradleFile);
+    Logger_1.Logger.getInstance().logInfo("Replaced old configuration with current configuration in dynatrace.gradle");
 }
 exports.writeGradleConfig = writeGradleConfig;
 function removeOldGradleConfig(gradleFileContent) {

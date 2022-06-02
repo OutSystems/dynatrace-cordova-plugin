@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.setBuildProperties = exports.setCliBuildArgs = void 0;
-var nodePath = require("path");
-var logger_1 = require("../logger");
-var pathConstants = require("../pathsConstants");
-var fileOperation = require("../fileOperationHelper");
+var fileHelper_1 = require("../helpers/fileHelper");
+var Logger_1 = require("../logger/Logger");
+var path_1 = require("path");
+var pathHelper_1 = require("../helpers/pathHelper");
 function setCliBuildArgs(process) {
     var buildArgs = {};
     var commandArgs = process.argv.slice(2);
@@ -23,39 +23,39 @@ function setCliBuildArgs(process) {
 exports.setCliBuildArgs = setCliBuildArgs;
 function setBuildProperties(argv) {
     var buildProperties = {};
-    buildProperties.isCapacitor = pathConstants.isCapacitorApp();
-    buildProperties.pathToConfig = pathConstants.getConfigFilePath();
+    buildProperties.isCapacitor = pathHelper_1.isCapacitorApp();
+    buildProperties.pathToConfig = pathHelper_1.getConfigFilePath();
     if (argv.config !== undefined) {
         buildProperties.pathToConfig = argv.config;
     }
     if (argv.gradle !== undefined) {
-        buildProperties.pathToGradle = nodePath.resolve(argv.gradle);
-        buildProperties.androidAvailable = fileOperation.isPlatformAvailable(buildProperties.pathToGradle, "Android");
+        buildProperties.pathToGradle = path_1.resolve(argv.gradle);
+        buildProperties.androidAvailable = fileHelper_1.isPlatformAvailable(buildProperties.pathToGradle, "Android");
     }
     else {
-        buildProperties.pathToGradle = buildProperties.isCapacitor ? pathConstants.getAndroidGradleFile(pathConstants.getAndroidPathCapacitor()) : pathConstants.getAndroidGradleFile(pathConstants.getAndroidPath());
-        buildProperties.androidAvailable = buildProperties.isCapacitor ? fileOperation.isPlatformAvailable(pathConstants.getAndroidPathCapacitor(), "Android") : fileOperation.isPlatformAvailable(pathConstants.getAndroidPath(), "Android");
+        buildProperties.pathToGradle = buildProperties.isCapacitor ? pathHelper_1.getAndroidGradleFile(pathHelper_1.getAndroidPathCapacitor()) : pathHelper_1.getAndroidGradleFile(pathHelper_1.getAndroidPath());
+        buildProperties.androidAvailable = buildProperties.isCapacitor ? fileHelper_1.isPlatformAvailable(pathHelper_1.getAndroidPathCapacitor(), "Android") : fileHelper_1.isPlatformAvailable(pathHelper_1.getAndroidPath(), "Android");
     }
     if (argv.plist !== undefined) {
-        buildProperties.pathToPList = nodePath.resolve(argv.plist);
-        buildProperties.iosAvailable = fileOperation.isPlatformAvailable(buildProperties.pathToPList, "iOS");
+        buildProperties.pathToPList = path_1.resolve(argv.plist);
+        buildProperties.iosAvailable = fileHelper_1.isPlatformAvailable(buildProperties.pathToPList, "iOS");
     }
     else {
-        buildProperties.pathToPList = buildProperties.isCapacitor ? pathConstants.getIosPlistPathCapacitor() : buildProperties.pathToPList;
-        buildProperties.iosAvailable = fileOperation.isPlatformAvailable(pathConstants.getIosPath(), "iOS");
+        buildProperties.pathToPList = buildProperties.isCapacitor ? pathHelper_1.getIosPlistPathCapacitor() : buildProperties.pathToPList;
+        buildProperties.iosAvailable = fileHelper_1.isPlatformAvailable(pathHelper_1.getIosPath(), "iOS");
     }
     if (argv.jsagent !== undefined) {
         try {
-            logger_1.default.logMessageSync("Checking if JSAgent file exists ..", logger_1.default.INFO);
-            buildProperties.pathToJsAgent = fileOperation.checkIfFileExistsSync(argv.jsagent);
-            logger_1.default.logMessageSync("JSAgent found at: " + buildProperties.pathToJsAgent, logger_1.default.INFO);
+            Logger_1.Logger.getInstance().logInfo("Checking if JSAgent file exists ..");
+            buildProperties.pathToJsAgent = fileHelper_1.checkIfFileExistsSync(argv.jsagent);
+            Logger_1.Logger.getInstance().logInfo("JSAgent found at: " + buildProperties.pathToJsAgent);
         }
         catch (ex) {
-            logger_1.default.logMessageSync("JSAgent not found: " + ex, logger_1.default.WARNING);
+            Logger_1.Logger.getInstance().logWarning("JSAgent not found: " + ex);
         }
     }
-    buildProperties.pathToConfig = nodePath.resolve(buildProperties.pathToConfig);
-    buildProperties.pathToGradle = nodePath.resolve(buildProperties.pathToGradle);
+    buildProperties.pathToConfig = path_1.resolve(buildProperties.pathToConfig);
+    buildProperties.pathToGradle = path_1.resolve(buildProperties.pathToGradle);
     return buildProperties;
 }
 exports.setBuildProperties = setBuildProperties;

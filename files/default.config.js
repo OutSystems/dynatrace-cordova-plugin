@@ -1,17 +1,16 @@
 module.exports = {
-    cordova : {
-        debug : false,
-        autoUpdate : true
+    cordova: {
+        debug: false
     },
 
-    js : {
-        url : "",
-        mode : 2
+    js: {
+        url: "",
+        mode: 2
     },
 
-    android : {
+    android: {
         // Those configs are copied 1:1
-        config : `
+        config: `
         dynatrace {
             configurations {
                 defaultConfig {
@@ -25,13 +24,13 @@ module.exports = {
         `
     },
 
-    ios : {
+    ios: {
         // Those configs are copied 1:1
-        config : `
+        config: `
         <key>DTXApplicationID</key>
         <string>Insert your ApplicationID from Config</string>
         <key>DTXBeaconURL</key>
         <string>Insert your ClusterURL from Config</string>
         `
-    }  
+    }
 }

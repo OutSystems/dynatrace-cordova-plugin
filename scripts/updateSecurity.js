@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -38,8 +37,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.checkForPolicy = exports.updateSecurity = void 0;
-var logger_1 = require("./logger");
-var files = require("./fileOperationHelper");
+var fileHelper_1 = require("./helpers/fileHelper");
+var Logger_1 = require("./logger/Logger");
 var SEC_POLICY_IDENTIFIER = "Content-Security-Policy";
 var HTML_IDENTIFIER = ["src=\"cordova.js\"", "<ion-app>"];
 var CONNECT_SRC = "connect-src";
@@ -49,15 +48,15 @@ function updateSecurity(path, configuration) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    logger_1.default.logMessageSync("Successfully read the settings for modifying CSP", logger_1.default.INFO);
-                    if (configuration.cordova.cspURL === undefined) {
-                        logger_1.default.logMessageSync("Updating the CSP is turned off!", logger_1.default.INFO);
+                    Logger_1.Logger.getInstance().logInfo("Successfully read the settings for modifying CSP");
+                    if (!configuration.getCordovaPluginConfiguration().isCSPUrlAvailable()) {
+                        Logger_1.Logger.getInstance().logInfo("Updating the CSP is turned off!");
                         return [2, false];
                     }
                     _a.label = 1;
                 case 1:
                     _a.trys.push([1, 3, , 4]);
-                    return [4, files.searchFileExtInDirectoryNonRecursive(path, ".html", [])];
+                    return [4, fileHelper_1.searchFileExtInDirectoryNonRecursive(path, ".html", [])];
                 case 2:
                     htmlFiles = _a.sent();
                     htmlFiles = htmlFiles.filter(function (value) {
@@ -66,21 +65,21 @@ function updateSecurity(path, configuration) {
                     return [3, 4];
                 case 3:
                     e_1 = _a.sent();
-                    logger_1.default.logMessageSync("Error during updating CSP: " + e_1.message, logger_1.default.ERROR);
+                    Logger_1.Logger.getInstance().logError("Error during updating CSP: " + e_1.message);
                     htmlFiles = [];
                     return [3, 4];
                 case 4:
                     if (!(htmlFiles.length > 1)) return [3, 5];
-                    logger_1.default.logMessageSync("Will not update security policy as the policy is available in two different files.", logger_1.default.WARNING);
+                    Logger_1.Logger.getInstance().logWarning("Will not update security policy as the policy is available in two different files.");
                     return [2, false];
                 case 5:
                     if (!(htmlFiles.length == 1)) return [3, 7];
-                    return [4, updateCSPInHtml(htmlFiles[0], configuration.cordova.cspURL)];
+                    return [4, updateCSPInHtml(htmlFiles[0], configuration.getCordovaPluginConfiguration().getCSPUrl())];
                 case 6:
                     _a.sent();
                     return [2, true];
                 case 7:
-                    logger_1.default.logMessageSync("Will not update security policy as the plugin didn't find a html file containing csp.", logger_1.default.WARNING);
+                    Logger_1.Logger.getInstance().logWarning("Will not update security policy as the plugin didn't find a html file containing csp.");
                     return [2, false];
             }
         });
@@ -93,8 +92,8 @@ function updateCSPInHtml(htmlFile, cspURL) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    logger_1.default.logMessageSync("Updating the CSP to allow communication with the server!", logger_1.default.INFO);
-                    return [4, files.readTextFromFile(htmlFile)];
+                    Logger_1.Logger.getInstance().logInfo("Updating the CSP to allow communication with the server!");
+                    return [4, fileHelper_1.readTextFromFile(htmlFile)];
                 case 1:
                     content = _a.sent();
                     indexCSP = content.indexOf(SEC_POLICY_IDENTIFIER);
@@ -110,17 +109,17 @@ function updateCSPInHtml(htmlFile, cspURL) {
                     else {
                         newFileContent = content.slice(0, indexCSPConnectSrc + CONNECT_SRC.length) + " " + cspURL + content.slice(indexCSPConnectSrc + CONNECT_SRC.length);
                     }
-                    return [4, files.writeTextToFile(htmlFile, newFileContent)];
+                    return [4, fileHelper_1.writeTextToFile(htmlFile, newFileContent)];
                 case 2:
                     _a.sent();
-                    logger_1.default.logMessageSync("Successfully updated the CSP!", logger_1.default.INFO);
+                    Logger_1.Logger.getInstance().logInfo("Successfully updated the CSP!");
                     return [2];
             }
         });
     });
 }
 function checkForPolicy(htmlFile) {
-    var content = files.readTextFromFileSync(htmlFile);
+    var content = fileHelper_1.readTextFromFileSync(htmlFile);
     if (content.indexOf(SEC_POLICY_IDENTIFIER) > -1) {
         for (var i = 0; i < HTML_IDENTIFIER.length; i++) {
             if (content.indexOf(HTML_IDENTIFIER[i])) {

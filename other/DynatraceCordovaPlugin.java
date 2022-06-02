@@ -8,8 +8,6 @@ import org.json.JSONObject;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import android.widget.Toast;
-
 import com.dynatrace.android.agent.Dynatrace;
 import com.dynatrace.android.agent.conf.DataCollectionLevel;
 import com.dynatrace.android.agent.conf.UserPrivacyOptions;
@@ -29,7 +27,6 @@ public class DynatraceCordovaPlugin extends CordovaPlugin {
   @Override
   public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
     try {
-
       if (action.equals(ACTION_UEM_END_SESSION)) {
         Dynatrace.endVisit();
         callbackContext.success();
@@ -45,8 +42,8 @@ public class DynatraceCordovaPlugin extends CordovaPlugin {
         return true;
       } else if (action.equals(ACTION_UEM_APPLY_USERPRIVACYOPTIONS)) {
         UserPrivacyOptions.Builder optionsBuilder = UserPrivacyOptions.builder();
-        optionsBuilder.withDataCollectionLevel(DataCollectionLevel.values()[(args.getJSONObject(0).getInt("_dataCollectionLevel"))]);
-        optionsBuilder.withCrashReportingOptedIn(args.getJSONObject(0).getBoolean("_crashReportingOptedIn"));
+        optionsBuilder.withDataCollectionLevel(DataCollectionLevel.values()[(args.getJSONObject(0).getInt("dataCollectionLevel"))]);
+        optionsBuilder.withCrashReportingOptedIn(args.getJSONObject(0).getBoolean("crashReportingOptedIn"));
 
         Dynatrace.applyUserPrivacyOptions(optionsBuilder.build());
         callbackContext.success("Privacy settings updated!");
@@ -54,17 +51,16 @@ public class DynatraceCordovaPlugin extends CordovaPlugin {
         return true;
       } else if (action.equals(ACTION_UEM_IDENTIFY_USER)) {
         String userId = args.getJSONObject(0).getString("userId");
-
+  
         Dynatrace.identifyUser(userId);
         callbackContext.success("UserId: " + userId);
         return true;
-      }
+      } 
     } catch(Exception e) {
       System.err.println("Exception: " + e.getMessage());
       callbackContext.error(e.getMessage());
       return false;
     }
     return false;
-  }  
-
+  }
 }

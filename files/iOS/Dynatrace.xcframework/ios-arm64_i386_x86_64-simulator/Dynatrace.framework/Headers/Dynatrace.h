@@ -1,5 +1,5 @@
 // Dynatrace.h
-// Version: 8.219.1.1004
+// Version: 8.233.1.1006
 //
 // These materials contain confidential information and
 // trade secrets of Dynatrace Corporation. You shall
@@ -56,7 +56,8 @@ typedef NS_ENUM(int, DTX_DataCollectionLevel) {
  @constant DTX_Error_ActionNotFound A corresponding enterAction event was not found for the current leaveAction.
  @constant DTX_Error_InvalidParameter A null or 0 length serverURL, applicationName, actionName, or eventName are used.
  @constant DTX_Error_ActionEnded The action has already been ended via the leaveAction method.
- @constant DTX_ReportErrorOff Returned if the DT server has turned error reporting off.
+ @constant DTX_Error_ActionCancelled The action has already been cancelled via the cancelAction method.
+ @constant DTX_ReportErrorOff DEPRECATED in version >= 8.223: Returned if the DT server has turned error reporting off.
  @constant DTX_TruncatedEventName Returned if the actionName or eventName exceeds maximum length.
  @constant DTX_CrashReportInvalid Crash Report was invalid.
  @constant DTX_TruncatedUserId Returned if the userid exceeds maximum length.
@@ -72,11 +73,12 @@ typedef NS_ENUM(int, DTX_StatusCode) {
     DTX_Error_ActionNotFound = -4,
     DTX_Error_InvalidParameter = -5,
     DTX_Error_ActionEnded = -6,
-    DTX_ReportErrorOff = -8,
+    DTX_Error_ActionCancelled = -7,
+    DTX_ReportErrorOff = -8, // DEPRECATED in version >= 8.223
     DTX_TruncatedEventName = -9,
     DTX_CrashReportInvalid = -10,
     DTX_TruncatedUserId = -11,
-} /*__attribute__((deprecated))*/;
+};
 
 /*!
  @category UIControl (DynatraceCustomization)
@@ -195,6 +197,21 @@ typedef NS_ENUM(int, DTX_StatusCode) {
  @return Returns a DTX_StatusCode indicating success (DTX_CaptureOn) or failure
  */
 - (DTX_StatusCode)leaveAction;
+
+/*!
+ @brief Cancels an action so it will not be sent.
+
+ All reported events, values, and tagged web requests since start of an action are
+ not part of the action any more. If this action has any child actions, they are also
+ cancelled. Call this method if you started a manual action that you wish to cancel and not be tracked after all.
+
+ In non-ARC code the DTXAction must be released after calling this method.
+ 
+ This method doesn't have an effect on auto generated actions.
+
+ @return Returns a DTX_StatusCode indicating success (DTX_CaptureOn) or failure
+ */
+- (DTX_StatusCode)cancelAction;
 
 /*!
  @brief Sends an event to Dynatrace.
@@ -787,6 +804,12 @@ extern NSString *_Nonnull const kDTXHybridApplication;
 extern NSString *_Nonnull const kDTXSetCookiesForDomain;
 
 /*!
+ @const kDTXSetSecureCookiesForDomain
+ For hybrid apps that use the JavaScript library, cookies must be set for each instrumented domain or server that the app communicates with. You can specify domains, host, or IP addresses. Domains and sub-domains must start with a dot. Similar to kDTXSetCookiesForDomain but will add the secure property to the cookie.
+ */
+extern NSString *_Nonnull const kDTXSetSecureCookiesForDomain;
+
+/*!
  @const kDTXCrashReportingEnabled
  Set the value to false if you want to disable crash reporting. The default value is true.
  */
@@ -918,6 +941,14 @@ extern NSString *_Nonnull const kDTXWebViewStandInDelegate;
  @note This key is available as of OneAgent for iOS 8.219.
  */
 extern NSString *_Nonnull const kDTXURLFilters;
+
+# pragma mark Instrumentation - Detect Rage Taps
+/*!
+ @const kDTXDetectRageTaps
+ If set to true, rage taps on the screen will be detected, signaling a user frustration while using the app.
+ Set the value to false to turn off automatic detection. The default value is true.
+ */
+extern NSString *_Nonnull const kDTXDetectRageTaps;
 
 # pragma mark Instrumentation - 3rd Party Frameworks
 /*!

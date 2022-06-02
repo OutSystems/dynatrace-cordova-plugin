@@ -4,41 +4,9 @@
 <dict>
 	<key>files</key>
 	<dict>
-		<key>Frameworks/KSCrash.framework/DemangleNodes.def</key>
-		<data>
-		xBmaP4Y6rsLH2pFHkgOZtsCzHAs=
-		</data>
-		<key>Frameworks/KSCrash.framework/Info.plist</key>
-		<data>
-		+9PMA+H5d/rEyg2IeqgFeaLL+0o=
-		</data>
-		<key>Frameworks/KSCrash.framework/KSCrash</key>
-		<data>
-		aJCVKvbQNG0k6YaBCspe9DEP8fg=
-		</data>
-		<key>Frameworks/KSCrash.framework/LICENSE.txt</key>
-		<data>
-		n7rSP+Ex/MKT2ZssUXuZDaovCm4=
-		</data>
-		<key>Frameworks/KSCrash.framework/ReferenceStorage.def</key>
-		<data>
-		jR7VZy/pseiQT6T6Fk56C4iq858=
-		</data>
-		<key>Frameworks/KSCrash.framework/StandardTypesMangling.def</key>
-		<data>
-		+r2FOeYf1fpCWSFEtDaKhoUICVQ=
-		</data>
-		<key>Frameworks/KSCrash.framework/ValueWitnessMangling.def</key>
-		<data>
-		2jmj7l5rSw0yVb/vlWAYkK/YBwk=
-		</data>
-		<key>Frameworks/KSCrash.framework/_CodeSignature/CodeResources</key>
-		<data>
-		prgR+p77A7oG99yzAUx8tFBRghU=
-		</data>
 		<key>Headers/Dynatrace.h</key>
 		<data>
-		Enm6z9yOowgHZC4agmA6hQ//+3M=
+		z2+Gbuv3m9Hjs9/qngEMqZE/fQ0=
 		</data>
 		<key>Headers/Framework.h</key>
 		<data>
@@ -46,7 +14,7 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		fbE7H08c1xVxvThXAcxNlPNjNTQ=
+		EdbWAgnB+yFNcfByGmPnsdPdcKc=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -55,67 +23,11 @@
 	</dict>
 	<key>files2</key>
 	<dict>
-		<key>Frameworks/KSCrash.framework/DemangleNodes.def</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			oyJFV1xUttG8trXqF7ElBCpkg9H1YPnFjDeqJl+AVb8=
-			</data>
-		</dict>
-		<key>Frameworks/KSCrash.framework/Info.plist</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			ldBiyaIQTpRh62c+0NyPdXZ+ZpaXihmQN0CJ6tiWeB0=
-			</data>
-		</dict>
-		<key>Frameworks/KSCrash.framework/KSCrash</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			Tq3fPeOwPfW5boCQGajBFEeYbVVlTrax9sOtjhWYMMw=
-			</data>
-		</dict>
-		<key>Frameworks/KSCrash.framework/LICENSE.txt</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			GGxfAZKnVHFKflQiM92qrSh0VibgrTLjWNP1rwCvuEo=
-			</data>
-		</dict>
-		<key>Frameworks/KSCrash.framework/ReferenceStorage.def</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			Q8agmnG13APs12x57GA1VaTPEi/8bUbKlVCmUJU6Ut4=
-			</data>
-		</dict>
-		<key>Frameworks/KSCrash.framework/StandardTypesMangling.def</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			dY447ZQtS5k2v7D8xsk2TPAl4IVHfNXEk5Ppm8/pGxY=
-			</data>
-		</dict>
-		<key>Frameworks/KSCrash.framework/ValueWitnessMangling.def</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
-			</data>
-		</dict>
-		<key>Frameworks/KSCrash.framework/_CodeSignature/CodeResources</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			SnBlte967V9J8L+TAM/FC/dszGXc//B/XCWdFMPbGAQ=
-			</data>
-		</dict>
 		<key>Headers/Dynatrace.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			yzDTlwzCF3hYWIuoS7UZruaAev1Z6axy4nI8ofXkom0=
+			Hw/wQXq1nN+26cJK1EPq+bqfhCFtwqfeFsFDS1OOD4Y=
 			</data>
 		</dict>
 		<key>Headers/Framework.h</key>

@@ -1,54 +1,82 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NativeNetworkInterceptorUtils = void 0;
-exports.NativeNetworkInterceptorUtils = {
-    getHeadersForNativeRequest: getHeadersForNativeRequest,
-    enterNativeRequestAction: enterNativeRequestAction,
-    leaveNativeRequestAction: leaveNativeRequestAction
-};
-function getHeadersForNativeRequest(actionId) {
-    var headers = {};
-    if (!dT_) {
-        console.log("Missing Dynatrace Javascript Agent API!");
-        return headers;
-    }
-    headers["x-dynatrace"] = "";
-    headers["x-dtc"] = getDTC(actionId);
-    return headers;
-}
+var sessionStoragePrefix = "_dt.";
 function getDTC(actionId) {
-    var referer = dT_.gAR(actionId);
+    var referer = getReferer(actionId);
+    var dtAdk = getCookieValue("dtAdk");
+    if (dtAdk == "") {
+        dtAdk = getLocalStorageValue("dtAdk");
+    }
+    return "sn=\"" + getCookieValue("dtCookie") + "\", pc=\"" + getCookieValue("dtPC") + "\", v=\"" + getCookieValue("rxVisitor") + "\", r=\"" + referer + "\", adk=\"" + dtAdk + "\"";
+}
+function getReferer(actionId) {
+    var referer = "";
+    if (typeof dT_ !== "undefined" && typeof dT_.gAR !== "undefined") {
+        referer = dT_.gAR(actionId);
+    }
     if (referer == "") {
         referer = location.href;
     }
-    return "sn=\"" + getCookieValue("dtCookie") + "\", pc=\"" + getCookieValue("dtPC") + "\", v=\"" + getCookieValue("rxVisitor") + "\", r=\"" + referer + "\", adk=\"" + getCookieValue("dtAdk") + "\"";
+    return referer;
 }
 function getCookieValue(cookieName) {
     var b = document.cookie.match('(^|[^;]+)\\s*' + cookieName + '\\s*=\\s*([^;]+)');
-    return b ? b.pop() : '';
+    var cookie = b ? b.pop() : '';
+    if (cookie == undefined || cookie.length == 0) {
+        return getSessionStorageValue(cookieName);
+    }
+    return cookie;
 }
-function enterNativeRequestAction(url, webRequestFrameworkName, actionNameFallback) {
-    if (!dtrum) {
-        console.log("Missing Dynatrace Javascript Agent API!");
-        return -1;
-    }
-    if (!webRequestFrameworkName) {
-        webRequestFrameworkName = "Native Web Request";
-    }
-    if (!actionNameFallback) {
-        actionNameFallback = "Request to: " + url;
-    }
-    var actionId = dtrum.enterXhrAction(webRequestFrameworkName, 3, url);
-    if (actionId == 0) {
-        actionId = dtrum.enterAction(actionNameFallback);
-    }
-    return actionId;
-}
-function leaveNativeRequestAction(actionId) {
-    if (!dtrum) {
-        console.log("Missing Dynatrace Javascript Agent API!");
-    }
-    else {
-        dtrum.leaveAction(actionId);
+function getLocalStorageValue(key) {
+    if (typeof localStorage !== "undefined") {
+        var b = localStorage.getItem(key);
+        return b ? b : '';
     }
 }
+function getSessionStorageValue(key) {
+    if (typeof sessionStorage !== "undefined") {
+        var b = sessionStorage.getItem(sessionStoragePrefix + key);
+        return b ? b : '';
+    }
+}
+exports.NativeNetworkInterceptorUtils = {
+    getHeadersForNativeRequest: function (actionId) {
+        var headers = {};
+        if (typeof dT_ === "undefined") {
+            console.log("Missing Dynatrace Javascript Agent API!");
+            return headers;
+        }
+        headers["x-dynatrace"] = "";
+        headers["x-dtc"] = getDTC(actionId);
+        return headers;
+    },
+    enterNativeRequestAction: function (url, webRequestFrameworkName, actionNameFallback) {
+        if (typeof dtrum === "undefined") {
+            console.log("Missing Dynatrace Javascript Agent API!");
+            return -1;
+        }
+        webRequestFrameworkName = !webRequestFrameworkName
+            ? "Native Web Request: " + url
+            : webRequestFrameworkName;
+        actionNameFallback = !actionNameFallback
+            ? "Request: " + url
+            : actionNameFallback;
+        var actionId = dtrum.enterXhrAction(webRequestFrameworkName, 3, url);
+        if (actionId == 0) {
+            var userInput = dtrum.beginUserInput("Request", "click", url);
+            actionId = dtrum.enterXhrAction(actionNameFallback, 3, url);
+            dtrum.actionName(actionNameFallback);
+            dtrum.endUserInput(userInput);
+        }
+        return actionId;
+    },
+    leaveNativeRequestAction: function (actionId) {
+        if (typeof dtrum === "undefined") {
+            console.log("Missing Dynatrace Javascript Agent API!");
+        }
+        else {
+            dtrum.leaveAction(actionId);
+        }
+    }
+};

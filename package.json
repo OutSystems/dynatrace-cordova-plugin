@@ -1,8 +1,8 @@
 {
   "_from": "@dynatrace/cordova-plugin",
-  "_id": "@dynatrace/cordova-plugin@1.219.1",
+  "_id": "@dynatrace/cordova-plugin@1.233.1",
   "_inBundle": false,
-  "_integrity": "sha512-dqHCOOfQp7imHBT0AJJVzrRFE/OVn2b7u7E5E8sGzbTsFyPy3d62eNKIUUbQ68u4HP+TvmB8c9ldUiBzjXXeww==",
+  "_integrity": "sha512-1ZWHcftkzdmXQYAAn0SDNBDN16WYqpTVbXX8xBGIrJOIzdwxnIppdIFU70OP6olv1MUMx/kfQuOP4EVOAh96jg==",
   "_location": "/@dynatrace/cordova-plugin",
   "_phantomChildren": {},
   "_requested": {
@@ -20,10 +20,10 @@
     "#USER",
     "/"
   ],
-  "_resolved": "https://registry.npmjs.org/@dynatrace/cordova-plugin/-/cordova-plugin-1.219.1.tgz",
-  "_shasum": "90bd333987f336cd72021a0642d8ed5acfc73d43",
+  "_resolved": "https://registry.npmjs.org/@dynatrace/cordova-plugin/-/cordova-plugin-1.233.1.tgz",
+  "_shasum": "cf0e9c9f19b8ee5db0ea9613753cc037c61ab087",
   "_spec": "@dynatrace/cordova-plugin",
-  "_where": "C:\\Users\\daw\\Documents\\Outsystems\\RDVs\\Dynatrace\\temp2",
+  "_where": "C:\\Temp\\dyna2",
   "author": {
     "name": "Dynatrace"
   },
@@ -37,25 +37,31 @@
     ]
   },
   "dependencies": {
-    "axios": "0.21.1",
-    "cordova-common": "^4.0.0",
+    "axios": "^0.25.0",
+    "cordova-common": "^4.0.2",
     "if-env": "1.0.4",
-    "jsdom": "^15.2.1",
-    "plist": "^3.0.2"
+    "jsdom": "^19.0.0",
+    "plist": "^3.0.4"
   },
   "deprecated": false,
   "description": "This plugin gives you the ability to use the Dynatrace instrumentation in your hybrid application (Cordova, Ionic, ..). It uses the Mobile Agent, the JavaScript Agent. The Mobile Agent will give you all device specific values containing lifecycle information and the Javascript Agent will allow you to manually instrument your JavaScript/TypeScript code out of the box (Typescript definitions included). The JavaScript Agent will cover the network calls and will automatically detect them.",
   "devDependencies": {
+    "@types/fs-extra": "^9.0.12",
+    "@types/jest": "^27.0.1",
     "@types/jsdom": "^12.2.4",
+    "@types/mock-fs": "^4.13.1",
     "@types/plist": "^3.0.2",
-    "babel-polyfill": "^6.23.0",
-    "cordova": "^9.0.0",
-    "fs-extra": "^8.1.0",
-    "ionic": "^5.4.16",
-    "jest": "^25.5.4",
-    "mock-fs": "^4.10.3",
-    "shelljs": "^0.8.3",
-    "tar": "^5.0.5",
+    "@types/shelljs": "^0.8.9",
+    "@types/tar": "^4.0.5",
+    "cordova": "^10.0.0",
+    "fs-extra": "^10.0.0",
+    "jest": "^27.0.5",
+    "mock-fs": "^4.14.0",
+    "npm-check-updates": "^12.0.2",
+    "shelljs": "^0.8.4",
+    "tar": "^6.1.11",
+    "ts-jest": "^27.0.5",
+    "ts-node": "^10.2.1",
     "typescript": "^3.7.5"
   },
   "files": [
@@ -90,5 +96,5 @@
     "uninstall": "if-env BUILD_PLUGIN=true && echo 'Skipping Uninstall Script' || node ./scripts/uninstallCap.js"
   },
   "typings": "typings/main.d.ts",
-  "version": "1.219.1"
+  "version": "1.233.1"
 }

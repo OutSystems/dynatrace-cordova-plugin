@@ -49,12 +49,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createHTTPRequest = exports.createHTTPRequestWithRetries = exports.isModeValid = exports.isJsAgentUrlValid = exports.createHTTPOptions = exports.retrieveJSAgentHttp = exports.downloadAgent = exports.StopBuildError = exports.AGENT_DTCONFIG = void 0;
-var axios_1 = require("axios");
-var https = require("https");
-var logger_1 = require("./logger");
+exports.createHTTPRequestWithRetries = exports.retrieveJSAgentHttp = exports.downloadAgent = exports.StopBuildError = exports.AGENT_DTCONFIG = void 0;
+var Logger_1 = require("./logger/Logger");
+var HttpCommunication_1 = require("./http/HttpCommunication");
 exports.AGENT_DTCONFIG = "data-dtconfig";
-var JSAGENT_OPTIONS = ['jsInlineScript', 'jsTagComplete', 'syncCS', 'asyncCS', 'jsTag'];
 var StopBuildError = (function (_super) {
     __extends(StopBuildError, _super);
     function StopBuildError(message) {
@@ -69,68 +67,44 @@ function downloadAgent(config) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    if (config.js === undefined) {
-                        logger_1.default.logMessageSync("No Settings available for JSAgent in the dynatrace.config.js file - Will not retrieve or include JSAgent.", logger_1.default.INFO);
+                    if (!config.isJavaScriptAgentConfigurationAvailable()) {
+                        Logger_1.Logger.getInstance().logInfo("No Settings available for JSAgent in the dynatrace.config.js file - Will not retrieve or include JSAgent.");
                         return [2];
                     }
-                    else if (!isJsAgentUrlValid(config.js.url)) {
-                        logger_1.default.logMessageSync("Incorrect or empty url found for JSAgent - Will not retrieve or include JSAgent.", logger_1.default.WARNING);
+                    else if (!config.getJavaScriptAgentConfiguration().isAgentUrlValid()) {
+                        Logger_1.Logger.getInstance().logWarning("Incorrect or empty url found for JSAgent - Will not retrieve or include JSAgent.");
                         return [2];
                     }
-                    logger_1.default.logMessageSync("Starting the retrieval of the JSAgent ..", logger_1.default.INFO);
+                    Logger_1.Logger.getInstance().logInfo("Starting the retrieval of the JSAgent ..");
                     _a.label = 1;
                 case 1:
-                    _a.trys.push([1, 8, , 9]);
-                    jsagentContent = void 0;
-                    if (!isModeValid(config.js.mode)) return [3, 3];
-                    return [4, retrieveJSAgentHttp(config.js, config.js.url.replace(JSAGENT_OPTIONS[0], JSAGENT_OPTIONS[config.js.mode]))];
+                    _a.trys.push([1, 3, , 4]);
+                    return [4, retrieveJSAgentHttp(config.getJavaScriptAgentConfiguration())];
                 case 2:
                     jsagentContent = _a.sent();
-                    logger_1.default.logMessageSync("JSAgent was retrieved successfully!", logger_1.default.INFO);
+                    Logger_1.Logger.getInstance().logInfo("JSAgent was retrieved successfully!");
                     return [2, jsagentContent];
                 case 3:
-                    if (!(config.js.mode === undefined)) return [3, 5];
-                    logger_1.default.logMessageSync("Mode value is not defined! Retrieving the default code snippet sync option for the JSAgent.", logger_1.default.INFO);
-                    return [4, retrieveJSAgentHttp(config.js, config.js.url.replace(JSAGENT_OPTIONS[0], JSAGENT_OPTIONS[2]))];
-                case 4:
-                    jsagentContent = _a.sent();
-                    logger_1.default.logMessageSync("JSAgent was retrieved successfully!", logger_1.default.INFO);
-                    return [2, jsagentContent];
-                case 5:
-                    logger_1.default.logMessageSync("Mode value is not a number between 0 and 4! Retrieving the default code snippet sync option for the JSAgent. Please check the documentation for more details.", logger_1.default.WARNING);
-                    return [4, retrieveJSAgentHttp(config.js, config.js.url)];
-                case 6:
-                    jsagentContent = _a.sent();
-                    logger_1.default.logMessageSync("JSAgent was retrieved successfully!", logger_1.default.INFO);
-                    return [2, jsagentContent];
-                case 7: return [3, 9];
-                case 8:
                     exception_1 = _a.sent();
-                    logger_1.default.logMessageSync("Could not retrieve the JSAgent! - " + exception_1, logger_1.default.ERROR);
-                    return [3, 9];
-                case 9: return [2];
+                    Logger_1.Logger.getInstance().logError("Could not retrieve the JSAgent! - " + exception_1);
+                    return [3, 4];
+                case 4: return [2];
             }
         });
     });
 }
 exports.downloadAgent = downloadAgent;
-function retrieveJSAgentHttp(configuration, jsAgentOptionsUrl) {
+function retrieveJSAgentHttp(configuration) {
     return __awaiter(this, void 0, void 0, function () {
-        var configJsUrl, jsagentContent;
+        var jsagentContent;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    configJsUrl = false;
-                    if (!(jsAgentOptionsUrl === undefined)) return [3, 1];
-                    throw new Error("JSAgent API url in configuration is not valid! Please update the url to a valid value!");
-                case 1:
-                    configJsUrl = isJsAgentUrlValid(jsAgentOptionsUrl);
-                    if (!configJsUrl) return [3, 3];
-                    if (configuration.allowanycert !== undefined && configuration.allowanycert) {
-                        logger_1.default.logMessageSync("Ignoring certificate when retrieving the JSAgent!", logger_1.default.WARNING);
+                    if (configuration.isAnyCertificateAllowed()) {
+                        Logger_1.Logger.getInstance().logWarning("Ignoring certificate when retrieving the JSAgent!");
                     }
-                    return [4, createHTTPRequestWithRetries(3, jsAgentOptionsUrl, createHTTPOptions(configuration), "Retrieving of JS Agent options finished", "Could not retrieve JS Agent options")];
-                case 2:
+                    return [4, createHTTPRequestWithRetries(3, configuration, "Retrieving of JS Agent options finished", "Could not retrieve JS Agent options")];
+                case 1:
                     jsagentContent = _a.sent();
                     if (jsagentContent !== undefined && jsagentContent.startsWith("<script")) {
                         return [2, jsagentContent.toString()];
@@ -138,34 +112,13 @@ function retrieveJSAgentHttp(configuration, jsAgentOptionsUrl) {
                     else {
                         throw new Error("Content of the JS Agent is invalid! Please check the js url in the dynatrace.config.js file.");
                     }
-                    _a.label = 3;
-                case 3: return [2, ""];
+                    return [2];
             }
         });
     });
 }
 exports.retrieveJSAgentHttp = retrieveJSAgentHttp;
-function createHTTPOptions(configuration) {
-    return { rejectUnauthorized: !(configuration.allowanycert !== undefined && configuration.allowanycert) };
-}
-exports.createHTTPOptions = createHTTPOptions;
-function isJsAgentUrlValid(jsAgentUrl) {
-    if (jsAgentUrl == "") {
-        return false;
-    }
-    for (var i = 0; i < JSAGENT_OPTIONS.length; i++) {
-        if (jsAgentUrl.indexOf(JSAGENT_OPTIONS[i]) >= 0) {
-            return true;
-        }
-    }
-    return false;
-}
-exports.isJsAgentUrlValid = isJsAgentUrlValid;
-function isModeValid(mode) {
-    return typeof (mode) === 'number' && mode >= 0 && mode <= 4;
-}
-exports.isModeValid = isModeValid;
-function createHTTPRequestWithRetries(retries, uri, options, finishMsg, errorMsg) {
+function createHTTPRequestWithRetries(retries, configuration, finishMsg, errorMsg) {
     return __awaiter(this, void 0, void 0, function () {
         var amountOfRetries, jsagentContent, error_1;
         return __generator(this, function (_a) {
@@ -179,8 +132,10 @@ function createHTTPRequestWithRetries(retries, uri, options, finishMsg, errorMsg
                     _a.label = 2;
                 case 2:
                     _a.trys.push([2, 4, , 5]);
-                    return [4, exports.createHTTPRequest(uri, options, finishMsg, errorMsg)];
-                case 3: return [2, _a.sent()];
+                    return [4, HttpCommunication_1.createJSAgentHTTPRequest(configuration, finishMsg, errorMsg)];
+                case 3:
+                    jsagentContent = _a.sent();
+                    return [3, 5];
                 case 4:
                     error_1 = _a.sent();
                     if (amountOfRetries == 0) {
@@ -196,40 +151,3 @@ function createHTTPRequestWithRetries(retries, uri, options, finishMsg, errorMsg
     });
 }
 exports.createHTTPRequestWithRetries = createHTTPRequestWithRetries;
-function createHTTPRequest(uri, options, finishMsg, errorMsg) {
-    return __awaiter(this, void 0, void 0, function () {
-        var axiosInstance, errorMessage, httpResponse, error_2;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    axiosInstance = axios_1.default.create({
-                        httpsAgent: new https.Agent(options)
-                    });
-                    _a.label = 1;
-                case 1:
-                    _a.trys.push([1, 3, , 4]);
-                    return [4, axiosInstance.get(uri)];
-                case 2:
-                    httpResponse = _a.sent();
-                    if (httpResponse.status == 200) {
-                        logger_1.default.logMessageSync(finishMsg, logger_1.default.INFO);
-                        return [2, httpResponse.data];
-                    }
-                    else {
-                        errorMessage = errorMsg + httpResponse.statusText;
-                    }
-                    return [3, 4];
-                case 3:
-                    error_2 = _a.sent();
-                    errorMessage = errorMsg + error_2.message;
-                    return [3, 4];
-                case 4:
-                    if (errorMessage) {
-                        throw new Error(errorMessage);
-                    }
-                    return [2, ""];
-            }
-        });
-    });
-}
-exports.createHTTPRequest = createHTTPRequest;
