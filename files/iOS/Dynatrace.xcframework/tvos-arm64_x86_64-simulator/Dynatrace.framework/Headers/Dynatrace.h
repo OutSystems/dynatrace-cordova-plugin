@@ -1,5 +1,5 @@
 // Dynatrace.h
-// Version: 8.233.1.1006
+// Version: 8.259.1.1009
 //
 // These materials contain confidential information and
 // trade secrets of Dynatrace Corporation. You shall
@@ -13,7 +13,7 @@
 // trademarks of Dynatrace Corporation. All other company
 // or product names are trademarks of their respective owners.
 //
-// Copyright 2011-2021 Dynatrace LLC
+// Copyright 2011-2022 Dynatrace LLC
 
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
@@ -54,10 +54,10 @@ typedef NS_ENUM(int, DTX_DataCollectionLevel) {
  @constant DTX_Error_InvalidRange Parameter value specified is outside of permitted range.
  @constant DTX_Error_InternalError An internal error occurred.
  @constant DTX_Error_ActionNotFound A corresponding enterAction event was not found for the current leaveAction.
- @constant DTX_Error_InvalidParameter A null or 0 length serverURL, applicationName, actionName, or eventName are used.
+ @constant DTX_Error_InvalidParameter A null or 0 length beaconURL, applicationID, actionName, or eventName are used.
  @constant DTX_Error_ActionEnded The action has already been ended via the leaveAction method.
  @constant DTX_Error_ActionCancelled The action has already been cancelled via the cancelAction method.
- @constant DTX_ReportErrorOff DEPRECATED in version >= 8.223: Returned if the DT server has turned error reporting off.
+ @constant DTX_ReportErrorOff DEPRECATED in version >= 8.223: Returned if Dynatrace cluster has error reporting configured to off.
  @constant DTX_TruncatedEventName Returned if the actionName or eventName exceeds maximum length.
  @constant DTX_CrashReportInvalid Crash Report was invalid.
  @constant DTX_TruncatedUserId Returned if the userid exceeds maximum length.
@@ -207,8 +207,6 @@ typedef NS_ENUM(int, DTX_StatusCode) {
 
  In non-ARC code the DTXAction must be released after calling this method.
  
- This method doesn't have an effect on auto generated actions.
-
  @return Returns a DTX_StatusCode indicating success (DTX_CaptureOn) or failure
  */
 - (DTX_StatusCode)cancelAction;
@@ -287,7 +285,7 @@ typedef NS_ENUM(int, DTX_StatusCode) {
  @param errorName Name of error
 
  @param exception An exception object that has been caught. The description string of this
- object is sent to the server along with the call stack if one is present.
+ object is sent to Dynatrace along with the call stack if one is present.
 
  @return Returns a DTX_StatusCode
  */
@@ -301,7 +299,7 @@ typedef NS_ENUM(int, DTX_StatusCode) {
  @param errorName Name of error
 
  @param error An error object that has been caught. The error information for this
- object is sent to the server.
+ object is sent to Dynatrace.
 
  @return Returns a DTX_StatusCode
  */
@@ -330,7 +328,7 @@ typedef NS_ENUM(int, DTX_StatusCode) {
  @param errorName Name of error
 
  @param exception An exception object that has been caught. The description string of this
- object is sent to the server along with the call stack if one is present.
+ object is sent to Dynatrace along with the call stack if one is present.
 
  @return Returns a DTX_StatusCode
  */
@@ -345,7 +343,7 @@ typedef NS_ENUM(int, DTX_StatusCode) {
  @param errorName Name of error
 
  @param error An error object that has been caught. The error information for this
- object is sent to the server.
+ object is sent to Dynatrace.
 
  @return Returns a DTX_StatusCode
  */
@@ -432,6 +430,63 @@ typedef NS_ENUM(int, DTX_StatusCode) {
 @property (nonatomic) DTX_DataCollectionLevel dataCollectionLevel;
 @end
 
+/*!
+ @typedef DTX_SwiftUIViewType
+ @abstract This enum represents the different view types the DTXOnChangeEventsListener listener supports.
+ @discussion The DTXOnChangeEventsListener is limited to a few supported view types, this enum shows a list of supported types.
+ @constant list List, LazyVGrid or LazyHGrid SwiftUI type
+ */
+typedef NS_ENUM(int, DTX_SwiftUIViewType) {
+    list
+};
+
+/*!
+@brief This API is not intended for manual use! DTXOnChangeEventsListener protocol should be implemented by any class that wants to recieve updates about specific SwiftUI onChange events.
+*/
+@protocol DTXOnChangeEventsListener <NSObject>
+@required
+
+/*!
+ @brief Called by the observer when it recieves a state update.
+ 
+ @param viewType The type of the view that changed.
+ 
+ @param frame The frame of the view that changed.
+*/
+- (void)viewDidChange:(DTX_SwiftUIViewType)viewType inFrame:(CGRect)frame;
+@end
+
+/*!
+ @brief This API is not intended for manual use! Provides a communication channel between the SwiftUI instrumentor and the mobile agent.
+ */
+@interface DTXOnChangeEventsObserver : NSObject
+
++ (DTXOnChangeEventsObserver* _Nonnull)sharedInstance;
+
+/*!
+ @brief Adds a listener for on change events.
+ 
+ @param listener The listener to be added.
+*/
+- (void)addListener:(id<DTXOnChangeEventsListener> _Nonnull)listener;
+
+/*!
+ @brief Removes a listener for on change events.
+
+ @param listener The listener to be removed..
+*/
+- (void)removeListener:(id<DTXOnChangeEventsListener> _Nonnull)listener;
+
+/*!
+ @brief Notifies all listener about an update.
+ 
+ @param changedView The type of the view that changed.
+ 
+ @param changedFrame The frame of the view that changed.
+*/
+- (void)notifyListeners:(DTX_SwiftUIViewType)changedView frame:(CGRect)changedFrame;
+@end
+
 
 /*!
  @brief Provides for startup and shutdown of the Dynatrace OneAgent.
@@ -442,54 +497,10 @@ typedef NS_ENUM(int, DTX_StatusCode) {
 @interface Dynatrace : NSObject
 
 /*!
- @brief Initializes the Dynatrace OneAgent. This is deprecated! Please use (DTX_StatusCode)startupWithConfig:(NSDictionary*)config instead.
-
- This must be invoked before any Events can be captured. Multiple calls to this method are
- ignored if the OneAgent is not shut down between them.
-
- This method will be called automatically if you specify the value DTXAgentStartupPath in
- your application's Info.plist file. The parameter descriptions below specify the info.plist value
- to use to specify each parameter value when using auto-start.
-
- @param applicationName A user-defined name for the application. (Info.plist value
- DTXApplicationID)
-
- @param serverURL The URL of the web server with an active Dynatrace UEM agent
- (eg: "http://myhost.mydomain.com:8080/agentLocation/"). The URL scheme dictates whether the OneAgent
- uses http or https. The URL must contain the agent location specified in the Dynatrace UEM settings
- for this application. (Info.plist value DTXAgentStartupPath)
-
- @param allowAnyCert Allow any certificate for https communication. This is only evaluated if
- the https transport mechanism is specified in the server name. (Info.plist value
- DTXAllowAnyCert)
-
- @param pathToCertificateAsDER Path to a (self-signed) certificate in DER format or nil. Adds a
- certificiate in DER format which is used as an additional anchor to validate https communication.
- This is needed if allowAnyCert is NO and a self-signed certificate is used on the server. You can
- retrieve the path for a file in your application bundle using code like this:
-
- <tt>
- NSString *pathToCertificateAsDER =
-     [[NSBundle mainBundle] pathForResource:\@"myAppCert" ofType:\@"der"];
- </tt>
-
- (Info.plist value DTXAgentCertificatePath)
-
- @return Returns a DTX_StatusCode
- */
-+ (DTX_StatusCode)startupWithApplicationName:(NSString* _Nonnull)applicationName
-                                   serverURL:(NSString* _Nonnull)serverURL
-                                allowAnyCert:(BOOL)allowAnyCert
-                             certificatePath:(NSString* _Nullable)pathToCertificateAsDER __deprecated_msg("Please use (DTX_StatusCode)startupWithConfig:(NSDictionary*)config instead");
-
-/*!
  @brief Initializes the Dynatrace OneAgent.
 
  This must be invoked before any Events can be captured. Multiple calls to this method are
  ignored if the OneAgent is not shut down between them.
-
- This method will be called automatically if you specify the value DTXAgentStartupPath in
- your application's info.plist file. This method has no paramaters. It uses the paramaters specified in info.plist.
 
 
  @return Returns a DTX_StatusCode
@@ -508,7 +519,7 @@ typedef NS_ENUM(int, DTX_StatusCode) {
 + (DTX_StatusCode)startupWithConfig:(NSDictionary<NSString*,id>* _Nonnull)config;
 
 /*!
- @brief Stops Dynatrace monitoring and flushes all collected data to the server.
+ @brief Stops monitoring and flushes all collected data to Dynatrace.
 
  @return Returns a DTX_StatusCode
  */
@@ -546,6 +557,15 @@ typedef NS_ENUM(int, DTX_StatusCode) {
  @param modifier block which is applied to the currently pending user action.
 */
 + (void)modifyUserAction:(void(^ _Nullable)(DTXAction* _Nullable modifiableAction))modifier;
+
+/*!
+ @brief Adds a callback that will be called every time an auto user action is generated.
+
+ The generated auto user action is passed to the callback for modification.
+
+ @param callback is called when a new auto user action is created.
+*/
++ (void)setAutoUserActionCreationCallback:(void(^ _Nullable)(DTXAction* _Nullable modifiableAction))callback;
 
 /*!
  @brief Set the current GPS location of the user.
@@ -595,13 +615,13 @@ typedef NS_ENUM(int, DTX_StatusCode) {
  @brief Enable Dynatrace crash reporting.
 
  The Dynatrace OneAgent can report on application crashes using the KSCrash framework. Call this
- method after startup to enable crash reporting to the Dynatrace server.
+ method after startup to enable crash reporting to Dynatrace.
 
  When using auto-start use the Info.plist value DTXCrashReportingEnabled to control whether this
  method is invoked automatically. You must disable the automatic invocation of this method if
  you wish to use one of the following methods to enable third party crash reporting.
 
- @param sendCrashReport YES to send complete crash report to Dynatrace server. NO to
+ @param sendCrashReport YES to send complete crash report to Dynatrace. NO to
  send only minimal information.
 
  @return Returns a DTX_StatusCode
@@ -611,9 +631,9 @@ typedef NS_ENUM(int, DTX_StatusCode) {
 /*!
  @brief Sets a dictionary of custom headers to be included in all OneAgent data transmissions.
  
- The Dynatrace OneAgent sends data to the server via HTTP or HTTPS. If your infrastructure requires
+ The Dynatrace OneAgent sends data to the beacon endpoint via HTTP or HTTPS. If your infrastructure requires
  custom headers to be added to HTTP requests in order for them to pass you can use this method to provide
- them. This method needs to be called as early as possible to ensure that the headers are available for the first communication with the server.
+ them. This method needs to be called as early as possible to ensure that the headers are available for the first communication with the beacon endpoint.
  It can be called again later to change or to remove the headers.
 
  @param beaconHeaders The headers dictionary. Pass nil to remove all headers from future requests.
@@ -721,11 +741,31 @@ When the user optin feature is not used:
 + (id<DTXUserPrivacyOptions> _Nonnull)userPrivacyOptions;
 
 /*!
-@brief Allows the user to activate/deactivate various privacy options. This are detailed in the DTXUserPrivacyOptions protocol declaration
+ @brief Allows the user to activate/deactivate various privacy options. This are detailed in the DTXUserPrivacyOptions protocol declaration
  
-@param completion callback that is executed when applying  the new option is completed. (Can be ommited but its higly recommendable to be used. In best case scenario the application should wait for it.)
+ @param completion callback that is executed when applying  the new option is completed. (Can be ommited but its higly recommendable to be used. In best case scenario the application should wait for it.)
 */
 + (void)applyUserPrivacyOptions:(id<DTXUserPrivacyOptions> _Nonnull)userOptions completion:(void(^ _Nullable)(BOOL successful))completion;
+
+/*!
+ @brief Set a SwiftUI instrumentor line number mapping file. This method is called automatically by the SwiftUI instrumentor.
+
+ @param mappingJson generated and passed automatically by the Dynatrace SwiftUI intrumentor.
+*/
++ (void)setLineNumberMapping:(NSString* _Nonnull)mappingJson;
+
+/*!
+ @brief Send a business event.
+ 
+ With sendBizEvent, you can report a business event. These standalone events are being sent detached from user actions or sessions.
+ The 'dt' key, as well as all 'dt.' prefixed keys are considered reserved by Dynatrace and will be stripped from the passed in attributes.
+ Note: Business events are only supported on Dynatrace SaaS deployments currently.
+ https://www.dynatrace.com/support/help/how-to-use-dynatrace/business-analytics/ba-events-capturing#get-business-events-from-rum
+
+ @param type type of the event being sent
+ @param attributes dictionary of attributes being attached to the sent event
+*/
++ (void)sendBizEventWithType:(NSString* _Nonnull)type attributes:(NSDictionary<NSString*,id>* _Nullable)attributes;
 
 @end
 #endif
@@ -735,9 +775,9 @@ When the user optin feature is not used:
 # pragma mark Logging
 /*!
  @const kDTXLogLevel
- If this key is present with a valid value (ALL, FINEST, FINER, FINE, CONFIG, INFO, WARNING, SEVERE, OFF),
+ If this key is present with a valid value (ALL, INFO, WARNING, SEVERE, OFF),
  the OneAgent logging level will be set to this value. If a key isn't present or doesn't have a valid value,
- logging will default to INFO.
+ logging will default to OFF.
  */
 extern NSString *_Nonnull const kDTXLogLevel;
 
@@ -749,14 +789,7 @@ extern NSString *_Nonnull const kDTXLogLevel;
 extern NSString *_Nonnull const kDTXApplicationID;
 
 /*!
- @const kDTXAgentStartupPath (Appmon)
- If this key is present with a valid value, the Mobile Agent starts automatically and using this value as the serverUrl name.
- It ignores any manual startup calls in your app. serverUrl must start with the transport mechanism to use (http:// or https://).
- */
-extern NSString *_Nonnull const kDTXAgentStartupPath;
-
-/*!
- @const kDTXBeaconURL (Dynatrace)
+ @const kDTXBeaconURL
  The beacon URL as specified by the mobile application settings in the Dynatrace webUI.
  This value needs to begin with the transport mechanism to be used (http:// or https://).
  */
@@ -766,7 +799,7 @@ extern NSString *_Nonnull const kDTXBeaconURL;
  @const kDTXAgentCertificatePath
  This key defines the path to a (self-signed) certificate in DERformat, which is used as an additional anchor
  to validate HTTPS communication. This key is needed if DTXAllowAnyCert is false and a self-signed certificate
- is used on the server. The default value is null.
+ is used on the beacon endpoint. The default value is false.
  */
 extern NSString *_Nonnull const kDTXAgentCertificatePath;
 
@@ -779,7 +812,7 @@ extern NSString *_Nonnull const kDTXAllowAnyCert;
 
 /*!
  @const kDTXStartupLoadBalancing
- This key enables agent-side load balancing on startup. By default, this is set to false. When set to true, this enables agent-side load balancing, which avoids unbalanced load on the server when multiple OneAgents simultaneously establish a connection to the ActiveGate. If OneAgent is used as a beacon endpoint in place of an ActiveGate, this configuration key requires OneAgent version 1.195+.
+ This key enables agent-side load balancing on startup. By default, this is set to false. When set to true, this enables agent-side load balancing, which avoids unbalanced load on the Dynatrace cluster when multiple OneAgents simultaneously establish a connection to the ActiveGate. If OneAgent is used as a beacon endpoint in place of an ActiveGate, this configuration key requires OneAgent version 1.195+.
  @note This key is available as of OneAgent for iOS 8.203.
  */
 extern NSString *_Nonnull const kDTXStartupLoadBalancing;
@@ -805,7 +838,7 @@ extern NSString *_Nonnull const kDTXSetCookiesForDomain;
 
 /*!
  @const kDTXSetSecureCookiesForDomain
- For hybrid apps that use the JavaScript library, cookies must be set for each instrumented domain or server that the app communicates with. You can specify domains, host, or IP addresses. Domains and sub-domains must start with a dot. Similar to kDTXSetCookiesForDomain but will add the secure property to the cookie.
+ For hybrid apps that use the JavaScript library, cookies must be set for each instrumented domain or webserver that the app communicates with. You can specify domains, host, or IP addresses. Domains and sub-domains must start with a dot. Similar to kDTXSetCookiesForDomain but will add the secure property to the cookie.
  */
 extern NSString *_Nonnull const kDTXSetSecureCookiesForDomain;
 
@@ -817,7 +850,7 @@ extern NSString *_Nonnull const kDTXCrashReportingEnabled;
 
 /*!
  @const kDTXSendCrashReports
- Corresponds to the sendCrashReport parameter for enableCrashReportingwithReport to send crash reports to the AppMon Server.
+ Corresponds to the sendCrashReport parameter for enableCrashReportingwithReport to send crash reports to Dynatrace.
  Set the key to false if you do not want to send crash reports. The default value is true.
  */
 extern NSString *_Nonnull const kDTXSendCrashReports;
@@ -835,7 +868,7 @@ extern NSString *_Nonnull const kDTXUserOptIn;
 # pragma mark Instrumentation - GPS
 /*!
  @const kDTXInstrumentGPSLocation
- The location is captured only if the app uses CLLocationManager and sends the captured location as a metric to the server.
+ The location is captured only if the app uses CLLocationManager and sends the captured location as a metric to Dynatrace.
  OneAgent for iOS doesn't perform GPS location capturing on its own. Set the value to false to disable OneAgent
  for iOS location capturing. The default value is true.
  */
@@ -930,10 +963,10 @@ extern NSString *_Nonnull const kDTXInstrumentWebViewTiming;
 
 /*!
  @const kDTXWebViewStandInDelegate
- Use different instrumentation mode for WebView delegates to prevent circular instrumentation on delegate switching involving a subclass. The default value is false.
+ (DEPRECATED in version >= 8.257) Use different instrumentation mode for WebView delegates to prevent circular instrumentation on delegate switching involving a subclass. The default value is false.
  @note This key is available as of OneAgent for iOS 8.175 and 7.2.7.
  */
-extern NSString *_Nonnull const kDTXWebViewStandInDelegate;
+extern NSString *_Nonnull const kDTXWebViewStandInDelegate __deprecated_msg("Don't use this flag anymore, it will be ignored.");
 
 /*!
  @const kDTXURLFilters
@@ -941,6 +974,13 @@ extern NSString *_Nonnull const kDTXWebViewStandInDelegate;
  @note This key is available as of OneAgent for iOS 8.219.
  */
 extern NSString *_Nonnull const kDTXURLFilters;
+
+/*!
+ @const kDTXWebViewInstrumentInitWithCoder
+ Enables auto-instrumentation for WKWebView's initWithCoding. This might interfere with custom serialized data. The default value is true.
+ @note This key is available as of OneAgent for iOS 8.249.
+ */
+extern NSString *_Nonnull const kDTXWebViewInstrumentInitWithCoder;
 
 # pragma mark Instrumentation - Detect Rage Taps
 /*!
@@ -956,3 +996,8 @@ extern NSString *_Nonnull const kDTXDetectRageTaps;
  Flag to force the agent to also look for viewControllers inside the frameworks linked with the application
 */
 extern NSString *_Nonnull const kDTXInstrumentFrameworks;
+/*!
+@const kDTXUIActionNamePrivacy
+ If set to true, a label or accessibility identifier of a view will be replaced by the view class name when reporting a touch event.
+*/
+extern NSString *_Nonnull const kDTXUIActionNamePrivacy;

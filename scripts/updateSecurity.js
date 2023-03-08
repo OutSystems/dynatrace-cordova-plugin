@@ -14,7 +14,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -37,96 +37,94 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.checkForPolicy = exports.updateSecurity = void 0;
-var fileHelper_1 = require("./helpers/fileHelper");
+var FileHelper_1 = require("./helpers/FileHelper");
 var Logger_1 = require("./logger/Logger");
-var SEC_POLICY_IDENTIFIER = "Content-Security-Policy";
-var HTML_IDENTIFIER = ["src=\"cordova.js\"", "<ion-app>"];
-var CONNECT_SRC = "connect-src";
-function updateSecurity(path, configuration) {
-    return __awaiter(this, void 0, void 0, function () {
-        var htmlFiles, e_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    Logger_1.Logger.getInstance().logInfo("Successfully read the settings for modifying CSP");
-                    if (!configuration.getCordovaPluginConfiguration().isCSPUrlAvailable()) {
-                        Logger_1.Logger.getInstance().logInfo("Updating the CSP is turned off!");
-                        return [2, false];
-                    }
-                    _a.label = 1;
-                case 1:
-                    _a.trys.push([1, 3, , 4]);
-                    return [4, fileHelper_1.searchFileExtInDirectoryNonRecursive(path, ".html", [])];
-                case 2:
-                    htmlFiles = _a.sent();
-                    htmlFiles = htmlFiles.filter(function (value) {
-                        return checkForPolicy(value);
-                    });
-                    return [3, 4];
-                case 3:
-                    e_1 = _a.sent();
-                    Logger_1.Logger.getInstance().logError("Error during updating CSP: " + e_1.message);
-                    htmlFiles = [];
-                    return [3, 4];
-                case 4:
-                    if (!(htmlFiles.length > 1)) return [3, 5];
-                    Logger_1.Logger.getInstance().logWarning("Will not update security policy as the policy is available in two different files.");
+var SEC_POLICY_IDENTIFIER = 'Content-Security-Policy';
+var HTML_IDENTIFIER = ['src="cordova.js"', '<ion-app>'];
+var CONNECT_SRC = 'connect-src';
+var updateSecurity = function (path, configuration) { return __awaiter(void 0, void 0, void 0, function () {
+    var htmlFiles, e_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                Logger_1.Logger.getInstance().logInfo('Successfully read the settings for modifying CSP');
+                if (!configuration.getCordovaPluginConfiguration().isCSPUrlAvailable()) {
+                    Logger_1.Logger.getInstance().logInfo('Updating the CSP is turned off!');
                     return [2, false];
-                case 5:
-                    if (!(htmlFiles.length == 1)) return [3, 7];
-                    return [4, updateCSPInHtml(htmlFiles[0], configuration.getCordovaPluginConfiguration().getCSPUrl())];
-                case 6:
-                    _a.sent();
-                    return [2, true];
-                case 7:
-                    Logger_1.Logger.getInstance().logWarning("Will not update security policy as the plugin didn't find a html file containing csp.");
-                    return [2, false];
-            }
-        });
+                }
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 3, , 4]);
+                return [4, (0, FileHelper_1.searchFileExtInDirectoryNonRecursive)(path, '.html', [])];
+            case 2:
+                htmlFiles = _a.sent();
+                htmlFiles = htmlFiles.filter(function (value) { return (0, exports.checkForPolicy)(value); });
+                return [3, 4];
+            case 3:
+                e_1 = _a.sent();
+                if (e_1 instanceof Error) {
+                    Logger_1.Logger.getInstance().logError('Error during updating CSP: ' + e_1.message);
+                }
+                htmlFiles = [];
+                return [3, 4];
+            case 4:
+                if (!(htmlFiles.length > 1)) return [3, 5];
+                Logger_1.Logger.getInstance().logWarning('Will not update security policy as the policy is available in two different files.');
+                return [2, false];
+            case 5:
+                if (!(htmlFiles.length === 1)) return [3, 7];
+                return [4, updateCSPInHtml(htmlFiles[0], configuration.getCordovaPluginConfiguration().getCSPUrl())];
+            case 6:
+                _a.sent();
+                return [2, true];
+            case 7:
+                Logger_1.Logger.getInstance().logWarning("Will not update security policy as the plugin didn't find a html file containing csp.");
+                return [2, false];
+        }
     });
-}
+}); };
 exports.updateSecurity = updateSecurity;
-function updateCSPInHtml(htmlFile, cspURL) {
-    return __awaiter(this, void 0, void 0, function () {
-        var content, indexCSP, indexCSPEnd, indexCSPContentStart, indexCSPConnectSrc, newFileContent;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    Logger_1.Logger.getInstance().logInfo("Updating the CSP to allow communication with the server!");
-                    return [4, fileHelper_1.readTextFromFile(htmlFile)];
-                case 1:
-                    content = _a.sent();
-                    indexCSP = content.indexOf(SEC_POLICY_IDENTIFIER);
-                    indexCSPEnd = content.indexOf("\">", indexCSP);
-                    indexCSPContentStart = content.indexOf("content=", indexCSP);
-                    if (indexCSPContentStart > indexCSPEnd) {
-                        throw new Error("CSP not correctly formatted!");
-                    }
-                    indexCSPConnectSrc = content.indexOf(CONNECT_SRC, indexCSPContentStart);
-                    if (indexCSPConnectSrc == -1) {
-                        newFileContent = content.slice(0, indexCSPEnd) + " " + CONNECT_SRC + " " + cspURL + ";" + content.slice(indexCSPEnd);
-                    }
-                    else {
-                        newFileContent = content.slice(0, indexCSPConnectSrc + CONNECT_SRC.length) + " " + cspURL + content.slice(indexCSPConnectSrc + CONNECT_SRC.length);
-                    }
-                    return [4, fileHelper_1.writeTextToFile(htmlFile, newFileContent)];
-                case 2:
-                    _a.sent();
-                    Logger_1.Logger.getInstance().logInfo("Successfully updated the CSP!");
-                    return [2];
-            }
-        });
+var updateCSPInHtml = function (htmlFile, cspURL) { return __awaiter(void 0, void 0, void 0, function () {
+    var content, indexCSP, indexCSPEnd, indexCSPContentStart, indexCSPConnectSrc, newFileContent;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                Logger_1.Logger.getInstance().logInfo('Updating the CSP to allow communication with the server!');
+                return [4, (0, FileHelper_1.readTextFromFile)(htmlFile)];
+            case 1:
+                content = _a.sent();
+                indexCSP = content.indexOf(SEC_POLICY_IDENTIFIER);
+                indexCSPEnd = content.indexOf('">', indexCSP);
+                indexCSPContentStart = content.indexOf('content=', indexCSP);
+                if (indexCSPContentStart > indexCSPEnd) {
+                    throw new Error('CSP not correctly formatted!');
+                }
+                indexCSPConnectSrc = content.indexOf(CONNECT_SRC, indexCSPContentStart);
+                if (indexCSPConnectSrc === -1) {
+                    newFileContent = content.slice(0, indexCSPEnd) + ' ' + CONNECT_SRC + ' ' + cspURL + ';' + content.slice(indexCSPEnd);
+                }
+                else {
+                    newFileContent = content.slice(0, indexCSPConnectSrc + CONNECT_SRC.length) +
+                        ' ' + cspURL + content.slice(indexCSPConnectSrc + CONNECT_SRC.length);
+                }
+                return [4, (0, FileHelper_1.writeTextToFile)(htmlFile, newFileContent)];
+            case 2:
+                _a.sent();
+                Logger_1.Logger.getInstance().logInfo('Successfully updated the CSP!');
+                return [2];
+        }
     });
-}
-function checkForPolicy(htmlFile) {
-    var content = fileHelper_1.readTextFromFileSync(htmlFile);
+}); };
+var checkForPolicy = function (htmlFile) {
+    var content = (0, FileHelper_1.readTextFromFileSync)(htmlFile);
     if (content.indexOf(SEC_POLICY_IDENTIFIER) > -1) {
-        for (var i = 0; i < HTML_IDENTIFIER.length; i++) {
-            if (content.indexOf(HTML_IDENTIFIER[i])) {
+        for (var _i = 0, HTML_IDENTIFIER_1 = HTML_IDENTIFIER; _i < HTML_IDENTIFIER_1.length; _i++) {
+            var identifer = HTML_IDENTIFIER_1[_i];
+            if (content.indexOf(identifer)) {
                 return true;
             }
         }
     }
     return false;
-}
+};
 exports.checkForPolicy = checkForPolicy;

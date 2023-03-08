@@ -4,3 +4,8 @@ framework module Dynatrace {
     export *
     module * { export * }
 }
+
+module Dynatrace.Swift {
+  header "Dynatrace-Swift.h"
+  requires objc
+}

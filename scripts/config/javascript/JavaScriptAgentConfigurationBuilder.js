@@ -10,12 +10,9 @@ var JavaScriptAgentConfigurationBuilder = (function () {
         this.anyCertificateAllowed = JavaScriptAgentConfigurationConstants_1.DEFAULT_IS_ANY_CERTIFICATE_ALLOWED;
         this.agentUrl = this.patchIncorrectJSUrl(agentUrl);
     }
-    JavaScriptAgentConfigurationBuilder.prototype.patchIncorrectJSUrl = function (url) {
-        return url.replace("ApiToken=", "Api-Token=");
-    };
     JavaScriptAgentConfigurationBuilder.prototype.setAgentMode = function (agentMode) {
-        if (agentMode != undefined && Number(agentMode) != NaN) {
-            this.agentMode = JavaScriptAgentMode_1.parseNumberToMode(agentMode);
+        if (agentMode !== undefined && !Number.isNaN(agentMode)) {
+            this.agentMode = (0, JavaScriptAgentMode_1.parseNumberToMode)(agentMode);
         }
         return this;
     };
@@ -25,6 +22,9 @@ var JavaScriptAgentConfigurationBuilder = (function () {
     };
     JavaScriptAgentConfigurationBuilder.prototype.build = function () {
         return new JavaScriptAgentConfiguration_1.JavaScriptAgentConfiguration(this.agentUrl, this.agentMode, this.anyCertificateAllowed);
+    };
+    JavaScriptAgentConfigurationBuilder.prototype.patchIncorrectJSUrl = function (url) {
+        return url.replace('ApiToken=', 'Api-Token=');
     };
     return JavaScriptAgentConfigurationBuilder;
 }());

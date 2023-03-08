@@ -14,7 +14,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -37,49 +37,47 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.executeDoctor = void 0;
-var DoctorBuilder_1 = require("./DoctorBuilder");
-var DoctorAnalyzer_1 = require("./DoctorAnalyzer");
-var DoctorHelper_1 = require("./DoctorHelper");
 var PackageJsonReader_1 = require("../package/PackageJsonReader");
-var pathHelper_1 = require("../helpers/pathHelper");
+var PathHelper_1 = require("../helpers/PathHelper");
 var Framework_1 = require("../model/Framework");
 var ConfigurationReader_1 = require("../config/ConfigurationReader");
-function executeDoctor() {
-    return __awaiter(this, void 0, void 0, function () {
-        var doctorBuilder, _a, _b, packageJsonReader, _c, _d, configurationReader, doctorAnalyzer, _e, _f;
-        return __generator(this, function (_g) {
-            switch (_g.label) {
-                case 0:
-                    doctorBuilder = new DoctorBuilder_1.DoctorBuilder();
-                    _b = (_a = doctorBuilder).setLatestPluginVersion;
-                    return [4, DoctorHelper_1.getLatestPluginVersion()];
-                case 1:
-                    _b.apply(_a, [_g.sent()]);
-                    doctorBuilder.setPlatforms(DoctorHelper_1.getAvailablePlatforms());
-                    packageJsonReader = new PackageJsonReader_1.PackageJsonReader(pathHelper_1.getApplicationPackage());
-                    _d = (_c = doctorBuilder).setPackageJson;
-                    return [4, packageJsonReader.readPackageJson()];
-                case 2:
-                    _d.apply(_c, [_g.sent()]);
-                    if (pathHelper_1.isCapacitorApp()) {
-                        doctorBuilder.setFramework(Framework_1.Framework.Capacitor);
-                    }
-                    else if (pathHelper_1.isIonic()) {
-                        doctorBuilder.setFramework(Framework_1.Framework.Ionic);
-                    }
-                    configurationReader = new ConfigurationReader_1.ConfigurationReader();
-                    doctorBuilder.setDynatraceConfigFile(configurationReader.readConfiguration(pathHelper_1.getConfigFilePath()));
-                    doctorAnalyzer = new DoctorAnalyzer_1.DoctorAnalyzer(doctorBuilder.build());
-                    _f = (_e = console).log;
-                    return [4, doctorAnalyzer.toString()];
-                case 3:
-                    _f.apply(_e, [_g.sent()]);
-                    return [4, doctorAnalyzer.storeFullLogs()];
-                case 4:
-                    _g.sent();
-                    return [2];
-            }
-        });
+var DoctorHelper_1 = require("./DoctorHelper");
+var DoctorAnalyzer_1 = require("./DoctorAnalyzer");
+var DoctorBuilder_1 = require("./DoctorBuilder");
+var executeDoctor = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var doctorBuilder, _a, _b, packageJsonReader, _c, _d, configurationReader, doctorAnalyzer, _e, _f;
+    return __generator(this, function (_g) {
+        switch (_g.label) {
+            case 0:
+                doctorBuilder = new DoctorBuilder_1.DoctorBuilder();
+                _b = (_a = doctorBuilder).setLatestPluginVersion;
+                return [4, (0, DoctorHelper_1.getLatestPluginVersion)()];
+            case 1:
+                _b.apply(_a, [_g.sent()]);
+                doctorBuilder.setPlatforms((0, DoctorHelper_1.getAvailablePlatforms)());
+                packageJsonReader = new PackageJsonReader_1.PackageJsonReader((0, PathHelper_1.getApplicationPackage)());
+                _d = (_c = doctorBuilder).setPackageJson;
+                return [4, packageJsonReader.readPackageJson()];
+            case 2:
+                _d.apply(_c, [_g.sent()]);
+                if ((0, PathHelper_1.isCapacitorApp)()) {
+                    doctorBuilder.setFramework(Framework_1.Framework.Capacitor);
+                }
+                else if ((0, PathHelper_1.isIonic)()) {
+                    doctorBuilder.setFramework(Framework_1.Framework.Ionic);
+                }
+                configurationReader = new ConfigurationReader_1.ConfigurationReader();
+                doctorBuilder.setDynatraceConfigFile(configurationReader.readConfiguration((0, PathHelper_1.getConfigFilePath)()));
+                doctorAnalyzer = new DoctorAnalyzer_1.DoctorAnalyzer(doctorBuilder.build());
+                _f = (_e = console).log;
+                return [4, doctorAnalyzer.toString()];
+            case 3:
+                _f.apply(_e, [_g.sent()]);
+                return [4, doctorAnalyzer.storeFullLogs()];
+            case 4:
+                _g.sent();
+                return [2];
+        }
     });
-}
+}); };
 exports.executeDoctor = executeDoctor;

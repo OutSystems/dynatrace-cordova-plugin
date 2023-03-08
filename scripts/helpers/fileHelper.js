@@ -14,7 +14,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -38,192 +38,176 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getProjectBuilderAsString = exports.getDynatraceConfigAsObject = exports.getPlistAsPath = exports.isGradleAvailable = exports.isPlatformAvailable = exports.copyFileSync = exports.copyFile = exports.renameFileSync = exports.renameFile = exports.deleteFileSync = exports.deleteFile = exports.deleteDirectory = exports.createDirectorySync = exports.createDirectory = exports.writeTextToFileSync = exports.writeTextToFile = exports.readTextFromFile = exports.readTextFromFileSync = exports.checkIfFileExistsSync = exports.checkIfFileExists = exports.appendFileSync = exports.searchFileExtInDirectoryNonRecursive = exports.searchFileExtInDirectoryRecursive = exports.searchFilesInDirectoryRecursive = void 0;
 var fs_1 = require("fs");
-var Logger_1 = require("../logger/Logger");
 var path_1 = require("path");
-var pathHelper_1 = require("./pathHelper");
-var ios_1 = require("../ios");
-function searchFilesInDirectoryRecursive(searchPath, fileExt, filteredDirectories) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4, _searchFilePatternInDirectory(searchPath, [], fileExt, filteredDirectories, true, compareFileNames)];
-                case 1: return [2, _a.sent()];
-            }
-        });
-    });
-}
+var Logger_1 = require("../logger/Logger");
+var Ios_1 = require("../Ios");
+var PathHelper_1 = require("./PathHelper");
+var searchFilesInDirectoryRecursive = function (searchPath, fileExt, filteredDirectories) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+    return [2, _searchFilePatternInDirectory(searchPath, [], fileExt, filteredDirectories, true, compareFileNames)];
+}); }); };
 exports.searchFilesInDirectoryRecursive = searchFilesInDirectoryRecursive;
-function searchFileExtInDirectoryRecursive(searchPath, fileExt, filteredDirectories) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4, _searchFilePatternInDirectory(searchPath, [], fileExt, filteredDirectories, true, compareExt)];
-                case 1: return [2, _a.sent()];
-            }
-        });
-    });
-}
+var searchFileExtInDirectoryRecursive = function (searchPath, fileExt, filteredDirectories) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+    return [2, _searchFilePatternInDirectory(searchPath, [], fileExt, filteredDirectories, true, compareExt)];
+}); }); };
 exports.searchFileExtInDirectoryRecursive = searchFileExtInDirectoryRecursive;
-function searchFileExtInDirectoryNonRecursive(searchPath, fileExt, filteredDirectories) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4, _searchFilePatternInDirectory(searchPath, [], fileExt, filteredDirectories, false, compareExt)];
-                case 1: return [2, _a.sent()];
-            }
-        });
-    });
-}
+var searchFileExtInDirectoryNonRecursive = function (searchPath, fileExt, filteredDirectories) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+    return [2, _searchFilePatternInDirectory(searchPath, [], fileExt, filteredDirectories, false, compareExt)];
+}); }); };
 exports.searchFileExtInDirectoryNonRecursive = searchFileExtInDirectoryNonRecursive;
-function compareFileNames(file, filePattern) {
-    var fileName = path_1.basename(file);
+var compareFileNames = function (file, filePattern) {
+    var fileName = (0, path_1.basename)(file);
     return fileName.indexOf(filePattern) > -1;
-}
-function compareExt(file, ext) {
-    var extName = path_1.extname(file);
-    return extName == ext;
-}
-function _searchFilePatternInDirectory(searchPath, foundFiles, pattern, filteredDirectories, recursive, fileCompare) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            return [2, new Promise(function (resolve, reject) {
-                    fs_1.readdir(searchPath, function (err, files) {
-                        if (err) {
-                            reject("Directory could not be read: " + path_1.resolve(searchPath));
-                            return;
+};
+var compareExt = function (file, ext) {
+    var extName = (0, path_1.extname)(file);
+    return extName === ext;
+};
+var _searchFilePatternInDirectory = function (searchPath, foundFiles, pattern, filteredDirectories, recursive, fileCompare) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        return [2, new Promise(function (resolve, reject) {
+                (0, fs_1.readdir)(searchPath, function (err, files) {
+                    if (err) {
+                        reject('Directory could not be read: ' + (0, path_1.resolve)(searchPath));
+                        return;
+                    }
+                    var promiseArr = [];
+                    for (var _i = 0, files_1 = files; _i < files_1.length; _i++) {
+                        var fileName = files_1[_i];
+                        var dirInfo = isDirectory((0, path_1.join)(searchPath, fileName));
+                        if (dirInfo) {
+                            promiseArr.push(dirInfo);
                         }
-                        var promiseArr = [];
-                        for (var i = 0; i < files.length; i++) {
-                            var dirInfo = isDirectory(path_1.join(searchPath, files[i]));
-                            if (dirInfo) {
-                                promiseArr.push(dirInfo);
-                            }
-                        }
-                        Promise.all(promiseArr).then(function (values) {
-                            var dirArr = [];
-                            for (var i = 0; i < promiseArr.length; i++) {
-                                if (values[i].isDirectory) {
-                                    if (!isDirectoryFiltered(values[i].path, filteredDirectories) && recursive) {
-                                        dirArr.push(values[i].path);
-                                    }
+                    }
+                    Promise.all(promiseArr).then(function (values) {
+                        var dirArr = [];
+                        for (var i = 0; i < promiseArr.length; i++) {
+                            if (values[i].isDirectory) {
+                                if (!isDirectoryFiltered(values[i].path, filteredDirectories) && recursive) {
+                                    dirArr.push(values[i].path);
                                 }
-                                else {
-                                    if (fileCompare(values[i].path, pattern)) {
-                                        foundFiles.push(values[i].path);
-                                    }
-                                }
-                            }
-                            var anotherPromise = Promise.resolve(foundFiles);
-                            var _loop_1 = function (ii) {
-                                anotherPromise = anotherPromise.then(function (foundFiles) {
-                                    return _searchFilePatternInDirectory(dirArr[ii], foundFiles, pattern, filteredDirectories, recursive, fileCompare);
-                                });
-                            };
-                            for (var ii = 0; ii < dirArr.length; ii++) {
-                                _loop_1(ii);
-                            }
-                            if (dirArr.length == 0) {
-                                resolve(foundFiles);
                             }
                             else {
-                                resolve(anotherPromise);
+                                if (fileCompare(values[i].path, pattern)) {
+                                    foundFiles.push(values[i].path);
+                                }
                             }
-                        });
+                        }
+                        var anotherPromise = Promise.resolve(foundFiles);
+                        var _loop_1 = function (directory) {
+                            anotherPromise = anotherPromise.then(function (foundFiles) { return _searchFilePatternInDirectory(directory, foundFiles, pattern, filteredDirectories, recursive, fileCompare); });
+                        };
+                        for (var _i = 0, dirArr_1 = dirArr; _i < dirArr_1.length; _i++) {
+                            var directory = dirArr_1[_i];
+                            _loop_1(directory);
+                        }
+                        if (dirArr.length === 0) {
+                            resolve(foundFiles);
+                        }
+                        else {
+                            resolve(anotherPromise);
+                        }
                     });
-                })];
-        });
+                });
+            })];
     });
-}
-function isDirectory(checkPath) {
+}); };
+var isDirectory = function (checkPath) {
     try {
-        var stats = fs_1.statSync(checkPath);
+        var stats = (0, fs_1.statSync)(checkPath);
         return {
             isDirectory: stats.isDirectory(),
-            path: checkPath
+            path: checkPath,
         };
     }
     catch (e) {
-        Logger_1.Logger.getInstance().logWarning("Directory or File could not be read: " + path_1.resolve(checkPath));
+        Logger_1.Logger.getInstance().logWarning("Directory or File could not be read: ".concat((0, path_1.resolve)(checkPath)));
         return undefined;
     }
-}
-function isDirectoryFiltered(dirPath, filteredDirectories) {
-    var dirName = path_1.basename(dirPath);
-    for (var i = 0; i < filteredDirectories.length; i++) {
-        if (dirName == filteredDirectories[i]) {
+};
+var isDirectoryFiltered = function (dirPath, filteredDirectories) {
+    var dirName = (0, path_1.basename)(dirPath);
+    for (var _i = 0, filteredDirectories_1 = filteredDirectories; _i < filteredDirectories_1.length; _i++) {
+        var directory = filteredDirectories_1[_i];
+        if (dirName === directory) {
             return true;
         }
     }
     return false;
-}
-function appendFileSync(file, text) {
-    fs_1.appendFileSync(file, text);
-}
+};
+var appendFileSync = function (file, text) {
+    (0, fs_1.appendFileSync)(file, text);
+};
 exports.appendFileSync = appendFileSync;
-function checkIfFileExists(_file) {
-    return new Promise(function (resolve, reject) {
-        fs_1.stat(_file, function (err) {
-            if (err) {
-                reject(err + " - File doesn't exist: " + path_1.resolve(_file));
-            }
-            resolve(_file);
-        });
+var checkIfFileExists = function (_file) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        return [2, new Promise(function (resolve, reject) {
+                (0, fs_1.stat)(_file, function (err) {
+                    if (err) {
+                        reject("".concat(err, " - File doesn't exist: ").concat((0, path_1.resolve)(_file)));
+                    }
+                    resolve(_file);
+                });
+            })];
     });
-}
+}); };
 exports.checkIfFileExists = checkIfFileExists;
-function checkIfFileExistsSync(_file) {
-    fs_1.statSync(_file);
+var checkIfFileExistsSync = function (_file) {
+    (0, fs_1.statSync)(_file);
     return _file;
-}
+};
 exports.checkIfFileExistsSync = checkIfFileExistsSync;
-function readTextFromFileSync(_file) {
-    return fs_1.readFileSync(_file, "utf8");
-}
+var readTextFromFileSync = function (_file) { return (0, fs_1.readFileSync)(_file, 'utf8'); };
 exports.readTextFromFileSync = readTextFromFileSync;
-function readTextFromFile(_file) {
-    return new Promise(function (resolve, reject) {
-        fs_1.readFile(_file, "utf8", function (err, data) {
-            if (err) {
-                reject(err + "Could not read the file: " + path_1.resolve(_file));
-            }
-            resolve(data);
-        });
+var readTextFromFile = function (_file) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        return [2, new Promise(function (resolve, reject) {
+                (0, fs_1.readFile)(_file, 'utf8', function (err, data) {
+                    if (err) {
+                        reject(err + 'Could not read the file: ' + (0, path_1.resolve)(_file));
+                    }
+                    resolve(data);
+                });
+            })];
     });
-}
+}); };
 exports.readTextFromFile = readTextFromFile;
-function writeTextToFile(_file, _text) {
-    return new Promise(function (resolve, reject) {
-        fs_1.writeFile(_file, _text, function (err) {
-            if (err) {
-                reject(err + " Could not write to file: " + path_1.resolve(_file));
-            }
-            resolve(_file);
-        });
+var writeTextToFile = function (_file, _text) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        return [2, new Promise(function (resolve, reject) {
+                (0, fs_1.writeFile)(_file, _text, function (err) {
+                    if (err) {
+                        reject(err + ' Could not write to file: ' + (0, path_1.resolve)(_file));
+                    }
+                    resolve(_file);
+                });
+            })];
     });
-}
+}); };
 exports.writeTextToFile = writeTextToFile;
-function writeTextToFileSync(_file, _text) {
+var writeTextToFileSync = function (_file, _text) {
     try {
-        fs_1.writeFileSync(_file, _text);
+        (0, fs_1.writeFileSync)(_file, _text);
         return _file;
     }
     catch (err) {
-        throw new Error(err + " Could not write to file: " + path_1.resolve(_file));
+        throw new Error(err + ' Could not write to file: ' + (0, path_1.resolve)(_file));
     }
-}
+};
 exports.writeTextToFileSync = writeTextToFileSync;
-function createDirectory(directory) {
-    return new Promise(function (resolve, reject) {
-        fs_1.mkdir(directory, function (err) {
-            if (err) {
-                resolve(false);
-            }
-            resolve(true);
-        });
+var createDirectory = function (directory) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        return [2, new Promise(function (resolve, reject) {
+                (0, fs_1.mkdir)(directory, function (err) {
+                    if (err) {
+                        resolve(false);
+                    }
+                    resolve(true);
+                });
+            })];
     });
-}
+}); };
 exports.createDirectory = createDirectory;
-function createDirectorySync(directory) {
+var createDirectorySync = function (directory) {
     try {
         mkdirSyncRecursive(directory);
         return true;
@@ -231,171 +215,170 @@ function createDirectorySync(directory) {
     catch (e) {
         return false;
     }
-}
+};
 exports.createDirectorySync = createDirectorySync;
-function mkdirSyncRecursive(directory) {
+var mkdirSyncRecursive = function (directory) {
     var pathParts = directory.split(path_1.sep);
     for (var i = 1; i <= pathParts.length; i++) {
         var segment = pathParts.slice(0, i).join(path_1.sep);
         if (segment.length > 0) {
-            !fs_1.existsSync(segment) ? fs_1.mkdirSync(segment) : null;
+            if (!(0, fs_1.existsSync)(segment)) {
+                (0, fs_1.mkdirSync)(segment);
+            }
         }
     }
-}
-function deleteDirectory(dir) {
-    return new Promise(function (resolve, reject) {
-        fs_1.access(dir, function (err) {
-            if (err) {
-                return reject(err);
-            }
-            fs_1.readdir(dir, function (err, files) {
-                if (err) {
-                    return reject(err);
-                }
-                Promise.all(files.map(function (file) {
-                    return deleteFile(path_1.join(dir, file));
-                })).then(function () {
-                    fs_1.rmdir(dir, function (err) {
-                        if (err) {
-                            return reject(err);
-                        }
-                        resolve();
-                    });
-                }).catch(reject);
-            });
-        });
-    });
-}
-exports.deleteDirectory = deleteDirectory;
-function deleteDirectorySync(dir) {
-    fs_1.accessSync(dir);
-    var files = fs_1.readdirSync(dir);
-    files.map(function (file) {
-        return deleteFileSync(path_1.join(dir, file));
-    });
-    fs_1.rmdirSync(dir);
-}
-function deleteFile(filePath) {
-    return new Promise(function (resolve, reject) {
-        fs_1.lstat(filePath, function (err, stats) {
-            if (err) {
-                return reject(err);
-            }
-            if (stats.isDirectory()) {
-                resolve(deleteDirectory(filePath));
-            }
-            else {
-                fs_1.unlink(filePath, function (err) {
+};
+var deleteDirectory = function (dir) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        return [2, new Promise(function (resolve, reject) {
+                (0, fs_1.access)(dir, function (err) {
                     if (err) {
                         return reject(err);
                     }
-                    resolve();
+                    (0, fs_1.readdir)(dir, function (err, files) {
+                        if (err) {
+                            return reject(err);
+                        }
+                        Promise.all(files.map(function (file) { return (0, exports.deleteFile)((0, path_1.join)(dir, file)); })).then(function () {
+                            (0, fs_1.rmdir)(dir, function (err) {
+                                if (err) {
+                                    return reject(err);
+                                }
+                                resolve();
+                            });
+                        }).catch(reject);
+                    });
                 });
-            }
-        });
+            })];
     });
-}
+}); };
+exports.deleteDirectory = deleteDirectory;
+var deleteDirectorySync = function (dir) {
+    (0, fs_1.accessSync)(dir);
+    var files = (0, fs_1.readdirSync)(dir);
+    files.map(function (file) { return (0, exports.deleteFileSync)((0, path_1.join)(dir, file)); });
+    (0, fs_1.rmdirSync)(dir);
+};
+var deleteFile = function (filePath) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        return [2, new Promise(function (resolve, reject) {
+                (0, fs_1.lstat)(filePath, function (err, stats) {
+                    if (err) {
+                        return reject(err);
+                    }
+                    if (stats.isDirectory()) {
+                        resolve((0, exports.deleteDirectory)(filePath));
+                    }
+                    else {
+                        (0, fs_1.unlink)(filePath, function (err) {
+                            if (err) {
+                                return reject(err);
+                            }
+                            resolve();
+                        });
+                    }
+                });
+            })];
+    });
+}); };
 exports.deleteFile = deleteFile;
-function deleteFileSync(filePath) {
-    var stats = fs_1.lstatSync(filePath);
+var deleteFileSync = function (filePath) {
+    var stats = (0, fs_1.lstatSync)(filePath);
     if (stats.isDirectory()) {
         deleteDirectorySync(filePath);
     }
     else {
-        fs_1.unlinkSync(filePath);
+        (0, fs_1.unlinkSync)(filePath);
     }
-}
+};
 exports.deleteFileSync = deleteFileSync;
-function renameFile(fileOld, fileNew) {
-    return new Promise(function (resolve, reject) {
-        fs_1.rename(fileOld, fileNew, function (err) {
-            if (err) {
-                reject(err);
-            }
-            resolve();
-        });
+var renameFile = function (fileOld, fileNew) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        return [2, new Promise(function (resolve, reject) {
+                (0, fs_1.rename)(fileOld, fileNew, function (err) {
+                    if (err) {
+                        reject(err);
+                    }
+                    resolve();
+                });
+            })];
     });
-}
+}); };
 exports.renameFile = renameFile;
-function renameFileSync(fileOld, fileNew) {
-    fs_1.renameSync(fileOld, fileNew);
-}
+var renameFileSync = function (fileOld, fileNew) {
+    (0, fs_1.renameSync)(fileOld, fileNew);
+};
 exports.renameFileSync = renameFileSync;
-function copyFile(filePath, destPath) {
-    return new Promise(function (resolve, reject) {
-        fs_1.copyFile(filePath, destPath, function (err) {
-            if (err) {
-                reject(err);
-            }
-            resolve();
-        });
+var copyFile = function (filePath, destPath) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        return [2, new Promise(function (resolve, reject) {
+                (0, fs_1.copyFile)(filePath, destPath, function (err) {
+                    if (err) {
+                        reject(err);
+                    }
+                    resolve();
+                });
+            })];
     });
-}
+}); };
 exports.copyFile = copyFile;
-function copyFileSync(filePath, destPath) {
-    fs_1.copyFileSync(filePath, destPath);
-}
+var copyFileSync = function (filePath, destPath) {
+    (0, fs_1.copyFileSync)(filePath, destPath);
+};
 exports.copyFileSync = copyFileSync;
-function isPlatformAvailable(path, platform) {
+var isPlatformAvailable = function (path, platform) {
     try {
-        checkIfFileExistsSync(path);
+        (0, exports.checkIfFileExistsSync)(path);
         return true;
     }
     catch (e) {
-        Logger_1.Logger.getInstance().logWarning(platform + " Location doesn't exist - Skip " + platform + " instrumentation and configuration.");
+        Logger_1.Logger.getInstance().logWarning("".concat(platform, " Location doesn't exist - Skip ").concat(platform, " instrumentation and configuration."));
         return false;
     }
-}
+};
 exports.isPlatformAvailable = isPlatformAvailable;
-function isGradleAvailable(isCap) {
-    return isCap
-        ? fs_1.existsSync(pathHelper_1.getAndroidGradleFile(pathHelper_1.getAndroidPathCapacitor()))
-        : fs_1.existsSync(pathHelper_1.getAndroidGradleFile(pathHelper_1.getAndroidPath()));
-}
+var isGradleAvailable = function (isCap) { return isCap !== undefined && isCap
+    ? (0, fs_1.existsSync)((0, PathHelper_1.getAndroidGradleFile)((0, PathHelper_1.getAndroidPathCapacitor)()))
+    : (0, fs_1.existsSync)((0, PathHelper_1.getAndroidGradleFile)((0, PathHelper_1.getAndroidPath)())); };
 exports.isGradleAvailable = isGradleAvailable;
-function getPlistAsPath(isCap) {
-    return __awaiter(this, void 0, void 0, function () {
-        var result, e_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    result = undefined;
-                    _a.label = 1;
-                case 1:
-                    _a.trys.push([1, 3, , 4]);
-                    return [4, ios_1.searchForPListFile()];
-                case 2:
-                    result = _a.sent();
-                    return [3, 4];
-                case 3:
-                    e_1 = _a.sent();
-                    if (isCap && fs_1.existsSync(pathHelper_1.getIosPlistPathCapacitor())) {
-                        result = pathHelper_1.getIosPlistPathCapacitor();
-                    }
-                    return [3, 4];
-                case 4: return [2, result];
-            }
-        });
+var getPlistAsPath = function (isCap) { return __awaiter(void 0, void 0, void 0, function () {
+    var result, e_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4, (0, Ios_1.searchForPListFile)()];
+            case 1:
+                result = _a.sent();
+                return [3, 3];
+            case 2:
+                e_1 = _a.sent();
+                if (isCap !== undefined && isCap && (0, fs_1.existsSync)((0, PathHelper_1.getIosPlistPathCapacitor)())) {
+                    result = (0, PathHelper_1.getIosPlistPathCapacitor)();
+                }
+                return [3, 3];
+            case 3: return [2, result];
+        }
     });
-}
+}); };
 exports.getPlistAsPath = getPlistAsPath;
-function getDynatraceConfigAsObject() {
+var getDynatraceConfigAsObject = function () {
     try {
-        checkIfFileExistsSync(pathHelper_1.getConfigFilePath());
-        return require(pathHelper_1.getConfigFilePath());
+        (0, exports.checkIfFileExistsSync)((0, PathHelper_1.getConfigFilePath)());
+        return require((0, PathHelper_1.getConfigFilePath)());
     }
     catch (e) {
         return undefined;
     }
-}
+};
 exports.getDynatraceConfigAsObject = getDynatraceConfigAsObject;
-function getProjectBuilderAsString() {
+var getProjectBuilderAsString = function () {
     try {
-        checkIfFileExistsSync(pathHelper_1.getAndroidGradleVersion());
-        return readTextFromFileSync(pathHelper_1.getAndroidGradleVersion());
+        (0, exports.checkIfFileExistsSync)((0, PathHelper_1.getAndroidGradleVersion)());
+        return (0, exports.readTextFromFileSync)((0, PathHelper_1.getAndroidGradleVersion)());
     }
     catch (e) {
         return undefined;
     }
-}
+};
 exports.getProjectBuilderAsString = getProjectBuilderAsString;

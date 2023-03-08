@@ -9,9 +9,9 @@ var DoctorBuilder = (function () {
         this.framework = Framework_1.Framework.Cordova;
     }
     DoctorBuilder.prototype.setLatestPluginVersion = function (version) {
-        if (version != undefined) {
-            if (version.startsWith("^")) {
-                this.latestPluginVersion = version.replace("^", "");
+        if (version !== undefined) {
+            if (version.startsWith('^')) {
+                this.latestPluginVersion = version.replace('^', '');
             }
             else {
                 this.latestPluginVersion = version;

@@ -14,7 +14,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -37,47 +37,47 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createHTTPOptions = exports.createJSAgentHTTPRequest = void 0;
-var axios_1 = require("axios");
 var https_1 = require("https");
+var axios_1 = require("axios");
 var Logger_1 = require("../logger/Logger");
-function createJSAgentHTTPRequest(configuration, finishMsg, errorMsg) {
-    return __awaiter(this, void 0, void 0, function () {
-        var axiosInstance, errorMessage, httpResponse, error_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    axiosInstance = axios_1.default.create({
-                        httpsAgent: new https_1.Agent(createHTTPOptions(configuration))
-                    });
-                    _a.label = 1;
-                case 1:
-                    _a.trys.push([1, 3, , 4]);
-                    return [4, axiosInstance.get(configuration.getAgentUrl())];
-                case 2:
-                    httpResponse = _a.sent();
-                    if (httpResponse.status == 200) {
-                        Logger_1.Logger.getInstance().logInfo(finishMsg);
-                        return [2, httpResponse.data];
-                    }
-                    else {
-                        errorMessage = errorMsg + httpResponse.statusText;
-                    }
-                    return [3, 4];
-                case 3:
-                    error_1 = _a.sent();
+var createJSAgentHTTPRequest = function (configuration, finishMsg, errorMsg) { return __awaiter(void 0, void 0, void 0, function () {
+    var axiosInstance, errorMessage, httpResponse, error_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                axiosInstance = new axios_1.Axios({
+                    httpsAgent: new https_1.Agent((0, exports.createHTTPOptions)(configuration)),
+                });
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 3, , 4]);
+                return [4, axiosInstance.get(configuration.getAgentUrl())];
+            case 2:
+                httpResponse = _a.sent();
+                if (httpResponse.status === 200) {
+                    Logger_1.Logger.getInstance().logInfo(finishMsg);
+                    return [2, httpResponse.data];
+                }
+                else {
+                    errorMessage = errorMsg + httpResponse.statusText;
+                }
+                return [3, 4];
+            case 3:
+                error_1 = _a.sent();
+                if (error_1 instanceof Error) {
                     errorMessage = errorMsg + error_1.message;
-                    return [3, 4];
-                case 4:
-                    if (errorMessage) {
-                        throw new Error(errorMessage);
-                    }
-                    return [2, ""];
-            }
-        });
+                }
+                return [3, 4];
+            case 4:
+                if (errorMessage != null) {
+                    throw new Error(errorMessage);
+                }
+                return [2, ''];
+        }
     });
-}
+}); };
 exports.createJSAgentHTTPRequest = createJSAgentHTTPRequest;
-function createHTTPOptions(configuration) {
-    return { rejectUnauthorized: !configuration.isAnyCertificateAllowed() };
-}
+var createHTTPOptions = function (configuration) {
+    return ({ rejectUnauthorized: !configuration.isAnyCertificateAllowed() });
+};
 exports.createHTTPOptions = createHTTPOptions;

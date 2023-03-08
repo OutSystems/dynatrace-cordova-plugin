@@ -24,7 +24,7 @@ interface MobileFirstNetworkInterceptor {
      * Enables the interceptor which wraps the WLResourceRequest
      * @param serverUrl ServerURL for the IBM Mobile First server. 
      */
-    enableInterceptor(): void;
+    enableInterceptor(serverUrl: string): void;
 
     /**
      * Disables the interceptor again

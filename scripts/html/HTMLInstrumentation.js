@@ -14,7 +14,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -38,8 +38,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HTMLInstrumentation = void 0;
 var Logger_1 = require("../logger/Logger");
-var HTMLModifier_1 = require("./HTMLModifier");
-var HTMLUtil_1 = require("./HTMLUtil");
+var HtmlModifier_1 = require("./HtmlModifier");
+var HtmlUtil_1 = require("./HtmlUtil");
 var HTMLInstrumentation = (function () {
     function HTMLInstrumentation(folder, jsAgentContent, cookieProxyEnabled) {
         this.folder = folder;
@@ -48,21 +48,22 @@ var HTMLInstrumentation = (function () {
     }
     HTMLInstrumentation.prototype.instrument = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var htmlFiles, i, htmlModifier;
+            var htmlFiles, _i, htmlFiles_1, htmlFile, htmlModifier;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4, HTMLUtil_1.searchHTMLFiles(this.folder)];
+                    case 0: return [4, (0, HtmlUtil_1.searchHTMLFiles)(this.folder)];
                     case 1:
                         htmlFiles = _a.sent();
-                        if (!(htmlFiles.length == 0)) return [3, 2];
-                        Logger_1.Logger.getInstance().logInfo("No HTML files to instrument!");
+                        if (!(htmlFiles.length === 0)) return [3, 2];
+                        Logger_1.Logger.getInstance().logInfo('No HTML files to instrument!');
                         return [3, 7];
                     case 2:
-                        i = 0;
+                        _i = 0, htmlFiles_1 = htmlFiles;
                         _a.label = 3;
                     case 3:
-                        if (!(i < htmlFiles.length)) return [3, 6];
-                        htmlModifier = new HTMLModifier_1.HTMLModifier(htmlFiles[i]);
+                        if (!(_i < htmlFiles_1.length)) return [3, 6];
+                        htmlFile = htmlFiles_1[_i];
+                        htmlModifier = new HtmlModifier_1.HTMLModifier(htmlFile);
                         htmlModifier.setJSAgentContent(this.jsAgentContent);
                         htmlModifier.setSwallowAPIEnabled(true);
                         htmlModifier.setCookieProxyEnabled(this.cookieProxyEnabled);
@@ -71,10 +72,10 @@ var HTMLInstrumentation = (function () {
                         _a.sent();
                         _a.label = 5;
                     case 5:
-                        i++;
+                        _i++;
                         return [3, 3];
                     case 6:
-                        Logger_1.Logger.getInstance().logInfo("Successfully updated the JSAgent in HTML file!");
+                        Logger_1.Logger.getInstance().logInfo('Successfully updated the JSAgent in HTML file!');
                         _a.label = 7;
                     case 7: return [2];
                 }

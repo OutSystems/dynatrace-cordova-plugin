@@ -4,5 +4,5 @@ exports.Platform = void 0;
 var Platform;
 (function (Platform) {
     Platform["Android"] = "Android";
-    Platform["iOS"] = "iOS";
+    Platform["IOS"] = "iOS";
 })(Platform = exports.Platform || (exports.Platform = {}));

@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConfigurationReader = void 0;
+var DownloadAgent_1 = require("../DownloadAgent");
 var ConfigurationDefaults_1 = require("./ConfigurationDefaults");
-var downloadAgent_1 = require("../downloadAgent");
 var CordovaPluginConfigurationBuilder_1 = require("./cordova/CordovaPluginConfigurationBuilder");
 var MobileAgentConfiguration_1 = require("./mobile/MobileAgentConfiguration");
 var JavaScriptAgentConfigurationBuilder_1 = require("./javascript/JavaScriptAgentConfigurationBuilder");
@@ -11,15 +11,16 @@ var ConfigurationReader = (function () {
     function ConfigurationReader() {
     }
     ConfigurationReader.prototype.readConfiguration = function (pathToConfiguration) {
+        debugger;
         var readConfig;
         try {
             readConfig = require(pathToConfiguration);
         }
         catch (e) {
-            throw new downloadAgent_1.StopBuildError(ConfigurationDefaults_1.ERROR_CONFIG_NOT_AVAILABLE);
+            throw new DownloadAgent_1.StopBuildError(ConfigurationDefaults_1.ERROR_CONFIG_NOT_AVAILABLE);
         }
         if (readConfig === undefined) {
-            throw new downloadAgent_1.StopBuildError(ConfigurationDefaults_1.ERROR_CONFIG_NOT_AVAILABLE);
+            throw new DownloadAgent_1.StopBuildError(ConfigurationDefaults_1.ERROR_CONFIG_NOT_AVAILABLE);
         }
         return this.parseConfiguration(readConfig);
     };
@@ -32,27 +33,34 @@ var ConfigurationReader = (function () {
     };
     ConfigurationReader.prototype.parseCordovaConfiguration = function (rawConfig) {
         var cordovaConfigurationBuilder = new CordovaPluginConfigurationBuilder_1.CordovaPluginConfigurationBuilder();
-        if (rawConfig.cordova != undefined) {
+        if (rawConfig.cordova !== undefined) {
             cordovaConfigurationBuilder.setDebugMode(Boolean(rawConfig.cordova.debug));
             cordovaConfigurationBuilder.setCSPUrl(rawConfig.cordova.cspURL);
             cordovaConfigurationBuilder.setCookieProxy(Boolean(rawConfig.cordova.cookieProxy));
+            cordovaConfigurationBuilder.setJsAgentPath(rawConfig.cordova.jsAgentPath);
+            cordovaConfigurationBuilder.setGradlePath(rawConfig.cordova.gradlePath);
+            cordovaConfigurationBuilder.setPlistPath(rawConfig.cordova.plistPath);
         }
         return cordovaConfigurationBuilder.build();
     };
     ConfigurationReader.prototype.parseAndroidConfiguration = function (rawConfig) {
-        if (rawConfig.android && rawConfig.android.config) {
+        var _a, _b;
+        if (((_b = (_a = rawConfig === null || rawConfig === void 0 ? void 0 : rawConfig.android) === null || _a === void 0 ? void 0 : _a.config) === null || _b === void 0 ? void 0 : _b.length) !== undefined
+            && rawConfig.android.config.length > 0) {
             return new MobileAgentConfiguration_1.MobileAgentConfiguration(rawConfig.android.config);
         }
         return new MobileAgentConfiguration_1.MobileAgentConfiguration(undefined);
     };
     ConfigurationReader.prototype.parseIosConfiguration = function (rawConfig) {
-        if (rawConfig.ios && rawConfig.ios.config) {
+        var _a, _b, _c, _d;
+        if (((_b = (_a = rawConfig === null || rawConfig === void 0 ? void 0 : rawConfig.ios) === null || _a === void 0 ? void 0 : _a.config) === null || _b === void 0 ? void 0 : _b.length) !== undefined && ((_d = (_c = rawConfig === null || rawConfig === void 0 ? void 0 : rawConfig.ios) === null || _c === void 0 ? void 0 : _c.config) === null || _d === void 0 ? void 0 : _d.length) > 0) {
             return new MobileAgentConfiguration_1.MobileAgentConfiguration(rawConfig.ios.config);
         }
         return new MobileAgentConfiguration_1.MobileAgentConfiguration(undefined);
     };
     ConfigurationReader.prototype.parseJavaScriptConfiguration = function (rawConfig) {
-        if (rawConfig.js && rawConfig.js.url) {
+        var _a;
+        if (((_a = rawConfig === null || rawConfig === void 0 ? void 0 : rawConfig.js) === null || _a === void 0 ? void 0 : _a.url) != null) {
             var javascriptConfigurationBuilder = new JavaScriptAgentConfigurationBuilder_1.JavaScriptAgentConfigurationBuilder(rawConfig.js.url);
             javascriptConfigurationBuilder.setAgentMode(rawConfig.js.mode);
             javascriptConfigurationBuilder.setAnyCertificateAllowed(Boolean(rawConfig.js.allowanycert));

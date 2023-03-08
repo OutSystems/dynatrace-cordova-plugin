@@ -14,7 +14,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -37,48 +37,46 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getLatestPluginVersion = exports.getAvailablePlatforms = void 0;
-var Platform_1 = require("../model/Platform");
-var pathHelper_1 = require("../helpers/pathHelper");
-var DoctorConstants_1 = require("./DoctorConstants");
 var fs_1 = require("fs");
 var axios_1 = require("axios");
-function getAvailablePlatforms() {
+var Platform_1 = require("../model/Platform");
+var PathHelper_1 = require("../helpers/PathHelper");
+var DoctorConstants_1 = require("./DoctorConstants");
+var getAvailablePlatforms = function () {
     var platforms = [];
     try {
-        if (fs_1.existsSync(pathHelper_1.getAndroidPath())) {
+        if ((0, fs_1.existsSync)((0, PathHelper_1.getAndroidPath)())) {
             platforms.push(Platform_1.Platform.Android);
         }
     }
     catch (e) {
     }
     try {
-        if (fs_1.existsSync(pathHelper_1.getIosPath())) {
-            platforms.push(Platform_1.Platform.iOS);
+        if ((0, fs_1.existsSync)((0, PathHelper_1.getIosPath)())) {
+            platforms.push(Platform_1.Platform.IOS);
         }
     }
     catch (e) {
     }
     return platforms;
-}
+};
 exports.getAvailablePlatforms = getAvailablePlatforms;
-function getLatestPluginVersion() {
-    return __awaiter(this, void 0, void 0, function () {
-        var response, e_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    _a.trys.push([0, 2, , 3]);
-                    axios_1.default.defaults.adapter = require('axios/lib/adapters/http');
-                    return [4, axios_1.default.get(DoctorConstants_1.NPM_PACKAGE_INFO_API)];
-                case 1:
-                    response = _a.sent();
-                    return [2, response.data.version];
-                case 2:
-                    e_1 = _a.sent();
-                    return [2, undefined];
-                case 3: return [2];
-            }
-        });
+var getLatestPluginVersion = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var response, e_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                axios_1.default.defaults.adapter = require('axios/lib/adapters/http');
+                return [4, axios_1.default.get(DoctorConstants_1.NPM_PACKAGE_INFO_API)];
+            case 1:
+                response = _a.sent();
+                return [2, response.data.version];
+            case 2:
+                e_1 = _a.sent();
+                return [2, undefined];
+            case 3: return [2];
+        }
     });
-}
+}); };
 exports.getLatestPluginVersion = getLatestPluginVersion;

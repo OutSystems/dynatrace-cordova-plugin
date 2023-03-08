@@ -25,7 +25,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -48,120 +48,115 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.searchForPListFile = exports.modifyPListFile = void 0;
-var fileHelper_1 = require("./helpers/fileHelper");
-var Logger_1 = require("./logger/Logger");
 var path_1 = require("path");
-var pathHelper_1 = require("./helpers/pathHelper");
 var plist_1 = require("plist");
-function modifyPListFile(pathToPList, iosConfig, removeOnly) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    if (!(pathToPList === undefined)) return [3, 2];
-                    return [4, searchForPListFile()];
-                case 1:
-                    pathToPList = _a.sent();
-                    return [3, 3];
-                case 2:
-                    if (!pathToPList.endsWith(".plist")) {
-                        throw new Error("Can't find .plist file. plist path must also include the plist file!");
+var FileHelper_1 = require("./helpers/FileHelper");
+var Logger_1 = require("./logger/Logger");
+var PathHelper_1 = require("./helpers/PathHelper");
+var modifyPListFile = function (pathToPList, iosConfig, removeOnly) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                if (!(pathToPList === undefined)) return [3, 2];
+                return [4, (0, exports.searchForPListFile)()];
+            case 1:
+                pathToPList = _a.sent();
+                return [3, 3];
+            case 2:
+                if (!pathToPList.endsWith('.plist')) {
+                    throw new Error("Can't find .plist file. plist path must also include the plist file!");
+                }
+                try {
+                    (0, FileHelper_1.checkIfFileExistsSync)(pathToPList);
+                }
+                catch (e) {
+                    throw new Error('Could not read plist file: ' + pathToPList);
+                }
+                _a.label = 3;
+            case 3:
+                removePListConfig(pathToPList);
+                if (!removeOnly && iosConfig !== undefined) {
+                    if (!iosConfig.isConfigurationAvailable()) {
+                        Logger_1.Logger.getInstance().logWarning("Can't write configuration of iOS agent because it is missing!");
                     }
-                    try {
-                        fileHelper_1.checkIfFileExistsSync(pathToPList);
+                    else {
+                        addAgentConfigToPListFile(pathToPList, iosConfig.getConfiguration());
                     }
-                    catch (e) {
-                        throw new Error("Could not read plist file: " + pathToPList);
-                    }
-                    _a.label = 3;
-                case 3:
-                    removePListConfig(pathToPList);
-                    if (!removeOnly) {
-                        if (!iosConfig.isConfigurationAvailable()) {
-                            Logger_1.Logger.getInstance().logWarning("Can't write configuration of iOS agent because it is missing!");
-                        }
-                        else {
-                            addAgentConfigToPListFile(pathToPList, iosConfig.getConfiguration());
-                        }
-                    }
-                    return [2];
-            }
-        });
+                }
+                return [2];
+        }
     });
-}
+}); };
 exports.modifyPListFile = modifyPListFile;
-function removePListConfig(file) {
-    var pListContent = fileHelper_1.readTextFromFileSync(file);
-    var pListObj = plist_1.parse(pListContent);
+var removePListConfig = function (file) {
+    var pListContent = (0, FileHelper_1.readTextFromFileSync)(file);
+    var pListObj = (0, plist_1.parse)(pListContent);
     var pListObjCopy = __assign({}, pListObj);
     for (var property in pListObj) {
-        if (property.startsWith("DTX")) {
+        if (property.startsWith('DTX')) {
             delete pListObjCopy[property];
         }
     }
-    fileHelper_1.writeTextToFileSync(file, plist_1.build(pListObjCopy));
-    Logger_1.Logger.getInstance().logInfo("Removed old configuration in plist file: " + file);
-}
-function addAgentConfigToPListFile(file, config) {
-    var pListContent = fileHelper_1.readTextFromFileSync(file);
-    var newPListContent = "<plist><dict>" + config + "</dict></plist>";
-    var flavorType = "<plist><dict><key>DTXFlavor</key><string>cordova</string></dict></plist>";
-    fileHelper_1.writeTextToFileSync(file, plist_1.build(__assign(__assign(__assign({}, plist_1.parse(pListContent)), plist_1.parse(newPListContent)), plist_1.parse(flavorType))));
-    Logger_1.Logger.getInstance().logInfo("Updated configuration in plist file: " + file);
-}
-var DIR_SEARCH_EXCEPTION = ["build", "cordova", "CordovaLib"];
-function searchForPListFile() {
-    return __awaiter(this, void 0, void 0, function () {
-        var foundPListFiles, isCap, packageApplicationContent, packageApplicationJSON, _a, e_1, e_2;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0:
-                    isCap = pathHelper_1.isCapacitorApp();
-                    _b.label = 1;
-                case 1:
-                    _b.trys.push([1, 7, , 8]);
-                    return [4, fileHelper_1.readTextFromFile(pathHelper_1.getApplicationPackage())];
-                case 2:
-                    packageApplicationContent = _b.sent();
-                    packageApplicationJSON = JSON.parse(packageApplicationContent);
-                    if (!isCap) return [3, 4];
-                    return [4, fileHelper_1.searchFilesInDirectoryRecursive(pathHelper_1.getIosPathCapacitor(), "Info.plist", DIR_SEARCH_EXCEPTION)];
-                case 3:
-                    _a = _b.sent();
-                    return [3, 6];
-                case 4: return [4, fileHelper_1.searchFilesInDirectoryRecursive(pathHelper_1.getIosPath(), packageApplicationJSON.name + "-Info.plist", DIR_SEARCH_EXCEPTION)];
-                case 5:
-                    _a = _b.sent();
-                    _b.label = 6;
-                case 6:
-                    foundPListFiles = _a;
-                    return [3, 8];
-                case 7:
-                    e_1 = _b.sent();
-                    Logger_1.Logger.getInstance().logWarning("Didn't find package.json and couldn't read name of the application. Will search for other plist files.");
-                    return [3, 8];
-                case 8:
-                    if (!(!foundPListFiles || foundPListFiles.length == 0)) return [3, 12];
-                    _b.label = 9;
-                case 9:
-                    _b.trys.push([9, 11, , 12]);
-                    return [4, fileHelper_1.searchFilesInDirectoryRecursive(pathHelper_1.getIosPath(), "-Info.plist", DIR_SEARCH_EXCEPTION)];
-                case 10:
-                    foundPListFiles = _b.sent();
-                    return [3, 12];
-                case 11:
-                    e_2 = _b.sent();
-                    return [3, 12];
-                case 12:
-                    if (foundPListFiles === undefined || foundPListFiles.length == 0) {
-                        throw new Error("Can't find .plist file in iOS Folder! Try to use plist= custom argument. See documentation for help!");
-                    }
-                    else if (foundPListFiles.length > 1 && !isCap) {
-                        Logger_1.Logger.getInstance().logWarning("Found several -Info.plist files, will take the first one: " + path_1.resolve(foundPListFiles[0]));
-                    }
-                    return [2, foundPListFiles[0]];
-            }
-        });
+    (0, FileHelper_1.writeTextToFileSync)(file, (0, plist_1.build)(pListObjCopy));
+    Logger_1.Logger.getInstance().logInfo('Removed old configuration in plist file: ' + file);
+};
+var addAgentConfigToPListFile = function (file, config) {
+    var pListContent = (0, FileHelper_1.readTextFromFileSync)(file);
+    var newPListContent = "<plist><dict>".concat(config, "</dict></plist>");
+    var flavorType = '<plist><dict><key>DTXFlavor</key><string>cordova</string></dict></plist>';
+    (0, FileHelper_1.writeTextToFileSync)(file, (0, plist_1.build)(__assign(__assign(__assign({}, (0, plist_1.parse)(pListContent)), (0, plist_1.parse)(newPListContent)), (0, plist_1.parse)(flavorType))));
+    Logger_1.Logger.getInstance().logInfo('Updated configuration in plist file: ' + file);
+};
+var DIR_SEARCH_EXCEPTION = ['build', 'cordova', 'CordovaLib'];
+var searchForPListFile = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var foundPListFiles, isCap, packageApplicationContent, packageApplicationJSON, e_1, e_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                isCap = (0, PathHelper_1.isCapacitorApp)();
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 7, , 8]);
+                return [4, (0, FileHelper_1.readTextFromFile)((0, PathHelper_1.getApplicationPackage)())];
+            case 2:
+                packageApplicationContent = _a.sent();
+                packageApplicationJSON = JSON.parse(packageApplicationContent);
+                if (!isCap) return [3, 4];
+                return [4, (0, FileHelper_1.searchFilesInDirectoryRecursive)((0, PathHelper_1.getIosPathCapacitor)(), 'Info.plist', DIR_SEARCH_EXCEPTION)];
+            case 3:
+                foundPListFiles = _a.sent();
+                return [3, 6];
+            case 4: return [4, (0, FileHelper_1.searchFilesInDirectoryRecursive)((0, PathHelper_1.getIosPath)(), packageApplicationJSON.name + '-Info.plist', DIR_SEARCH_EXCEPTION)];
+            case 5:
+                foundPListFiles = _a.sent();
+                _a.label = 6;
+            case 6: return [3, 8];
+            case 7:
+                e_1 = _a.sent();
+                Logger_1.Logger.getInstance()
+                    .logWarning("Didn't find package.json and couldn't read name of the application. Will search for other plist files.");
+                return [3, 8];
+            case 8:
+                if (!(!foundPListFiles || foundPListFiles.length === 0)) return [3, 12];
+                _a.label = 9;
+            case 9:
+                _a.trys.push([9, 11, , 12]);
+                return [4, (0, FileHelper_1.searchFilesInDirectoryRecursive)((0, PathHelper_1.getIosPath)(), '-Info.plist', DIR_SEARCH_EXCEPTION)];
+            case 10:
+                foundPListFiles = _a.sent();
+                return [3, 12];
+            case 11:
+                e_2 = _a.sent();
+                return [3, 12];
+            case 12:
+                if (foundPListFiles === undefined || foundPListFiles.length === 0) {
+                    throw new Error("Can't find .plist file in iOS Folder! Try to use plist= custom argument. See documentation for help!");
+                }
+                else if (foundPListFiles.length > 1 && !isCap) {
+                    Logger_1.Logger.getInstance().logWarning('Found several -Info.plist files, will take the first one: ' + (0, path_1.resolve)(foundPListFiles[0]));
+                }
+                return [2, foundPListFiles[0]];
+        }
     });
-}
+}); };
 exports.searchForPListFile = searchForPListFile;

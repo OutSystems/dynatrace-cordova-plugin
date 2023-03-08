@@ -10,8 +10,8 @@ var PackageJson = (function () {
     }
     PackageJson.prototype.getPackageVersion = function () {
         var version = this.getDependencyVersion(DoctorConstants_1.DYNATRACE_NPM_PACKAGE_NAME);
-        if (version && version.startsWith("^")) {
-            return version.replace("^", "");
+        if ((version != null) && version.startsWith('^')) {
+            return version.replace('^', '');
         }
         return version;
     };
@@ -29,19 +29,20 @@ var PackageJson = (function () {
     };
     PackageJson.prototype.isDependencyAvailable = function (dependency) {
         var allDependencies = this.getAllDependencies();
-        return allDependencies[dependency] != undefined;
+        return allDependencies[dependency] !== undefined;
     };
     PackageJson.prototype.getDependencyVersion = function (dependency) {
         var allDependencies = this.getAllDependencies();
         return allDependencies[dependency];
     };
     PackageJson.prototype.isScriptAvailable = function (script) {
-        if (script == undefined) {
-            return this.scripts != undefined;
+        if (script === undefined) {
+            return false;
         }
-        else {
-            return this.scripts && this.scripts[script] != undefined;
+        else if (this.scripts === undefined) {
+            return false;
         }
+        return this.scripts[script] !== undefined;
     };
     PackageJson.prototype.getScripts = function () {
         return this.scripts;

@@ -14,7 +14,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -38,9 +38,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DoctorAnalyzer = void 0;
 var Logger_1 = require("../logger/Logger");
+var FileHelper_1 = require("../helpers/FileHelper");
+var PathHelper_1 = require("../helpers/PathHelper");
 var DoctorConstants_1 = require("./DoctorConstants");
-var fileHelper_1 = require("../helpers/fileHelper");
-var pathHelper_1 = require("../helpers/pathHelper");
 var DoctorAnalyzer = (function () {
     function DoctorAnalyzer(doctor) {
         this.doctor = doctor;
@@ -52,18 +52,18 @@ var DoctorAnalyzer = (function () {
                 switch (_c.label) {
                     case 0:
                         _c.trys.push([0, 2, , 3]);
-                        if (!fileHelper_1.checkIfFileExistsSync(pathHelper_1.getLogPath())) {
-                            fileHelper_1.createDirectorySync(pathHelper_1.getLogPath());
+                        if (!(0, FileHelper_1.checkIfFileExistsSync)((0, PathHelper_1.getLogPath)())) {
+                            (0, FileHelper_1.createDirectorySync)((0, PathHelper_1.getLogPath)());
                         }
-                        _a = fileHelper_1.writeTextToFileSync;
-                        _b = [pathHelper_1.getDoctorLogPath()];
+                        _a = FileHelper_1.writeTextToFileSync;
+                        _b = [(0, PathHelper_1.getDoctorLogPath)()];
                         return [4, this.toFullString()];
                     case 1:
                         _a.apply(void 0, _b.concat([_c.sent()]));
                         return [3, 3];
                     case 2:
                         e_1 = _c.sent();
-                        Logger_1.Logger.getInstance().logError("Unable to store doctorDynatrace log file: " + e_1);
+                        Logger_1.Logger.getInstance().logError("Unable to store doctorDynatrace log file: ".concat(e_1));
                         return [3, 3];
                     case 3: return [2];
                 }
@@ -78,8 +78,8 @@ var DoctorAnalyzer = (function () {
                     case 0: return [4, this.toString()];
                     case 1:
                         stringBuilder = _a.sent();
-                        stringBuilder += "\n" + DoctorConstants_1.DEPENDENCIES_HEADING + "\n";
-                        stringBuilder += "" + JSON.stringify(this.doctor.getAllDependencies(), null, "\t");
+                        stringBuilder += "\n".concat(DoctorConstants_1.DEPENDENCIES_HEADING, "\n");
+                        stringBuilder += "".concat(JSON.stringify(this.doctor.getAllDependencies(), null, '\t'));
                         return [2, stringBuilder];
                 }
             });
@@ -91,8 +91,8 @@ var DoctorAnalyzer = (function () {
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        stringBuilder = "" + DoctorConstants_1.DOCTOR_DYNATRACE_HEADING;
-                        stringBuilder += "\n\n";
+                        stringBuilder = "".concat(DoctorConstants_1.DOCTOR_DYNATRACE_HEADING);
+                        stringBuilder += '\n\n';
                         if (this.doctor.isCurrentPluginVersionAvailable()
                             && this.doctor.isLatestPluginVersionAvailable()) {
                             if (this.doctor.isPluginUpToDate()) {
@@ -101,15 +101,15 @@ var DoctorAnalyzer = (function () {
                             else {
                                 stringBuilder += this.getPluginStringUpdateRecommended(this.doctor.getCurrentPluginVersion(), this.doctor.getLatestPluginVersion());
                             }
-                            stringBuilder += "\n\n";
+                            stringBuilder += '\n\n';
                         }
                         stringBuilder += this.getImportantDependencyList();
-                        stringBuilder += "\n";
+                        stringBuilder += '\n';
                         _a = stringBuilder;
                         return [4, this.getProblemsList()];
                     case 1:
                         stringBuilder = _a + _b.sent();
-                        stringBuilder += "\n";
+                        stringBuilder += '\n';
                         stringBuilder += this.getImportantList();
                         return [2, stringBuilder];
                 }
@@ -117,30 +117,30 @@ var DoctorAnalyzer = (function () {
         });
     };
     DoctorAnalyzer.prototype.getPluginStringUpToDate = function (currentPluginVersion) {
-        var stringBuilder = DoctorConstants_1.PLUGIN_VERSION_HEADING + "\n\n";
-        stringBuilder += "" + DoctorConstants_1.PLUGIN_CURRENT + DoctorConstants_1.GREEN_FONT + currentPluginVersion + DoctorConstants_1.RESET + "\n";
+        var stringBuilder = "".concat(DoctorConstants_1.PLUGIN_VERSION_HEADING, "\n\n");
+        stringBuilder += "".concat(DoctorConstants_1.PLUGIN_CURRENT).concat(DoctorConstants_1.GREEN_FONT).concat(currentPluginVersion).concat(DoctorConstants_1.RESET, "\n");
         stringBuilder += DoctorConstants_1.PLUGIN_UP_TO_DATE;
         return stringBuilder;
     };
     DoctorAnalyzer.prototype.getPluginStringUpdateRecommended = function (currentPluginVersion, latestPluginVersion) {
-        var stringBuilder = DoctorConstants_1.PLUGIN_VERSION_HEADING + "\n\n";
-        stringBuilder += "" + DoctorConstants_1.PLUGIN_CURRENT + DoctorConstants_1.RED_FONT + currentPluginVersion + DoctorConstants_1.RESET + "\n";
-        stringBuilder += "" + DoctorConstants_1.PLUGIN_LATEST + DoctorConstants_1.GREEN_FONT + latestPluginVersion + DoctorConstants_1.RESET + "\n";
+        var stringBuilder = "".concat(DoctorConstants_1.PLUGIN_VERSION_HEADING, "\n\n");
+        stringBuilder += "".concat(DoctorConstants_1.PLUGIN_CURRENT).concat(DoctorConstants_1.RED_FONT).concat(currentPluginVersion).concat(DoctorConstants_1.RESET, "\n");
+        stringBuilder += "".concat(DoctorConstants_1.PLUGIN_LATEST).concat(DoctorConstants_1.GREEN_FONT).concat(latestPluginVersion).concat(DoctorConstants_1.RESET, "\n");
         stringBuilder += DoctorConstants_1.PLUGIN_UPDATE_RECOMMEND;
         return stringBuilder;
     };
     DoctorAnalyzer.prototype.getImportantDependencyList = function () {
-        var stringBuilder = DoctorConstants_1.NATIVE_DEPENDENCIES_HEADING + "\n\n";
+        var stringBuilder = "".concat(DoctorConstants_1.NATIVE_DEPENDENCIES_HEADING, "\n\n");
         var nativeWebRequestFrameworks = this.doctor.isNativeWebRequestFrameworkAvailable();
-        if (Object.keys(nativeWebRequestFrameworks).length == 0) {
-            stringBuilder += DoctorConstants_1.NO_DEPENDENCIES + "\n";
+        if (Object.keys(nativeWebRequestFrameworks).length === 0) {
+            stringBuilder += "".concat(DoctorConstants_1.NO_DEPENDENCIES, "\n");
         }
         else {
             Object.keys(nativeWebRequestFrameworks).forEach(function (key) {
-                stringBuilder += key + ": " + nativeWebRequestFrameworks[key] + "\n";
+                stringBuilder += "".concat(key, ": ").concat(nativeWebRequestFrameworks[key], "\n");
             });
         }
-        return stringBuilder + "\n";
+        return stringBuilder + '\n';
     };
     DoctorAnalyzer.prototype.getProblemsList = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -148,7 +148,7 @@ var DoctorAnalyzer = (function () {
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        stringBuilder = "";
+                        stringBuilder = '';
                         if (!this.doctor.isDynatraceConfigurationAvailable()) {
                             stringBuilder += DoctorConstants_1.MISSING_DYNATRACE_CONFIG;
                         }
@@ -182,16 +182,16 @@ var DoctorAnalyzer = (function () {
                         if (this.doctor.isAndroidAvailable() && !this.doctor.isGradleProperVersion()) {
                             stringBuilder += DoctorConstants_1.GRADLE_VERSION_NOT_SUPPORTED;
                         }
-                        if (stringBuilder.length == 0) {
+                        if (stringBuilder.length === 0) {
                             stringBuilder += DoctorConstants_1.NO_PROBLEMS;
                         }
-                        return [2, DoctorConstants_1.PROBLEMS_REC_HEADING + "\n" + stringBuilder];
+                        return [2, "".concat(DoctorConstants_1.PROBLEMS_REC_HEADING, "\n") + stringBuilder];
                 }
             });
         });
     };
     DoctorAnalyzer.prototype.getImportantList = function () {
-        var stringBuilder = "";
+        var stringBuilder = '';
         if (this.doctor.isMobileFirstAvailable()) {
             stringBuilder += DoctorConstants_1.MFP_REQ;
         }
@@ -201,7 +201,7 @@ var DoctorAnalyzer = (function () {
         if (this.doctor.isIosAvailable() && (this.doctor.isCapacitorAvailable() || this.doctor.isIonicAvailable())) {
             stringBuilder += DoctorConstants_1.JSAGENT_REQ;
         }
-        if (stringBuilder.length != 0) {
+        if (stringBuilder.length !== 0) {
             stringBuilder = DoctorConstants_1.IMPORTANT_HEADING + stringBuilder;
         }
         return stringBuilder;

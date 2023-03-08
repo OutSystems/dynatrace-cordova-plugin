@@ -18,11 +18,12 @@ var JavaScriptAgentConfiguration = (function () {
         return this.allowAnyCertificate;
     };
     JavaScriptAgentConfiguration.prototype.isAgentUrlValid = function () {
-        if (this.agentUrl == undefined || this.agentUrl.length == 0) {
+        if (this.agentUrl === undefined || this.agentUrl.length === 0) {
             return false;
         }
-        for (var i = 0; i < JavaScriptAgentMode_1.JAVA_SCRIPT_AGENT_MODE_NAMES.length; i++) {
-            if (this.agentUrl.indexOf(JavaScriptAgentMode_1.JAVA_SCRIPT_AGENT_MODE_NAMES[i]) >= 0) {
+        for (var _i = 0, JAVA_SCRIPT_AGENT_MODE_NAMES_1 = JavaScriptAgentMode_1.JAVA_SCRIPT_AGENT_MODE_NAMES; _i < JAVA_SCRIPT_AGENT_MODE_NAMES_1.length; _i++) {
+            var mode = JAVA_SCRIPT_AGENT_MODE_NAMES_1[_i];
+            if (this.agentUrl.indexOf(mode) >= 0) {
                 return true;
             }
         }

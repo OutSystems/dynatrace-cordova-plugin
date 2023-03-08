@@ -14,7 +14,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -38,8 +38,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PackageJsonReader = void 0;
 var Logger_1 = require("../logger/Logger");
+var FileHelper_1 = require("../helpers/FileHelper");
 var PackageJsonBuilder_1 = require("./PackageJsonBuilder");
-var fileHelper_1 = require("../helpers/fileHelper");
 var PackageJsonReader = (function () {
     function PackageJsonReader(packageJsonPath) {
         this.packageJsonPath = packageJsonPath;
@@ -54,20 +54,20 @@ var PackageJsonReader = (function () {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        return [4, fileHelper_1.readTextFromFile(this.packageJsonPath)];
+                        return [4, (0, FileHelper_1.readTextFromFile)(this.packageJsonPath)];
                     case 2:
                         packageJson = _a.sent();
                         parsedPackageJson = JSON.parse(packageJson);
-                        if (parsedPackageJson.dependencies != undefined) {
+                        if (parsedPackageJson.dependencies !== undefined) {
                             packageJsonBuilder.setDependencies(parsedPackageJson.dependencies);
                         }
-                        if (parsedPackageJson.devDependencies != undefined) {
+                        if (parsedPackageJson.devDependencies !== undefined) {
                             packageJsonBuilder.setDevDependencies(parsedPackageJson.devDependencies);
                         }
                         return [3, 4];
                     case 3:
                         e_1 = _a.sent();
-                        Logger_1.Logger.getInstance().logWarning("Could not find package.json! - " + e_1);
+                        Logger_1.Logger.getInstance().logWarning("Could not find package.json! - ".concat(e_1));
                         return [3, 4];
                     case 4: return [2, packageJsonBuilder.build()];
                 }

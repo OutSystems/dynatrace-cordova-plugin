@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -14,11 +16,11 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FileLogger = void 0;
-var BaseLogger_1 = require("./BaseLogger");
-var fileHelper_1 = require("../helpers/fileHelper");
-var pathHelper_1 = require("../helpers/pathHelper");
-var LogUtil_1 = require("./LogUtil");
 var path_1 = require("path");
+var FileHelper_1 = require("../helpers/FileHelper");
+var PathHelper_1 = require("../helpers/PathHelper");
+var BaseLogger_1 = require("./BaseLogger");
+var LogUtil_1 = require("./LogUtil");
 var LogLevel_1 = require("./LogLevel");
 var FileLogger = (function (_super) {
     __extends(FileLogger, _super);
@@ -38,10 +40,10 @@ var FileLogger = (function (_super) {
         var logMessage = _super.prototype.log.call(this, message, logLevel);
         try {
             this.createLogPath();
-            fileHelper_1.appendFileSync(this.getFileLocation(), logMessage + "\r\n");
+            (0, FileHelper_1.appendFileSync)(this.getFileLocation(), "".concat(logMessage, "\r\n"));
         }
         catch (error) {
-            _super.prototype.log.call(this, "Could not log to File: " + pathHelper_1.getCurrentLogPath(), LogLevel_1.LogLevel.WARNING);
+            _super.prototype.log.call(this, "Could not log to File: ".concat((0, PathHelper_1.getCurrentLogPath)()), LogLevel_1.LogLevel.WARNING);
         }
         return logMessage;
     };
@@ -51,24 +53,24 @@ var FileLogger = (function (_super) {
         }
     };
     FileLogger.prototype.getFileLocation = function () {
-        return pathHelper_1.getCurrentLogPath();
+        return (0, PathHelper_1.getCurrentLogPath)();
     };
     FileLogger.prototype.closeLogger = function () {
         try {
-            fileHelper_1.checkIfFileExistsSync(pathHelper_1.getCurrentLogPath());
-            var logFileName = LogUtil_1.currentDate().split(":").join("-") + ".txt";
-            fileHelper_1.checkIfFileExistsSync(path_1.join(pathHelper_1.getLogPath(), logFileName));
-            fileHelper_1.renameFileSync(pathHelper_1.getCurrentLogPath(), path_1.join(pathHelper_1.getLogPath(), logFileName));
+            (0, FileHelper_1.checkIfFileExistsSync)((0, PathHelper_1.getCurrentLogPath)());
+            var logFileName = (0, LogUtil_1.currentDate)().split(':').join('-') + '.txt';
+            (0, FileHelper_1.checkIfFileExistsSync)((0, path_1.join)((0, PathHelper_1.getLogPath)(), logFileName));
+            (0, FileHelper_1.renameFileSync)((0, PathHelper_1.getCurrentLogPath)(), (0, path_1.join)((0, PathHelper_1.getLogPath)(), logFileName));
         }
         catch (e) {
         }
     };
     FileLogger.prototype.createLogPath = function () {
         try {
-            fileHelper_1.checkIfFileExistsSync(pathHelper_1.getLogPath());
+            (0, FileHelper_1.checkIfFileExistsSync)((0, PathHelper_1.getLogPath)());
         }
         catch (error) {
-            fileHelper_1.createDirectorySync(pathHelper_1.getLogPath());
+            (0, FileHelper_1.createDirectorySync)((0, PathHelper_1.getLogPath)());
         }
     };
     return FileLogger;

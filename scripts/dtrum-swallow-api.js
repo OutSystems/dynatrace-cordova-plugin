@@ -1,3 +1,4 @@
+"use strict";
 if (typeof window !== 'undefined') {
     window.dtrum = window.dtrum || {
         actionName: function () { return void 0; },
@@ -42,7 +43,5 @@ if (typeof window !== 'undefined') {
         startThirdParty: function () { return void 0; },
         stopThirdParty: function () { return void 0; },
     };
-    window.dtrum.endSession = function (success, error) {
-        return window.dynatraceMobile.endVisit(success, error);
-    };
+    window.dtrum.endSession = function (success, error) { return window.dynatraceMobile.endVisit(success, error); };
 }

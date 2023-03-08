@@ -3,10 +3,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -27,7 +29,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -52,7 +54,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.createHTTPRequestWithRetries = exports.retrieveJSAgentHttp = exports.downloadAgent = exports.StopBuildError = exports.AGENT_DTCONFIG = void 0;
 var Logger_1 = require("./logger/Logger");
 var HttpCommunication_1 = require("./http/HttpCommunication");
-exports.AGENT_DTCONFIG = "data-dtconfig";
+exports.AGENT_DTCONFIG = 'data-dtconfig';
 var StopBuildError = (function (_super) {
     __extends(StopBuildError, _super);
     function StopBuildError(message) {
@@ -61,93 +63,88 @@ var StopBuildError = (function (_super) {
     return StopBuildError;
 }(Error));
 exports.StopBuildError = StopBuildError;
-function downloadAgent(config) {
-    return __awaiter(this, void 0, void 0, function () {
-        var jsagentContent, exception_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    if (!config.isJavaScriptAgentConfigurationAvailable()) {
-                        Logger_1.Logger.getInstance().logInfo("No Settings available for JSAgent in the dynatrace.config.js file - Will not retrieve or include JSAgent.");
-                        return [2];
-                    }
-                    else if (!config.getJavaScriptAgentConfiguration().isAgentUrlValid()) {
-                        Logger_1.Logger.getInstance().logWarning("Incorrect or empty url found for JSAgent - Will not retrieve or include JSAgent.");
-                        return [2];
-                    }
-                    Logger_1.Logger.getInstance().logInfo("Starting the retrieval of the JSAgent ..");
-                    _a.label = 1;
-                case 1:
-                    _a.trys.push([1, 3, , 4]);
-                    return [4, retrieveJSAgentHttp(config.getJavaScriptAgentConfiguration())];
-                case 2:
-                    jsagentContent = _a.sent();
-                    Logger_1.Logger.getInstance().logInfo("JSAgent was retrieved successfully!");
-                    return [2, jsagentContent];
-                case 3:
-                    exception_1 = _a.sent();
-                    Logger_1.Logger.getInstance().logError("Could not retrieve the JSAgent! - " + exception_1);
-                    return [3, 4];
-                case 4: return [2];
-            }
-        });
-    });
-}
-exports.downloadAgent = downloadAgent;
-function retrieveJSAgentHttp(configuration) {
-    return __awaiter(this, void 0, void 0, function () {
-        var jsagentContent;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    if (configuration.isAnyCertificateAllowed()) {
-                        Logger_1.Logger.getInstance().logWarning("Ignoring certificate when retrieving the JSAgent!");
-                    }
-                    return [4, createHTTPRequestWithRetries(3, configuration, "Retrieving of JS Agent options finished", "Could not retrieve JS Agent options")];
-                case 1:
-                    jsagentContent = _a.sent();
-                    if (jsagentContent !== undefined && jsagentContent.startsWith("<script")) {
-                        return [2, jsagentContent.toString()];
-                    }
-                    else {
-                        throw new Error("Content of the JS Agent is invalid! Please check the js url in the dynatrace.config.js file.");
-                    }
+var downloadAgent = function (config) { return __awaiter(void 0, void 0, void 0, function () {
+    var jsagentContent, exception_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                if (!config.isJavaScriptAgentConfigurationAvailable()) {
+                    Logger_1.Logger.getInstance()
+                        .logInfo('No Settings available for JSAgent in the dynatrace.config.js file - Will not retrieve or include JSAgent.');
                     return [2];
-            }
-        });
+                }
+                else if (!config.getJavaScriptAgentConfiguration().isAgentUrlValid()) {
+                    Logger_1.Logger.getInstance().logWarning('Incorrect or empty url found for JSAgent - Will not retrieve or include JSAgent.');
+                    return [2];
+                }
+                Logger_1.Logger.getInstance().logInfo('Starting the retrieval of the JSAgent ..');
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 3, , 4]);
+                return [4, (0, exports.retrieveJSAgentHttp)(config.getJavaScriptAgentConfiguration())];
+            case 2:
+                jsagentContent = _a.sent();
+                Logger_1.Logger.getInstance().logInfo('JSAgent was retrieved successfully!');
+                return [2, jsagentContent];
+            case 3:
+                exception_1 = _a.sent();
+                Logger_1.Logger.getInstance().logError('Could not retrieve the JSAgent! - ' + exception_1);
+                return [3, 4];
+            case 4: return [2];
+        }
     });
-}
+}); };
+exports.downloadAgent = downloadAgent;
+var retrieveJSAgentHttp = function (configuration) { return __awaiter(void 0, void 0, void 0, function () {
+    var jsagentContent;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                if (configuration.isAnyCertificateAllowed()) {
+                    Logger_1.Logger.getInstance().logWarning('Ignoring certificate when retrieving the JSAgent!');
+                }
+                return [4, (0, exports.createHTTPRequestWithRetries)(3, configuration, 'Retrieving of JS Agent options finished', 'Could not retrieve JS Agent options')];
+            case 1:
+                jsagentContent = _a.sent();
+                if (jsagentContent !== undefined && jsagentContent.startsWith('<script')) {
+                    return [2, jsagentContent.toString()];
+                }
+                else {
+                    throw new Error('Content of the JS Agent is invalid! Please check the js url in the dynatrace.config.js file.');
+                }
+                return [2];
+        }
+    });
+}); };
 exports.retrieveJSAgentHttp = retrieveJSAgentHttp;
-function createHTTPRequestWithRetries(retries, configuration, finishMsg, errorMsg) {
-    return __awaiter(this, void 0, void 0, function () {
-        var amountOfRetries, jsagentContent, error_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    amountOfRetries = retries || 1;
-                    jsagentContent = "";
-                    _a.label = 1;
-                case 1:
-                    amountOfRetries -= 1;
-                    _a.label = 2;
-                case 2:
-                    _a.trys.push([2, 4, , 5]);
-                    return [4, HttpCommunication_1.createJSAgentHTTPRequest(configuration, finishMsg, errorMsg)];
-                case 3:
-                    jsagentContent = _a.sent();
-                    return [3, 5];
-                case 4:
-                    error_1 = _a.sent();
-                    if (amountOfRetries == 0) {
-                        throw error_1;
-                    }
-                    return [3, 5];
-                case 5:
-                    if (jsagentContent.length === 0 && amountOfRetries > 0) return [3, 1];
-                    _a.label = 6;
-                case 6: return [2, jsagentContent];
-            }
-        });
+var createHTTPRequestWithRetries = function (retries, configuration, finishMsg, errorMsg) { return __awaiter(void 0, void 0, void 0, function () {
+    var amountOfRetries, jsagentContent, error_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                amountOfRetries = retries || 1;
+                jsagentContent = '';
+                _a.label = 1;
+            case 1:
+                amountOfRetries -= 1;
+                _a.label = 2;
+            case 2:
+                _a.trys.push([2, 4, , 5]);
+                return [4, (0, HttpCommunication_1.createJSAgentHTTPRequest)(configuration, finishMsg, errorMsg)];
+            case 3:
+                jsagentContent = _a.sent();
+                return [3, 5];
+            case 4:
+                error_1 = _a.sent();
+                if (amountOfRetries === 0) {
+                    throw error_1;
+                }
+                return [3, 5];
+            case 5:
+                if (jsagentContent.length === 0 && amountOfRetries > 0) return [3, 1];
+                _a.label = 6;
+            case 6: return [2, jsagentContent];
+        }
     });
-}
+}); };
 exports.createHTTPRequestWithRetries = createHTTPRequestWithRetries;

@@ -14,7 +14,7 @@ var Logger = (function () {
         return this.instance;
     };
     Logger.setType = function (loggerType, debug) {
-        if (loggerType == LoggerType_1.LoggerType.FileLogger) {
+        if (loggerType === LoggerType_1.LoggerType.FileLogger) {
             this.instance = new FileLogger_1.FileLogger(debug);
         }
         else {

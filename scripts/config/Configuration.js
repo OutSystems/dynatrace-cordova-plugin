@@ -21,14 +21,14 @@ var Configuration = (function () {
         return this.iOSAgentConfiguration;
     };
     Configuration.prototype.isJavaScriptAgentConfigurationAvailable = function () {
-        return this.javascriptAgentConfiguration != undefined;
+        return this.javascriptAgentConfiguration !== undefined;
     };
     Configuration.prototype.isAndroidConfigurationAvailable = function () {
-        return this.androidAgentConfiguration != undefined
+        return this.androidAgentConfiguration !== undefined
             && this.androidAgentConfiguration.isConfigurationAvailable();
     };
     Configuration.prototype.isIosConfigurationAvailable = function () {
-        return this.iOSAgentConfiguration != undefined &&
+        return this.iOSAgentConfiguration !== undefined &&
             this.iOSAgentConfiguration.isConfigurationAvailable();
     };
     return Configuration;

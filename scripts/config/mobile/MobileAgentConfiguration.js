@@ -9,7 +9,7 @@ var MobileAgentConfiguration = (function () {
         return this.configuration;
     };
     MobileAgentConfiguration.prototype.isConfigurationAvailable = function () {
-        return this.configuration != undefined;
+        return this.configuration !== undefined;
     };
     return MobileAgentConfiguration;
 }());

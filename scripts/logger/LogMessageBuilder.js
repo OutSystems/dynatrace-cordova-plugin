@@ -17,12 +17,12 @@ var LogMessageBuilder = (function () {
         return this;
     };
     LogMessageBuilder.prototype.build = function () {
-        var stringBuilder = "#" + this.logLevel.toString() + " ";
-        if (this.date == undefined) {
-            stringBuilder += "[" + LogUtil_1.currentDate() + "]: ";
+        var stringBuilder = "#".concat(this.logLevel.toString(), " ");
+        if (this.date === undefined) {
+            stringBuilder += "[".concat((0, LogUtil_1.currentDate)(), "]: ");
         }
         else {
-            stringBuilder += "[" + LogUtil_1.convertDateToString(this.date) + "]: ";
+            stringBuilder += "[".concat((0, LogUtil_1.convertDateToString)(this.date), "]: ");
         }
         return stringBuilder += this.message;
     };

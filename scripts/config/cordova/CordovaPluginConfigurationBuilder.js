@@ -20,8 +20,20 @@ var CordovaPluginConfigurationBuilder = (function () {
         this.cookieProxy = cookieProxy;
         return this;
     };
+    CordovaPluginConfigurationBuilder.prototype.setJsAgentPath = function (jsAgentPath) {
+        this.jsAgentPath = jsAgentPath;
+        return this;
+    };
+    CordovaPluginConfigurationBuilder.prototype.setGradlePath = function (gradlePath) {
+        this.gradlePath = gradlePath;
+        return this;
+    };
+    CordovaPluginConfigurationBuilder.prototype.setPlistPath = function (plistPath) {
+        this.plistPath = plistPath;
+        return this;
+    };
     CordovaPluginConfigurationBuilder.prototype.build = function () {
-        return new CordovaPluginConfiguration_1.CordovaPluginConfiguration(this.debug, this.cookieProxy, this.cspUrl);
+        return new CordovaPluginConfiguration_1.CordovaPluginConfiguration(this.debug, this.cookieProxy, this.cspUrl, this.jsAgentPath, this.gradlePath, this.plistPath);
     };
     return CordovaPluginConfigurationBuilder;
 }());

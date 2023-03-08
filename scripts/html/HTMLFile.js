@@ -14,7 +14,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -37,7 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HTMLFile = void 0;
-var fileHelper_1 = require("../helpers/fileHelper");
+var FileHelper_1 = require("../helpers/FileHelper");
 var Logger_1 = require("../logger/Logger");
 var LogLevel_1 = require("../logger/LogLevel");
 var HTMLFile = (function () {
@@ -58,13 +58,13 @@ var HTMLFile = (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4, fileHelper_1.writeTextToFile(this.path, this.dom.serialize())];
+                        return [4, (0, FileHelper_1.writeTextToFile)(this.path, this.dom.serialize())];
                     case 1:
                         _a.sent();
                         return [3, 3];
                     case 2:
                         error_1 = _a.sent();
-                        Logger_1.Logger.getInstance().logDebug("Could not modify HTML File: " + this.path, LogLevel_1.LogLevel.ERROR);
+                        Logger_1.Logger.getInstance().logDebug('Could not modify HTML File: ' + this.path, LogLevel_1.LogLevel.ERROR);
                         return [3, 3];
                     case 3: return [2];
                 }

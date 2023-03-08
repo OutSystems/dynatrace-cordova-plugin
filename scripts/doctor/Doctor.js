@@ -14,7 +14,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -38,9 +38,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Doctor = void 0;
 var Platform_1 = require("../model/Platform");
-var DoctorConstants_1 = require("./DoctorConstants");
 var Framework_1 = require("../model/Framework");
-var fileHelper_1 = require("../helpers/fileHelper");
+var FileHelper_1 = require("../helpers/FileHelper");
+var DoctorConstants_1 = require("./DoctorConstants");
 var Doctor = (function () {
     function Doctor(platforms, framework, latestPluginVersion, packageJson, dynatraceConfiguration) {
         this.platforms = platforms;
@@ -50,15 +50,15 @@ var Doctor = (function () {
         this.framework = framework;
     }
     Doctor.prototype.isCurrentPluginVersionAvailable = function () {
-        return this.getCurrentPluginVersion() != undefined;
+        return this.getCurrentPluginVersion() !== undefined;
     };
     Doctor.prototype.isLatestPluginVersionAvailable = function () {
-        return this.getLatestPluginVersion() != undefined;
+        return this.getLatestPluginVersion() !== undefined;
     };
     Doctor.prototype.isPluginUpToDate = function () {
         if (this.isLatestPluginVersionAvailable() && this.isCurrentPluginVersionAvailable()) {
-            var currentArray = this.getCurrentPluginVersion().split(".");
-            var latestArray = this.getLatestPluginVersion().split(".");
+            var currentArray = this.getCurrentPluginVersion().split('.');
+            var latestArray = this.getLatestPluginVersion().split('.');
             if (latestArray[0] === currentArray[0]) {
                 if (latestArray[1] === currentArray[1]) {
                     if (latestArray[2] === currentArray[2]) {
@@ -79,26 +79,27 @@ var Doctor = (function () {
         return this.latestPluginVersion;
     };
     Doctor.prototype.isIosAvailable = function () {
-        return this.platforms.includes(Platform_1.Platform.iOS);
+        return this.platforms.includes(Platform_1.Platform.IOS);
     };
     Doctor.prototype.isAndroidAvailable = function () {
         return this.platforms.includes(Platform_1.Platform.Android);
     };
     Doctor.prototype.isCordovaAvailable = function () {
-        return this.framework == Framework_1.Framework.Cordova;
+        return this.framework === Framework_1.Framework.Cordova;
     };
     Doctor.prototype.isIonicAvailable = function () {
-        return this.framework == Framework_1.Framework.Ionic;
+        return this.framework === Framework_1.Framework.Ionic;
     };
     Doctor.prototype.isCapacitorAvailable = function () {
-        return this.framework == Framework_1.Framework.Capacitor;
+        return this.framework === Framework_1.Framework.Capacitor;
     };
     Doctor.prototype.isNativeWebRequestFrameworkAvailable = function () {
         var dependenciesToCollect = {};
         if (this.packageJson) {
-            for (var i = 0; i < DoctorConstants_1.DEPENDENCY_LIST.length; i++) {
-                if (this.packageJson.isDependencyAvailable(DoctorConstants_1.DEPENDENCY_LIST[i])) {
-                    dependenciesToCollect[DoctorConstants_1.DEPENDENCY_LIST[i]] = this.packageJson.getDependencyVersion(DoctorConstants_1.DEPENDENCY_LIST[i]);
+            for (var _i = 0, DEPENDENCY_LIST_1 = DoctorConstants_1.DEPENDENCY_LIST; _i < DEPENDENCY_LIST_1.length; _i++) {
+                var dependency = DEPENDENCY_LIST_1[_i];
+                if (this.packageJson.isDependencyAvailable(dependency)) {
+                    dependenciesToCollect[dependency] = this.packageJson.getDependencyVersion(dependency);
                 }
             }
         }
@@ -113,8 +114,8 @@ var Doctor = (function () {
     Doctor.prototype.isMobileFirstProperVersion = function () {
         if (this.isMobileFirstAvailable()) {
             var version = this.packageJson.getDependencyVersion(DoctorConstants_1.MFP_DEPENDENCY_NAME);
-            if (version != undefined) {
-                return version.startsWith("^") ? parseFloat(version.replace("^", "")) > 7 : parseFloat(version) > 7;
+            if (version !== undefined) {
+                return version.startsWith('^') ? parseFloat(version.replace('^', '')) > 7 : parseFloat(version) > 7;
             }
         }
         return false;
@@ -126,12 +127,13 @@ var Doctor = (function () {
         return {};
     };
     Doctor.prototype.isDynatraceConfigurationAvailable = function () {
-        return this.dynatraceConfiguration != undefined;
+        return this.dynatraceConfiguration !== undefined;
     };
     Doctor.prototype.isAndroidUsingHybrid = function () {
         if (this.isAndroidAvailable() && this.isDynatraceConfigurationAvailable()) {
             if (this.dynatraceConfiguration.isAndroidConfigurationAvailable()
-                && this.dynatraceConfiguration.getAndroidConfiguration().getConfiguration().includes("hybridWebView")) {
+                && this.dynatraceConfiguration.getAndroidConfiguration().getConfiguration() !== undefined &&
+                this.dynatraceConfiguration.getAndroidConfiguration().getConfiguration().includes('hybridWebView')) {
                 return true;
             }
         }
@@ -140,7 +142,8 @@ var Doctor = (function () {
     Doctor.prototype.isIosUsingHybrid = function () {
         if (this.isIosAvailable() && this.isDynatraceConfigurationAvailable()) {
             if (this.dynatraceConfiguration.isIosConfigurationAvailable()
-                && this.dynatraceConfiguration.getIosConfiguration().getConfiguration().includes("<key>DTXHybridApplication</key>")) {
+                && this.dynatraceConfiguration.getIosConfiguration().getConfiguration() !== undefined &&
+                this.dynatraceConfiguration.getIosConfiguration().getConfiguration().includes('<key>DTXHybridApplication</key>')) {
                 return true;
             }
         }
@@ -149,7 +152,8 @@ var Doctor = (function () {
     Doctor.prototype.isIosUsingDomains = function () {
         if (this.isIosAvailable() && this.isDynatraceConfigurationAvailable()) {
             if (this.dynatraceConfiguration.isIosConfigurationAvailable()
-                && this.dynatraceConfiguration.getIosConfiguration().getConfiguration().includes("<key>DTXSetCookiesForDomain</key>")) {
+                && this.dynatraceConfiguration.getIosConfiguration().getConfiguration() !== undefined &&
+                this.dynatraceConfiguration.getIosConfiguration().getConfiguration().includes('<key>DTXSetCookiesForDomain</key>')) {
                 return true;
             }
         }
@@ -165,8 +169,8 @@ var Doctor = (function () {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        return [4, fileHelper_1.getPlistAsPath(this.isCapacitorAvailable())];
-                    case 2: return [2, (_a.sent()) != undefined];
+                        return [4, (0, FileHelper_1.getPlistAsPath)(this.isCapacitorAvailable())];
+                    case 2: return [2, (_a.sent()) !== undefined];
                     case 3:
                         e_1 = _a.sent();
                         return [3, 4];
@@ -178,7 +182,7 @@ var Doctor = (function () {
     Doctor.prototype.isGradleAvailable = function () {
         if (this.isAndroidAvailable()) {
             try {
-                return fileHelper_1.isGradleAvailable(this.isCapacitorAvailable());
+                return (0, FileHelper_1.isGradleAvailable)(this.isCapacitorAvailable());
             }
             catch (e) {
             }
@@ -187,13 +191,13 @@ var Doctor = (function () {
     };
     Doctor.prototype.isGradleProperVersion = function () {
         try {
-            if (this.isAndroidAvailable() && fileHelper_1.isGradleAvailable()) {
+            if (this.isAndroidAvailable() && (0, FileHelper_1.isGradleAvailable)()) {
                 if (this.isCapacitorAvailable()) {
                     return true;
                 }
-                var projectBuilderStr = fileHelper_1.getProjectBuilderAsString();
-                if (projectBuilderStr != undefined) {
-                    return parseInt(projectBuilderStr.substring(projectBuilderStr.indexOf("distributions/gradle-") + 21, projectBuilderStr.indexOf("-all.zip"))) >= DoctorConstants_1.GRADLE_MIN_VERSION;
+                var projectBuilderStr = (0, FileHelper_1.getProjectBuilderAsString)();
+                if (projectBuilderStr !== undefined) {
+                    return parseInt(projectBuilderStr.substring(projectBuilderStr.indexOf('distributions/gradle-') + 21, projectBuilderStr.indexOf('-all.zip')), 10) >= DoctorConstants_1.GRADLE_MIN_VERSION;
                 }
             }
         }

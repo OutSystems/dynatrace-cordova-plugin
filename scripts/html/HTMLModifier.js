@@ -14,7 +14,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -37,15 +37,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HTMLModifier = void 0;
-var Logger_1 = require("../logger/Logger");
-var HTMLConstants_1 = require("./HTMLConstants");
-var HTMLUtil_1 = require("./HTMLUtil");
 var path_1 = require("path");
+var Logger_1 = require("../logger/Logger");
+var HtmlConstants_1 = require("./HtmlConstants");
+var HtmlUtil_1 = require("./HtmlUtil");
 var HTMLModifier = (function () {
     function HTMLModifier(htmlFile) {
         this.htmlFile = htmlFile;
-        this.swallowAPIEnabled = HTMLConstants_1.DEFAULT_SWALLOW_API_INJECTION;
-        this.cookieProxyScript = HTMLConstants_1.DEFAULT_COOKIE_PROXY_INJECTION;
+        this.swallowAPIEnabled = HtmlConstants_1.DEFAULT_SWALLOW_API_INJECTION;
+        this.cookieProxyScript = HtmlConstants_1.DEFAULT_COOKIE_PROXY_INJECTION;
     }
     HTMLModifier.prototype.setJSAgentContent = function (jsAgentContent) {
         this.jsAgentContent = jsAgentContent;
@@ -60,32 +60,15 @@ var HTMLModifier = (function () {
         return this;
     };
     HTMLModifier.prototype.removeAgentFromHTMLDom = function () {
-        var scripts = this.htmlFile.getDOM().window.document.getElementsByTagName("script");
+        var scripts = this.htmlFile.getDOM().window.document.getElementsByTagName('script');
         for (var i = 0; i < scripts.length; i++) {
             var item = scripts.item(i);
-            if (item !== null && item.src.includes(HTMLConstants_1.OLD_AGENT_SRC) && item.parentNode !== null) {
+            if (item !== null && item.src.includes(HtmlConstants_1.OLD_AGENT_SRC) && item.parentNode !== null) {
                 item.parentNode.removeChild(item);
                 return true;
             }
         }
         return false;
-    };
-    HTMLModifier.prototype.getHead = function () {
-        var heads = this.htmlFile.getDOM().window.document.getElementsByTagName("head");
-        if (heads.length == 0) {
-            var head = this.htmlFile.getDOM().window.document.createElement("head");
-            this.htmlFile.getDOM().window.document.appendChild(head);
-            return head;
-        }
-        else {
-            return heads.item(0);
-        }
-    };
-    HTMLModifier.prototype.createScriptTag = function (location) {
-        var scriptTag = this.htmlFile.getDOM().window.document.createElement("script");
-        scriptTag.type = "text/javascript";
-        scriptTag.src = location;
-        return scriptTag;
     };
     HTMLModifier.prototype.modify = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -94,13 +77,13 @@ var HTMLModifier = (function () {
                 switch (_a.label) {
                     case 0:
                         if (this.removeAgentFromHTMLDom()) {
-                            Logger_1.Logger.getInstance().logDebug("Old JavaScript agent was removed from HTML.");
+                            Logger_1.Logger.getInstance().logDebug('Old JavaScript agent was removed from HTML.');
                         }
                         head = this.getHead();
-                        if (!(this.jsAgentContent !== undefined)) return [3, 6];
+                        if (!(this.jsAgentContent !== undefined && head != null)) return [3, 6];
                         if (!this.swallowAPIEnabled) return [3, 2];
-                        head.prepend(this.createScriptTag(HTMLConstants_1.SWALLOW_API_SRC));
-                        return [4, HTMLUtil_1.copySwallowAPI(path_1.join(this.htmlFile.getPath(), ".."))];
+                        head.prepend(this.createScriptTag(HtmlConstants_1.SWALLOW_API_SRC));
+                        return [4, (0, HtmlUtil_1.copySwallowAPI)((0, path_1.join)(this.htmlFile.getPath(), '..'))];
                     case 1:
                         _a.sent();
                         _a.label = 2;
@@ -110,9 +93,9 @@ var HTMLModifier = (function () {
                         if (scriptTag.content.firstChild !== null) {
                             head.prepend(scriptTag.content.firstChild);
                         }
-                        if (!this.cookieProxyScript) return [3, 4];
-                        head.prepend(this.createScriptTag(HTMLConstants_1.COOKIE_PROXY_SRC));
-                        return [4, HTMLUtil_1.copyCookieProxy(path_1.join(this.htmlFile.getPath(), ".."))];
+                        if (!(this.cookieProxyScript === true)) return [3, 4];
+                        head.prepend(this.createScriptTag(HtmlConstants_1.COOKIE_PROXY_SRC));
+                        return [4, (0, HtmlUtil_1.copyCookieProxy)((0, path_1.join)(this.htmlFile.getPath(), '..'))];
                     case 3:
                         _a.sent();
                         _a.label = 4;
@@ -124,6 +107,23 @@ var HTMLModifier = (function () {
                 }
             });
         });
+    };
+    HTMLModifier.prototype.getHead = function () {
+        var heads = this.htmlFile.getDOM().window.document.getElementsByTagName('head');
+        if (heads.length === 0) {
+            var head = this.htmlFile.getDOM().window.document.createElement('head');
+            this.htmlFile.getDOM().window.document.appendChild(head);
+            return head;
+        }
+        else {
+            return heads.item(0);
+        }
+    };
+    HTMLModifier.prototype.createScriptTag = function (location) {
+        var scriptTag = this.htmlFile.getDOM().window.document.createElement('script');
+        scriptTag.type = 'text/javascript';
+        scriptTag.src = location;
+        return scriptTag;
     };
     return HTMLModifier;
 }());

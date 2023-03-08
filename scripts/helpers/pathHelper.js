@@ -14,7 +14,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -36,204 +36,155 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isCapacitorApp = exports.getCapacitorConfig = exports.getIosAssetsPathCapacitor = exports.getAndroidAssetsPathCapacitor = exports.getIosPlistPathCapacitor = exports.getAndroidPathCapacitor = exports.getIosPathCapacitor = exports.getDynatracePluginGradleFile = exports.getDynatraceGradleFile = exports.getLogPath = exports.getCurrentLogPath = exports.getCookieProxyPath = exports.getSwallowApiPath = exports.getDownloadJSAgentPath = exports.getIOSAssetsPath = exports.getAndroidAssetsPath = exports.getConfigFilePath = exports.getDefaultConfig = exports.getAndroidGradleVersion = exports.dynatraceConfigExists = exports.isIonic = exports.getIonicConfig = exports.getDoctorLogPath = exports.getAndroidGradleFile = exports.getPluginPath = exports.getPluginPackage = exports.getAndroidPath = exports.getIosPath = exports.getApplicationPackage = exports.getApplicationPath = exports.setRoot = exports.FILE_COOKIE_PROXY = exports.FILE_SWALLOW_API = exports.FILE_JSAGENT = exports.FOLDER_ASSETS = void 0;
-var fileHelper_1 = require("./fileHelper");
+exports.isCapacitorApp = exports.getCapacitorConfig = exports.getCapCliPackage = exports.getIosAssetsPathCapacitor = exports.getAndroidAssetsPathCapacitor = exports.getIosPlistPathCapacitor = exports.getAndroidPathCapacitor = exports.getIosPathCapacitor = exports.getDynatracePluginGradleFile = exports.getDynatraceGradleFile = exports.getLogPath = exports.getCurrentLogPath = exports.getCookieProxyPath = exports.getSwallowApiPath = exports.getDownloadJSAgentPath = exports.getIOSAssetsPath = exports.getAndroidAssetsPath = exports.getConfigFilePath = exports.getDefaultConfig = exports.getAndroidGradleVersion = exports.dynatraceConfigExists = exports.isIonic = exports.getIonicConfig = exports.getDoctorLogPath = exports.getAndroidGradleFile = exports.getPluginPath = exports.getPluginPackage = exports.getAndroidPath = exports.getIosPath = exports.getApplicationPackage = exports.getApplicationPath = exports.setRoot = exports.FILE_COOKIE_PROXY = exports.FILE_SWALLOW_API = exports.FILE_JSAGENT = exports.FOLDER_ASSETS = void 0;
 var path_1 = require("path");
 var fs_1 = require("fs");
-var FOLDER_PLATFORMS = "platforms";
-exports.FOLDER_ASSETS = "assets";
-var FOLDER_WWW = "www";
-var FOLDER_SCRIPTS = "scripts";
-var FOLDER_FILES = "files";
-var FOLDER_LOGS = "logs";
-var FOLDER_ANDROID_APP = "app";
-var FILE_PACKAGE = "package.json";
-var FILE_CONFIG = "dynatrace.config.js";
-var FILE_CURRENT_LOG = "currentLog.txt";
-exports.FILE_JSAGENT = "dtAgent.js";
-exports.FILE_SWALLOW_API = "dtrum-swallow-api.js";
-exports.FILE_COOKIE_PROXY = "dt-cookie-proxy.js";
+var FileHelper_1 = require("./FileHelper");
+var FOLDER_PLATFORMS = 'platforms';
+exports.FOLDER_ASSETS = 'assets';
+var FOLDER_WWW = 'www';
+var FOLDER_SCRIPTS = 'scripts';
+var FOLDER_FILES = 'files';
+var FOLDER_LOGS = 'logs';
+var FOLDER_ANDROID_APP = 'app';
+var FOLDER_NODE_MODULES = 'node_modules';
+var FILE_PACKAGE = 'package.json';
+var FILE_CONFIG = 'dynatrace.config.js';
+var FILE_CURRENT_LOG = 'currentLog.txt';
+exports.FILE_JSAGENT = 'dtAgent.js';
+exports.FILE_SWALLOW_API = 'dtrum-swallow-api.js';
+exports.FILE_COOKIE_PROXY = 'dt-cookie-proxy.js';
 var rootPath = __dirname;
-function setRoot(newRoot) {
-    rootPath = path_1.resolve(newRoot);
-}
+var setRoot = function (newRoot) {
+    rootPath = (0, path_1.resolve)(newRoot);
+};
 exports.setRoot = setRoot;
-function getPluginPath() {
-    return path_1.join(rootPath, "..", "..");
-}
+var getPluginPath = function () { return (0, path_1.join)(rootPath, '..', '..'); };
 exports.getPluginPath = getPluginPath;
-function getDefaultConfig() {
-    return path_1.join(getPluginPath(), FOLDER_FILES, "default.config.js");
-}
+var getDefaultConfig = function () { return (0, path_1.join)(getPluginPath(), FOLDER_FILES, 'default.config.js'); };
 exports.getDefaultConfig = getDefaultConfig;
-function getDynatraceGradleFile() {
-    return path_1.join(getPluginPath(), FOLDER_FILES, "dynatrace.gradle");
-}
+var getDynatraceGradleFile = function () { return (0, path_1.join)(getPluginPath(), FOLDER_FILES, 'dynatrace.gradle'); };
 exports.getDynatraceGradleFile = getDynatraceGradleFile;
-function getDynatracePluginGradleFile() {
-    return path_1.join(getPluginPath(), FOLDER_FILES, "plugin.gradle");
-}
+var getDynatracePluginGradleFile = function () { return (0, path_1.join)(getPluginPath(), FOLDER_FILES, 'plugin.gradle'); };
 exports.getDynatracePluginGradleFile = getDynatracePluginGradleFile;
-function getApplicationPath() {
-    return isCapacitorApp() ? path_1.join(getPluginPath(), "..", "..", "..") : path_1.join(getPluginPath(), "..", "..");
-}
+var getApplicationPath = function () {
+    return isCapacitorApp() ? (0, path_1.join)(getPluginPath(), '..', '..', '..') : (0, path_1.join)(getPluginPath(), '..', '..');
+};
 exports.getApplicationPath = getApplicationPath;
-function getPluginPackage() {
-    return path_1.join(getPluginPath(), FILE_PACKAGE);
-}
+var getPluginPackage = function () { return (0, path_1.join)(getPluginPath(), FILE_PACKAGE); };
 exports.getPluginPackage = getPluginPackage;
-function getApplicationPackage() {
-    return path_1.join(getApplicationPath(), FILE_PACKAGE);
-}
+var getApplicationPackage = function () { return (0, path_1.join)(getApplicationPath(), FILE_PACKAGE); };
 exports.getApplicationPackage = getApplicationPackage;
-function getIosPath() {
-    return isCapacitorApp() ? getIosPathCapacitor() : path_1.join(getApplicationPath(), FOLDER_PLATFORMS, "ios");
-}
+var getCapCliPackage = function () { return (0, path_1.join)(getApplicationPath(), FOLDER_NODE_MODULES, "@capacitor", "cli", FILE_PACKAGE); };
+exports.getCapCliPackage = getCapCliPackage;
+var getIosPath = function () { return isCapacitorApp() ? getIosPathCapacitor() : (0, path_1.join)(getApplicationPath(), FOLDER_PLATFORMS, 'ios'); };
 exports.getIosPath = getIosPath;
-function getAndroidPath() {
-    return path_1.join(getApplicationPath(), FOLDER_PLATFORMS, "android");
-}
+var getAndroidPath = function () { return (0, path_1.join)(getApplicationPath(), FOLDER_PLATFORMS, 'android'); };
 exports.getAndroidPath = getAndroidPath;
-function getAndroidGradleFile(androidFolder) {
-    return path_1.join(androidFolder, "build.gradle");
-}
+var getAndroidGradleFile = function (androidFolder) { return (0, path_1.join)(androidFolder, 'build.gradle'); };
 exports.getAndroidGradleFile = getAndroidGradleFile;
-function getConfigFilePath() {
-    return path_1.join(getApplicationPath(), FILE_CONFIG);
-}
+var getConfigFilePath = function () { return (0, path_1.join)(getApplicationPath(), FILE_CONFIG); };
 exports.getConfigFilePath = getConfigFilePath;
-function getAndroidAssetsPath() {
-    return __awaiter(this, void 0, void 0, function () {
-        var _a, e_1;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0:
-                    _b.trys.push([0, 5, , 6]);
-                    if (!isCapacitorApp()) return [3, 2];
-                    return [4, fileHelper_1.checkIfFileExists(path_1.join(getAndroidPathCapacitor(), FOLDER_ANDROID_APP, "src", "main", exports.FOLDER_ASSETS, "public"))];
-                case 1:
-                    _a = _b.sent();
-                    return [3, 4];
-                case 2: return [4, fileHelper_1.checkIfFileExists(path_1.join(getAndroidPath(), exports.FOLDER_ASSETS, FOLDER_WWW))];
-                case 3:
-                    _a = _b.sent();
-                    _b.label = 4;
-                case 4: return [2, _a];
-                case 5:
-                    e_1 = _b.sent();
-                    return [2, isCapacitorApp() ? path_1.join(getAndroidPathCapacitor(), FOLDER_ANDROID_APP, "src", "main", exports.FOLDER_ASSETS, "public") : path_1.join(getAndroidPath(), FOLDER_ANDROID_APP, "src", "main", exports.FOLDER_ASSETS, FOLDER_WWW)];
-                case 6: return [2];
-            }
-        });
+var getAndroidAssetsPath = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var e_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 5, , 6]);
+                if (!isCapacitorApp()) return [3, 2];
+                return [4, (0, FileHelper_1.checkIfFileExists)((0, path_1.join)(getAndroidPathCapacitor(), FOLDER_ANDROID_APP, 'src', 'main', exports.FOLDER_ASSETS, 'public'))];
+            case 1: return [2, _a.sent()];
+            case 2: return [4, (0, FileHelper_1.checkIfFileExists)((0, path_1.join)(getAndroidPath(), exports.FOLDER_ASSETS, FOLDER_WWW))];
+            case 3: return [2, _a.sent()];
+            case 4: return [3, 6];
+            case 5:
+                e_1 = _a.sent();
+                if (isCapacitorApp()) {
+                    return [2, (0, path_1.join)(getAndroidPathCapacitor(), FOLDER_ANDROID_APP, 'src', 'main', exports.FOLDER_ASSETS, 'public')];
+                }
+                else {
+                    return [2, (0, path_1.join)(getAndroidPath(), FOLDER_ANDROID_APP, 'src', 'main', exports.FOLDER_ASSETS, FOLDER_WWW)];
+                }
+                return [3, 6];
+            case 6: return [2];
+        }
     });
-}
+}); };
 exports.getAndroidAssetsPath = getAndroidAssetsPath;
-function getIOSAssetsPath() {
-    return __awaiter(this, void 0, void 0, function () {
-        var _a, e_2;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0:
-                    _b.trys.push([0, 4, , 5]);
-                    if (!isCapacitorApp()) return [3, 1];
-                    _a = getIosAssetsPathCapacitor();
-                    return [3, 3];
-                case 1: return [4, fileHelper_1.checkIfFileExists(path_1.join(getIosPath(), FOLDER_WWW))];
-                case 2:
-                    _a = _b.sent();
-                    _b.label = 3;
-                case 3: return [2, _a];
-                case 4:
-                    e_2 = _b.sent();
-                    return [2, isCapacitorApp() ? getIosAssetsPathCapacitor() : path_1.join(getIosPath(), FOLDER_WWW)];
-                case 5: return [2];
-            }
-        });
+var getIOSAssetsPath = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, e_2;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 4, , 5]);
+                if (!isCapacitorApp()) return [3, 1];
+                _a = getIosAssetsPathCapacitor();
+                return [3, 3];
+            case 1: return [4, (0, FileHelper_1.checkIfFileExists)((0, path_1.join)(getIosPath(), FOLDER_WWW))];
+            case 2:
+                _a = _b.sent();
+                _b.label = 3;
+            case 3: return [2, _a];
+            case 4:
+                e_2 = _b.sent();
+                return [2, isCapacitorApp() ? getIosAssetsPathCapacitor() : (0, path_1.join)(getIosPath(), FOLDER_WWW)];
+            case 5: return [2];
+        }
     });
-}
+}); };
 exports.getIOSAssetsPath = getIOSAssetsPath;
-function getDownloadJSAgentPath() {
-    return path_1.join(getPluginPath(), FOLDER_FILES, exports.FILE_JSAGENT);
-}
+var getDownloadJSAgentPath = function () { return (0, path_1.join)(getPluginPath(), FOLDER_FILES, exports.FILE_JSAGENT); };
 exports.getDownloadJSAgentPath = getDownloadJSAgentPath;
-function getSwallowApiPath() {
-    return path_1.join(getPluginPath(), FOLDER_SCRIPTS, exports.FILE_SWALLOW_API);
-}
+var getSwallowApiPath = function () { return (0, path_1.join)(getPluginPath(), FOLDER_SCRIPTS, exports.FILE_SWALLOW_API); };
 exports.getSwallowApiPath = getSwallowApiPath;
-function getCookieProxyPath() {
-    return path_1.join(getPluginPath(), FOLDER_SCRIPTS, "snippets", exports.FILE_COOKIE_PROXY);
-}
+var getCookieProxyPath = function () { return (0, path_1.join)(getPluginPath(), FOLDER_SCRIPTS, 'snippets', exports.FILE_COOKIE_PROXY); };
 exports.getCookieProxyPath = getCookieProxyPath;
-function getCurrentLogPath() {
-    return path_1.join(getLogPath(), FILE_CURRENT_LOG);
-}
+var getCurrentLogPath = function () { return (0, path_1.join)(getLogPath(), FILE_CURRENT_LOG); };
 exports.getCurrentLogPath = getCurrentLogPath;
-function getLogPath() {
-    return path_1.join(getPluginPath(), FOLDER_LOGS);
-}
+var getLogPath = function () { return (0, path_1.join)(getPluginPath(), FOLDER_LOGS); };
 exports.getLogPath = getLogPath;
-function getDoctorLogPath() {
-    return path_1.join(getPluginPath(), FOLDER_LOGS, "currentDoctorDynatrace.txt");
-}
+var getDoctorLogPath = function () { return (0, path_1.join)(getPluginPath(), FOLDER_LOGS, 'currentDoctorDynatrace.txt'); };
 exports.getDoctorLogPath = getDoctorLogPath;
-function getAndroidGradleVersion() {
-    return path_1.join(getAndroidPath(), "cordova", "lib", "builders", "ProjectBuilder.js");
-}
+var getAndroidGradleVersion = function () { return (0, path_1.join)(getAndroidPath(), 'cordova', 'lib', 'builders', 'ProjectBuilder.js'); };
 exports.getAndroidGradleVersion = getAndroidGradleVersion;
-function getIonicConfig() {
-    return path_1.join(getApplicationPath(), "ionic.config.json");
-}
+var getIonicConfig = function () { return (0, path_1.join)(getApplicationPath(), 'ionic.config.json'); };
 exports.getIonicConfig = getIonicConfig;
-function isIonic() {
-    return fileHelper_1.checkIfFileExistsSync(getIonicConfig()) ? true : false;
-}
+var isIonic = function () { return (0, FileHelper_1.checkIfFileExistsSync)(getIonicConfig()) ? true : false; };
 exports.isIonic = isIonic;
-function dynatraceConfigExists() {
-    return fileHelper_1.checkIfFileExistsSync(getConfigFilePath()) ? true : false;
-}
+var dynatraceConfigExists = function () { return (0, FileHelper_1.checkIfFileExistsSync)(getConfigFilePath()) ? true : false; };
 exports.dynatraceConfigExists = dynatraceConfigExists;
-function getIosPathCapacitor() {
-    return path_1.join(getApplicationPath(), "ios", "App");
-}
+var getIosPathCapacitor = function () { return (0, path_1.join)(getApplicationPath(), 'ios', 'App'); };
 exports.getIosPathCapacitor = getIosPathCapacitor;
-function getAndroidPathCapacitor() {
-    return path_1.join(getApplicationPath(), "android");
-}
+var getAndroidPathCapacitor = function () { return (0, path_1.join)(getApplicationPath(), 'android'); };
 exports.getAndroidPathCapacitor = getAndroidPathCapacitor;
-function getIosPlistPathCapacitor() {
-    return path_1.join(getIosPathCapacitor(), "App", "Info.plist");
-}
+var getIosPlistPathCapacitor = function () { return (0, path_1.join)(getIosPathCapacitor(), 'App', 'Info.plist'); };
 exports.getIosPlistPathCapacitor = getIosPlistPathCapacitor;
-function getAndroidAssetsPathCapacitor() {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            try {
-                return [2, fileHelper_1.checkIfFileExists(path_1.join(getAndroidPathCapacitor(), FOLDER_ANDROID_APP, "src", "main", exports.FOLDER_ASSETS, "public"))];
-            }
-            catch (e) {
-                return [2, path_1.join(getAndroidPathCapacitor(), FOLDER_ANDROID_APP, "src", "main", exports.FOLDER_ASSETS, "public")];
-            }
-            return [2];
-        });
+var getAndroidAssetsPathCapacitor = function () { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        try {
+            return [2, (0, FileHelper_1.checkIfFileExists)((0, path_1.join)(getAndroidPathCapacitor(), FOLDER_ANDROID_APP, 'src', 'main', exports.FOLDER_ASSETS, 'public'))];
+        }
+        catch (e) {
+            return [2, (0, path_1.join)(getAndroidPathCapacitor(), FOLDER_ANDROID_APP, 'src', 'main', exports.FOLDER_ASSETS, 'public')];
+        }
+        return [2];
     });
-}
+}); };
 exports.getAndroidAssetsPathCapacitor = getAndroidAssetsPathCapacitor;
-function getIosAssetsPathCapacitor() {
-    if (fs_1.existsSync(path_1.join(getIosPathCapacitor(), "public"))) {
-        return path_1.join(getIosPathCapacitor(), "public");
+var getIosAssetsPathCapacitor = function () {
+    if ((0, fs_1.existsSync)((0, path_1.join)(getIosPathCapacitor(), 'public'))) {
+        return (0, path_1.join)(getIosPathCapacitor(), 'public');
     }
-    else if (fs_1.existsSync(path_1.join(getIosPathCapacitor(), "App", "public"))) {
-        return path_1.join(getIosPathCapacitor(), "App", "public");
+    else if ((0, fs_1.existsSync)((0, path_1.join)(getIosPathCapacitor(), 'App', 'public'))) {
+        return (0, path_1.join)(getIosPathCapacitor(), 'App', 'public');
     }
     return undefined;
-}
+};
 exports.getIosAssetsPathCapacitor = getIosAssetsPathCapacitor;
-function getCapacitorConfig(checkForTs) {
-    return checkForTs ? path_1.join(__dirname, "..", "..", "..", "..", "..", "capacitor.config.ts")
-        : path_1.join(__dirname, "..", "..", "..", "..", "..", "capacitor.config.json");
-}
+var getCapacitorConfig = function (checkForTs) {
+    return (checkForTs === true) ? (0, path_1.join)(__dirname, '..', '..', '..', '..', '..', 'capacitor.config.ts')
+        : (0, path_1.join)(__dirname, '..', '..', '..', '..', '..', 'capacitor.config.json');
+};
 exports.getCapacitorConfig = getCapacitorConfig;
-function isCapacitorApp() {
-    return fs_1.existsSync(getCapacitorConfig()) || fs_1.existsSync(getCapacitorConfig(true)) ? true : false;
-}
+var isCapacitorApp = function () { return (0, fs_1.existsSync)(getCapacitorConfig()) || (0, fs_1.existsSync)(getCapacitorConfig(true)) ? true : false; };
 exports.isCapacitorApp = isCapacitorApp;

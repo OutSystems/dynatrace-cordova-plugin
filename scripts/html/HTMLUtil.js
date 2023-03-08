@@ -14,7 +14,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -37,145 +37,138 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.removeOldDtAgent = exports.copyCookieProxy = exports.copySwallowAPI = exports.searchHTMLFiles = void 0;
-var fileHelper_1 = require("../helpers/fileHelper");
-var Logger_1 = require("../logger/Logger");
-var HTMLReader_1 = require("./HTMLReader");
-var HTMLVerifier_1 = require("./HTMLVerifier");
 var path_1 = require("path");
-var pathHelper_1 = require("../helpers/pathHelper");
+var FileHelper_1 = require("../helpers/FileHelper");
+var Logger_1 = require("../logger/Logger");
+var PathHelper_1 = require("../helpers/PathHelper");
 var LogLevel_1 = require("../logger/LogLevel");
-function searchHTMLFiles(folder) {
-    return __awaiter(this, void 0, void 0, function () {
-        var htmlFilesInstrumentable, htmlFiles, i, htmlReader, htmlFile, htmlVerifier, error_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    Logger_1.Logger.getInstance().logInfo("Searching for HTML files ..");
-                    htmlFilesInstrumentable = [];
-                    _a.label = 1;
-                case 1:
-                    _a.trys.push([1, 8, , 9]);
-                    return [4, fileHelper_1.searchFileExtInDirectoryNonRecursive(folder, ".html", [])];
-                case 2:
-                    htmlFiles = _a.sent();
-                    i = 0;
-                    _a.label = 3;
-                case 3:
-                    if (!(i < htmlFiles.length)) return [3, 7];
-                    htmlReader = new HTMLReader_1.HTMLReader(htmlFiles[i]);
-                    return [4, htmlReader.isAvailable()];
-                case 4:
-                    if (!_a.sent()) return [3, 6];
-                    return [4, htmlReader.read()];
-                case 5:
-                    htmlFile = _a.sent();
-                    htmlVerifier = new HTMLVerifier_1.HTMLVerifier(htmlFile);
-                    if (htmlVerifier.isQualified()) {
-                        htmlFilesInstrumentable.push(htmlFile);
-                    }
-                    _a.label = 6;
-                case 6:
-                    i++;
-                    return [3, 3];
-                case 7: return [3, 9];
-                case 8:
-                    error_1 = _a.sent();
-                    Logger_1.Logger.getInstance().logDebug("Error occured during HTML file search: " + error_1, LogLevel_1.LogLevel.ERROR);
-                    return [3, 9];
-                case 9: return [2, htmlFilesInstrumentable];
-            }
-        });
+var HtmlReader_1 = require("./HtmlReader");
+var HtmlVerifier_1 = require("./HtmlVerifier");
+var searchHTMLFiles = function (folder) { return __awaiter(void 0, void 0, void 0, function () {
+    var htmlFilesInstrumentable, htmlFiles, _i, htmlFiles_1, htmlFile, htmlReader, htmlFileContent, htmlVerifier, error_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                Logger_1.Logger.getInstance().logInfo('Searching for HTML files ..');
+                htmlFilesInstrumentable = [];
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 8, , 9]);
+                return [4, (0, FileHelper_1.searchFileExtInDirectoryNonRecursive)(folder, '.html', [])];
+            case 2:
+                htmlFiles = _a.sent();
+                _i = 0, htmlFiles_1 = htmlFiles;
+                _a.label = 3;
+            case 3:
+                if (!(_i < htmlFiles_1.length)) return [3, 7];
+                htmlFile = htmlFiles_1[_i];
+                htmlReader = new HtmlReader_1.HTMLReader(htmlFile);
+                return [4, htmlReader.isAvailable()];
+            case 4:
+                if (!_a.sent()) return [3, 6];
+                return [4, htmlReader.read()];
+            case 5:
+                htmlFileContent = _a.sent();
+                htmlVerifier = new HtmlVerifier_1.HTMLVerifier(htmlFileContent);
+                if (htmlVerifier.isQualified()) {
+                    htmlFilesInstrumentable.push(htmlFileContent);
+                }
+                _a.label = 6;
+            case 6:
+                _i++;
+                return [3, 3];
+            case 7: return [3, 9];
+            case 8:
+                error_1 = _a.sent();
+                Logger_1.Logger.getInstance().logDebug('Error occured during HTML file search: ' + error_1, LogLevel_1.LogLevel.ERROR);
+                return [3, 9];
+            case 9: return [2, htmlFilesInstrumentable];
+        }
     });
-}
+}); };
 exports.searchHTMLFiles = searchHTMLFiles;
-function copySwallowAPI(destinationDirectory) {
-    return __awaiter(this, void 0, void 0, function () {
-        var destAssets, swallowApi, e_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4, createAssetsDirectory(destinationDirectory)];
-                case 1:
-                    destAssets = _a.sent();
-                    _a.label = 2;
-                case 2:
-                    _a.trys.push([2, 5, , 6]);
-                    return [4, fileHelper_1.readTextFromFile(pathHelper_1.getSwallowApiPath())];
-                case 3:
-                    swallowApi = _a.sent();
-                    return [4, fileHelper_1.writeTextToFile(path_1.resolve(destAssets, pathHelper_1.FILE_SWALLOW_API), swallowApi)];
-                case 4:
-                    _a.sent();
-                    return [3, 6];
-                case 5:
-                    e_1 = _a.sent();
-                    Logger_1.Logger.getInstance().logError("Error while copying dtrum swallow api to platforms folder: " + e_1);
-                    return [3, 6];
-                case 6: return [2];
-            }
-        });
+var copySwallowAPI = function (destinationDirectory) { return __awaiter(void 0, void 0, void 0, function () {
+    var destAssets, swallowApi, e_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, createAssetsDirectory(destinationDirectory)];
+            case 1:
+                destAssets = _a.sent();
+                _a.label = 2;
+            case 2:
+                _a.trys.push([2, 5, , 6]);
+                return [4, (0, FileHelper_1.readTextFromFile)((0, PathHelper_1.getSwallowApiPath)())];
+            case 3:
+                swallowApi = _a.sent();
+                return [4, (0, FileHelper_1.writeTextToFile)((0, path_1.resolve)(destAssets, PathHelper_1.FILE_SWALLOW_API), swallowApi)];
+            case 4:
+                _a.sent();
+                return [3, 6];
+            case 5:
+                e_1 = _a.sent();
+                Logger_1.Logger.getInstance().logError('Error while copying dtrum swallow api to platforms folder: ' + e_1);
+                return [3, 6];
+            case 6: return [2];
+        }
     });
-}
+}); };
 exports.copySwallowAPI = copySwallowAPI;
-function copyCookieProxy(destinationDirectory) {
-    return __awaiter(this, void 0, void 0, function () {
-        var destAssets, cookieProxy, e_2;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4, createAssetsDirectory(destinationDirectory)];
-                case 1:
-                    destAssets = _a.sent();
-                    _a.label = 2;
-                case 2:
-                    _a.trys.push([2, 5, , 6]);
-                    return [4, fileHelper_1.readTextFromFile(pathHelper_1.getCookieProxyPath())];
-                case 3:
-                    cookieProxy = _a.sent();
-                    return [4, fileHelper_1.writeTextToFile(path_1.resolve(destAssets, pathHelper_1.FILE_COOKIE_PROXY), cookieProxy)];
-                case 4:
-                    _a.sent();
-                    return [3, 6];
-                case 5:
-                    e_2 = _a.sent();
-                    Logger_1.Logger.getInstance().logError("Error while copying cookie proxy to platforms folder: " + e_2);
-                    return [3, 6];
-                case 6: return [2];
-            }
-        });
+var copyCookieProxy = function (destinationDirectory) { return __awaiter(void 0, void 0, void 0, function () {
+    var destAssets, cookieProxy, e_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, createAssetsDirectory(destinationDirectory)];
+            case 1:
+                destAssets = _a.sent();
+                _a.label = 2;
+            case 2:
+                _a.trys.push([2, 5, , 6]);
+                return [4, (0, FileHelper_1.readTextFromFile)((0, PathHelper_1.getCookieProxyPath)())];
+            case 3:
+                cookieProxy = _a.sent();
+                return [4, (0, FileHelper_1.writeTextToFile)((0, path_1.resolve)(destAssets, PathHelper_1.FILE_COOKIE_PROXY), cookieProxy)];
+            case 4:
+                _a.sent();
+                return [3, 6];
+            case 5:
+                e_2 = _a.sent();
+                Logger_1.Logger.getInstance().logError('Error while copying cookie proxy to platforms folder: ' + e_2);
+                return [3, 6];
+            case 6: return [2];
+        }
     });
-}
+}); };
 exports.copyCookieProxy = copyCookieProxy;
-function createAssetsDirectory(destinationDirectory) {
-    return __awaiter(this, void 0, void 0, function () {
-        var destAssets, e_3;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    destAssets = path_1.join(destinationDirectory, pathHelper_1.FOLDER_ASSETS);
-                    _a.label = 1;
-                case 1:
-                    _a.trys.push([1, 3, , 5]);
-                    return [4, fileHelper_1.checkIfFileExists(destAssets)];
-                case 2:
-                    _a.sent();
-                    return [3, 5];
-                case 3:
-                    e_3 = _a.sent();
-                    return [4, fileHelper_1.createDirectory(destAssets)];
-                case 4:
-                    _a.sent();
-                    return [3, 5];
-                case 5: return [2, destAssets];
-            }
-        });
+var createAssetsDirectory = function (destinationDirectory) { return __awaiter(void 0, void 0, void 0, function () {
+    var destAssets, e_3;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                destAssets = (0, path_1.join)(destinationDirectory, PathHelper_1.FOLDER_ASSETS);
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 3, , 5]);
+                return [4, (0, FileHelper_1.checkIfFileExists)(destAssets)];
+            case 2:
+                _a.sent();
+                return [3, 5];
+            case 3:
+                e_3 = _a.sent();
+                return [4, (0, FileHelper_1.createDirectory)(destAssets)];
+            case 4:
+                _a.sent();
+                return [3, 5];
+            case 5: return [2, destAssets];
+        }
     });
-}
-function removeOldDtAgent(path) {
+}); };
+var removeOldDtAgent = function (path) {
     try {
-        fileHelper_1.deleteFileSync(path);
+        (0, FileHelper_1.deleteFileSync)(path);
         return true;
     }
     catch (e) {
         return false;
     }
-}
+};
 exports.removeOldDtAgent = removeOldDtAgent;
