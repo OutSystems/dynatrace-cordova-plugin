@@ -1,1 +1,0 @@
-[Authorized Dynatrace Customer Subscription Agreement](https://github.com/Dynatrace/dem-license/blob/main/LICENSE.md)
