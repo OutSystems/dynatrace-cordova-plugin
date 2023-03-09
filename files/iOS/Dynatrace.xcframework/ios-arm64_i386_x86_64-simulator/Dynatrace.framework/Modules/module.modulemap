@@ -1,6 +1,0 @@
-framework module Dynatrace {
-    umbrella header "Framework.h"
-    
-    export *
-    module * { export * }
-}

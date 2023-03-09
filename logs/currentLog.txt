@@ -1,4 +1,0 @@
-#WARN  [2021-08-09 10:12:18]: Dependencies are not resolved - Will do npm install. Please wait!
-#WARN  [2021-08-09 10:12:40]: capacitor.config.json file is not available
-#INFO  [2021-08-09 10:12:40]: Created dynatrace.config.js - Please insert your configuration and update the file!
-#WARN  [2021-08-09 10:12:41]: capacitor.config.json file is not available
