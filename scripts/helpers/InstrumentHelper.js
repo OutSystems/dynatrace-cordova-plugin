@@ -82,142 +82,131 @@ var parseCommandLine = function (inputArgs) {
 };
 exports.parseCommandLine = parseCommandLine;
 var instrument = function (process) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, cliBuildArgs, jsagentContent, configJson, buildProperties, _b, _c, htmlInstrumentation, e_1, _d, htmlInstrumentation, e_2, e_3;
-    return __generator(this, function (_e) {
-        switch (_e.label) {
+    var _a, cliBuildArgs, jsagentContent, configJson, buildProperties, htmlFiles, htmlInstrumentation, _b, e_1, htmlInstrumentation, _c, e_2, e_3;
+    return __generator(this, function (_d) {
+        switch (_d.label) {
             case 0:
                 Logger_1.Logger.getInstance().logInfo('Starting Configuration of application ..');
                 _a = PluginUtil_1.logPluginVersion;
                 return [4, (0, InstallHelper_1.parsedPluginPackageJson)()];
             case 1:
-                _a.apply(void 0, [_e.sent()]);
+                _a.apply(void 0, [_d.sent()]);
                 cliBuildArgs = (0, InstrumentUtil_1.setCliBuildArgs)(process);
                 buildProperties = (0, InstrumentUtil_1.setBuildProperties)(instrumentHelper.parseCommandLine(process.argv.slice(2)));
-                if (!((buildProperties.iosAvailable === true) || (buildProperties.androidAvailable === true))) return [3, 31];
+                if (!((buildProperties.iosAvailable === true) || (buildProperties.androidAvailable === true))) return [3, 26];
                 if (buildProperties.isCapacitor === false) {
                     (0, HtmlUtil_1.removeOldDtAgent)((0, PathHelper_1.getDownloadJSAgentPath)());
                 }
-                _e.label = 2;
+                _d.label = 2;
             case 2:
-                _e.trys.push([2, 29, , 30]);
+                _d.trys.push([2, 24, , 25]);
                 Logger_1.Logger.getInstance().logInfo('Trying to read configuration file: ' + buildProperties.pathToConfig);
-                if (!(buildProperties.pathToConfig !== undefined)) return [3, 28];
+                if (!(buildProperties.pathToConfig !== undefined)) return [3, 23];
                 configJson = new ConfigurationReader_1.ConfigurationReader().readConfiguration(buildProperties.pathToConfig);
                 Logger_1.Logger.setType(LoggerType_1.LoggerType.FileLogger, configJson.getCordovaPluginConfiguration().isDebugEnabled());
                 if (!(buildProperties.pathToJsAgent !== undefined)) return [3, 4];
                 Logger_1.Logger.getInstance().logInfo('Checking if JSAgent file exists at custom path ..');
                 return [4, (0, FileHelper_1.readTextFromFile)(buildProperties.pathToJsAgent)];
             case 3:
-                jsagentContent = _e.sent();
+                jsagentContent = _d.sent();
                 return [3, 6];
             case 4: return [4, (0, DownloadAgent_1.downloadAgent)(configJson)];
             case 5:
-                jsagentContent = _e.sent();
-                _e.label = 6;
+                jsagentContent = _d.sent();
+                _d.label = 6;
             case 6:
+                htmlFiles = [];
+                if (configJson.getJavaScriptAgentConfiguration() !== undefined) {
+                    htmlFiles = configJson.getJavaScriptAgentConfiguration().getHtmlFiles();
+                }
                 if (!((buildProperties.androidAvailable === true) &&
-                    ((cliBuildArgs.android === true) || cliBuildArgs.capacitor === 'android'))) return [3, 18];
-                _e.label = 7;
+                    ((cliBuildArgs.android === true) || cliBuildArgs.capacitor === 'android'))) return [3, 14];
+                _d.label = 7;
             case 7:
-                _e.trys.push([7, 16, 17, 18]);
+                _d.trys.push([7, 12, 13, 14]);
                 Logger_1.Logger.getInstance().logInfo('Starting Android Configuration with Dynatrace!');
                 if (buildProperties.pathToGradle != null) {
                     (0, Android_1.instrumentAndroidPlatform)(buildProperties.pathToGradle, false);
                 }
                 (0, Android_1.writeGradleConfig)(configJson.getAndroidConfiguration());
-                _b = buildProperties;
-                if (!(buildProperties.isCapacitor === true)) return [3, 9];
-                return [4, (0, PathHelper_1.getAndroidAssetsPathCapacitor)()];
-            case 8:
-                _c = _e.sent();
-                return [3, 11];
-            case 9: return [4, (0, PathHelper_1.getAndroidAssetsPath)()];
-            case 10:
-                _c = _e.sent();
-                _e.label = 11;
-            case 11:
-                _b.androidAssetPath = _c;
+                buildProperties.androidAssetPath = (buildProperties.isCapacitor === true) ?
+                    (0, PathHelper_1.getAndroidAssetsPathCapacitor)() : (0, PathHelper_1.getAndroidAssetsPath)();
                 if ((buildProperties.isCapacitor === false) && buildProperties.androidAssetPath) {
                     (0, HtmlUtil_1.removeOldDtAgent)((0, path_1.join)(buildProperties.androidAssetPath, 'assets', 'dtAgent.js'));
                 }
-                if (!(jsagentContent === undefined)) return [3, 12];
+                if (!(jsagentContent === undefined)) return [3, 8];
                 Logger_1.Logger.getInstance()
                     .logWarning('Not instrumenting HTML files since there is no available JSAgent to inject!');
-                return [3, 15];
-            case 12:
-                htmlInstrumentation = new HtmlInstrumentation_1.HTMLInstrumentation(buildProperties.androidAssetPath, jsagentContent, configJson.getCordovaPluginConfiguration().isCookieProxyEnabled());
+                return [3, 11];
+            case 8:
+                htmlInstrumentation = new HtmlInstrumentation_1.HTMLInstrumentation(buildProperties.androidAssetPath, jsagentContent, configJson.getCordovaPluginConfiguration().isCookieProxyEnabled(), htmlFiles);
+                _b = UpdateSecurity_1.updateSecurity;
                 return [4, htmlInstrumentation.instrument()];
-            case 13:
-                _e.sent();
-                return [4, (0, UpdateSecurity_1.updateSecurity)(buildProperties.androidAssetPath, configJson)];
-            case 14:
-                _e.sent();
-                _e.label = 15;
-            case 15: return [3, 18];
-            case 16:
-                e_1 = _e.sent();
+            case 9: return [4, _b.apply(void 0, [_d.sent(), configJson])];
+            case 10:
+                _d.sent();
+                _d.label = 11;
+            case 11: return [3, 14];
+            case 12:
+                e_1 = _d.sent();
                 if (e_1 instanceof Error) {
                     Logger_1.Logger.getInstance().logError(e_1.message);
                 }
-                return [3, 18];
-            case 17:
+                return [3, 14];
+            case 13:
                 Logger_1.Logger.getInstance().logInfo('Finished Android Configuration with Dynatrace!');
                 return [7];
-            case 18:
-                if (!((buildProperties.iosAvailable === true) && ((cliBuildArgs.ios === true) || cliBuildArgs.capacitor === 'ios'))) return [3, 28];
-                _e.label = 19;
-            case 19:
-                _e.trys.push([19, 26, 27, 28]);
+            case 14:
+                if (!((buildProperties.iosAvailable === true) && ((cliBuildArgs.ios === true) || cliBuildArgs.capacitor === 'ios'))) return [3, 23];
+                _d.label = 15;
+            case 15:
+                _d.trys.push([15, 21, 22, 23]);
                 Logger_1.Logger.getInstance().logInfo('Starting iOS Configuration with Dynatrace!');
                 return [4, (0, Ios_1.modifyPListFile)(buildProperties.pathToPList, configJson.getIosConfiguration(), false)];
-            case 20:
-                _e.sent();
-                _d = buildProperties;
-                return [4, (0, PathHelper_1.getIOSAssetsPath)()];
-            case 21:
-                _d.iosAssetsPath = _e.sent();
+            case 16:
+                _d.sent();
+                buildProperties.iosAssetsPath = (0, PathHelper_1.getIOSAssetsPath)();
                 if ((buildProperties.isCapacitor === false) && buildProperties.iosAssetsPath !== undefined) {
                     (0, HtmlUtil_1.removeOldDtAgent)((0, path_1.join)(buildProperties.iosAssetsPath, 'assets', 'dtAgent.js'));
                 }
-                if (!(jsagentContent === undefined)) return [3, 22];
+                if (!(jsagentContent === undefined)) return [3, 17];
                 Logger_1.Logger.getInstance().
                     logWarning('Not instrumenting HTML files since there is no available JSAgent to inject!');
-                return [3, 25];
-            case 22:
-                if (!(buildProperties.iosAssetsPath !== undefined)) return [3, 25];
-                htmlInstrumentation = new HtmlInstrumentation_1.HTMLInstrumentation(buildProperties.iosAssetsPath, jsagentContent, configJson.getCordovaPluginConfiguration().isCookieProxyEnabled());
+                return [3, 20];
+            case 17:
+                if (!(buildProperties.iosAssetsPath !== undefined)) return [3, 20];
+                htmlInstrumentation = new HtmlInstrumentation_1.HTMLInstrumentation(buildProperties.iosAssetsPath, jsagentContent, configJson.getCordovaPluginConfiguration().isCookieProxyEnabled(), htmlFiles);
+                _c = UpdateSecurity_1.updateSecurity;
                 return [4, htmlInstrumentation.instrument()];
-            case 23:
-                _e.sent();
-                return [4, (0, UpdateSecurity_1.updateSecurity)(buildProperties.iosAssetsPath, configJson)];
-            case 24:
-                _e.sent();
-                _e.label = 25;
-            case 25: return [3, 28];
-            case 26:
-                e_2 = _e.sent();
+            case 18: return [4, _c.apply(void 0, [_d.sent(), configJson])];
+            case 19:
+                _d.sent();
+                _d.label = 20;
+            case 20: return [3, 23];
+            case 21:
+                e_2 = _d.sent();
                 if (e_2 instanceof Error) {
                     Logger_1.Logger.getInstance().logError(e_2.message);
                 }
-                return [3, 28];
-            case 27:
+                return [3, 23];
+            case 22:
                 Logger_1.Logger.getInstance().logInfo('Finished iOS Configuration with Dynatrace!');
                 return [7];
-            case 28: return [3, 30];
-            case 29:
-                e_3 = _e.sent();
+            case 23: return [3, 25];
+            case 24:
+                e_3 = _d.sent();
                 if (e_3 instanceof Error) {
                     Logger_1.Logger.getInstance().logError(e_3.message);
                 }
                 if (e_3 instanceof DownloadAgent_1.StopBuildError) {
                     throw e_3;
                 }
-                return [3, 30];
-            case 30: return [3, 32];
-            case 31:
+                return [3, 25];
+            case 25: return [3, 27];
+            case 26:
                 Logger_1.Logger.getInstance().logWarning('Both Android and iOS Folder are not available - Skip Configuration.');
-                _e.label = 32;
-            case 32:
+                _d.label = 27;
+            case 27:
                 Logger_1.Logger.getInstance().logInfo('Finished Configuration of Cordova application ..');
                 Logger_1.Logger.getInstance().closeLogger();
                 return [2];

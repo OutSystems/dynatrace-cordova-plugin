@@ -50,12 +50,13 @@ public class DynatraceCordovaPlugin extends CordovaPlugin {
 
         return true;
       } else if (action.equals(ACTION_UEM_IDENTIFY_USER)) {
-        String userId = args.getJSONObject(0).getString("userId");
-      
-        Dynatrace.identifyUser(userId);
-        callbackContext.success("UserId: " + userId);
-        return true;
-      }
+       String userId = args.getJSONObject(0).getString("userId");
+
+
+       Dynatrace.identifyUser(userId);
+       callbackContext.success("UserId: " + userId);
+       return true;
+     }
     } catch(Exception e) {
       System.err.println("Exception: " + e.getMessage());
       callbackContext.error(e.getMessage());
