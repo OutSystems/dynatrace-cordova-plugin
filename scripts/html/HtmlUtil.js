@@ -149,7 +149,7 @@ var copySwallowAPI = function (destinationDirectory) { return __awaiter(void 0, 
     });
 }); };
 exports.copySwallowAPI = copySwallowAPI;
-var copyCookieProxy = function (destinationDirectory) { return __awaiter(void 0, void 0, void 0, function () {
+var copyCookieProxy = function (destinationDirectory, cookieProxyProps) { return __awaiter(void 0, void 0, void 0, function () {
     var destAssets, cookieProxy, e_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -159,16 +159,16 @@ var copyCookieProxy = function (destinationDirectory) { return __awaiter(void 0,
                 _a.label = 2;
             case 2:
                 _a.trys.push([2, 5, , 6]);
-                return [4, (0, FileHelper_1.readTextFromFile)((0, PathHelper_1.getCookieProxyPath)())];
+                return [4, (0, FileHelper_1.readTextFromFile)(cookieProxyProps.path)];
             case 3:
                 cookieProxy = _a.sent();
-                return [4, (0, FileHelper_1.writeTextToFile)((0, path_1.resolve)(destAssets, PathHelper_1.FILE_COOKIE_PROXY), cookieProxy)];
+                return [4, (0, FileHelper_1.writeTextToFile)((0, path_1.resolve)(destAssets, cookieProxyProps.fileName), cookieProxy)];
             case 4:
                 _a.sent();
                 return [3, 6];
             case 5:
                 e_2 = _a.sent();
-                Logger_1.Logger.getInstance().logError('Error while copying cookie proxy to platforms folder: ' + e_2);
+                Logger_1.Logger.getInstance().logError(cookieProxyProps.errorLog + e_2);
                 return [3, 6];
             case 6: return [2];
         }

@@ -34,4 +34,14 @@
  */
 + (DTXAction* _Nonnull)touchActionWith:(NSDictionary* _Nonnull)reportValues;
 
+/*!
+ @brief Gets invoked automatically by the SwiftUI instrumentor when a touch action must be reported.
+ */
++ (DTXAction* _Nonnull)touchActionWith:(NSDictionary * _Nonnull)reportValues delayTimeout:(bool)delayTimout;
+
+/*!
+ @brief Gets invoked automatically by the SwiftUI instrumentor when an action is left.
+ */
++ (DTX_StatusCode)leaveActionIncludingAutoUserActionsWith:(DTXAction* _Nonnull)action;
+
 @end

@@ -37,6 +37,7 @@ var ConfigurationReader = (function () {
             cordovaConfigurationBuilder.setDebugMode(Boolean(rawConfig.cordova.debug));
             cordovaConfigurationBuilder.setCSPUrl(rawConfig.cordova.cspURL);
             cordovaConfigurationBuilder.setCookieProxy(Boolean(rawConfig.cordova.cookieProxy));
+            cordovaConfigurationBuilder.setCapacitorCookieProxy(Boolean(rawConfig.cordova.capacitorCookieProxy));
             cordovaConfigurationBuilder.setJsAgentPath((0, PluginUtil_1.sanitizePath)(rawConfig.cordova.jsAgentPath));
             cordovaConfigurationBuilder.setGradlePath((0, PluginUtil_1.sanitizePath)(rawConfig.cordova.gradlePath));
             cordovaConfigurationBuilder.setPlistPath((0, PluginUtil_1.sanitizePath)(rawConfig.cordova.plistPath));

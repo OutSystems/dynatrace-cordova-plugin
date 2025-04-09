@@ -1,5 +1,5 @@
 // Dynatrace.h
-// Version: 8.291.1.1004
+// Version: 8.309.1.1009
 //
 // These materials contain confidential information and
 // trade secrets of Dynatrace Corporation. You shall
@@ -79,6 +79,23 @@ typedef NS_ENUM(int, DTX_StatusCode) {
     DTX_CrashReportInvalid = -10,
     DTX_TruncatedUserId = -11,
 };
+
+/*!
+ @class DTXModifyableEvent
+ @abstract This class represents an event available for modification.
+ @discussion It can be used to modify an event scheduled to be sent.
+ */
+@interface DTXModifyableEvent : NSObject
+@property (nonatomic, readwrite) NSMutableDictionary<NSString*,id> * _Nonnull attributes;
+@end
+
+/*!
+ @class DTXModifyEventSubscriber
+ @abstract This class acts as a reference to a modify event closure.
+ @discussion It can be used to store a reference to an event modifier and remove the modifier in removeEventModifier.
+ */
+@interface DTXModifyEventSubscriber : NSObject
+@end
 
 /*!
  @category UIControl (DynatraceCustomization)
@@ -439,7 +456,7 @@ typedef NS_ENUM(int, DTX_StatusCode) {
 /*!
 @brief DTXUserPrivacyOptions protocol should be implemented by objects passed to applyUserPrivacyOptions:completion: method.
 @property crashReportingOptedIn current privacy setting for crash reporting
-@property crashReplayOptedIn (DEPRECATED in version >= 8.287) current privacy setting for crash Session Replay
+@property crashReplayOptedIn current privacy setting for crash Session Replay
 @property screenRecordOptedIn current privacy setting for Session Replay
 @property dataCollectionLevel the current data collection level.
 */
@@ -545,7 +562,7 @@ typedef NS_ENUM(int, DTX_SwiftUIViewType) {
 
  @return Returns a DTX_StatusCode
  */
-+ (DTX_StatusCode)shutdown;
++ (DTX_StatusCode)shutdown __deprecated_msg("Deprecated as of version 8.303, no replacement");
 
 /*!
  @brief Identify a user.
@@ -795,6 +812,75 @@ When the user optin feature is not used:
  @param attributes dictionary of attributes being attached to the sent event
 */
 + (void)sendBizEventWithType:(NSString* _Nonnull)type attributes:(NSDictionary<NSString*,id>* _Nullable)attributes;
+
+/*!
+ @brief Open a sheet that allows sharing the agent's the logs via an UIActivityViewController.
+
+ Only works when `DTXWriteLogsToFile` is set to `true` (defaults to `false`). If you want logs to be written to disk set `DTXWriteLogsToFile` set to `true`.
+
+ @param viewController the viewController the sharing sheet is shown on
+*/
++ (void)shareLogsFileOnViewController:(UIViewController* _Nonnull)viewController;
+
+/*!
+ * @brief Sends an event with the fields specified. A context can be added to provide information for later modification.
+ *
+ * Note: This feature is currently only supported for Real User Monitoring powered by Grail on Dynatrace SaaS deployments.
+ *
+ * @param fields fields of the event being sent
+ * @param eventContext context of the event being sent provided for potential later modification
+ */
++ (void)sendEventWithFields:(NSDictionary<NSString*,id>* _Nullable)fields eventContext:(id _Nullable)eventContext NS_SWIFT_NAME(sendEvent(fields:eventContext:));
+
+/*!
+ * @brief A view refers to a view/screen/window which a user is presented with at any one time. On every opening of a view
+ * the startView method can be called to highlight the current view context of the user. All events happening
+ * thereafter will be analysable in context of that view. This method also clears the previous view context, if
+ * set.
+ *
+ * Note: This feature is currently only supported for Real User Monitoring powered by Grail on Dynatrace SaaS deployments.
+ *
+ * @param name of view
+ */
++ (void)startViewWithName:(NSString* _Nonnull)name NS_SWIFT_NAME(startView(name:));
+
+/*!
+ * @brief Method clears the previous view context, if set.
+ *
+ * Note: This feature is currently only supported for Real User Monitoring powered by Grail on Dynatrace SaaS deployments.
+ *
+ * See startViewWithName(NSString*)name
+ */
++ (void)stopView;
+
+/*!
+ * @brief Adds a modifier that enriches future events by applying the modifier function to them.
+ *
+ * Note: This feature is currently only supported for Real User Monitoring powered by Grail on Dynatrace SaaS deployments.
+ *
+ * @param eventModifier the modification function that is applied to each event
+ * @return An event subscriber that can be used to remove the subscription
+ */
++ (DTXModifyEventSubscriber* _Nonnull)addEventModifier:(DTXModifyableEvent* _Nullable (^ _Nonnull)(DTXModifyableEvent* _Nonnull event, id _Nullable eventContext))eventModifier;
+
+/*!
+ * @brief Removes a previously added event modifier.
+ *
+ * Note: This feature is currently only supported for Real User Monitoring powered by Grail on Dynatrace SaaS deployments.
+ *
+ * @param subscriber the previously added subscriber
+ */
++ (void)removeEventModifier:(DTXModifyEventSubscriber* _Nonnull)subscriber;
+
+/*!
+ * @brief Sends a session properties event. Any custom properties must be added in the `session_properties.*` namespace,
+ * otherwise they will be dropped. Only one session properties event may be active for every session.
+ *
+ * Note: This feature is currently only supported for Real User Monitoring powered by Grail on Dynatrace SaaS deployments.
+ *
+ * @param properties properties that apply to all events in the current session
+ */
++ (void)sendSessionPropertyEvent:(NSDictionary<NSString*,id>* _Nullable)properties;
 
 @end
 #endif

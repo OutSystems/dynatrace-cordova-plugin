@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isCapacitorApp = exports.getCapacitorConfig = exports.getCapCliPackage = exports.getIosAssetsPathCapacitor = exports.getAndroidAssetsPathCapacitor = exports.getIosPlistPathCapacitor = exports.getAndroidPathCapacitor = exports.getIosPathCapacitor = exports.getDynatracePluginGradleFile = exports.getDynatraceGradleFile = exports.getLogPath = exports.getCurrentLogPath = exports.getCookieProxyPath = exports.getSwallowApiPath = exports.getDownloadJSAgentPath = exports.getIOSAssetsPath = exports.getAndroidAssetsPath = exports.getConfigFilePath = exports.getDefaultConfig = exports.getAndroidGradleVersionNewer = exports.getAndroidGradleVersion = exports.dynatraceConfigExists = exports.isIonic = exports.getIonicConfig = exports.getDoctorLogPath = exports.getAndroidGradleFile = exports.getPluginPath = exports.getPluginPackage = exports.getAndroidPath = exports.getIosPath = exports.getApplicationPackage = exports.getApplicationPath = exports.setRoot = exports.FILE_COOKIE_PROXY = exports.FILE_SWALLOW_API = exports.FILE_JSAGENT = exports.FOLDER_ASSETS = void 0;
+exports.isCapacitorApp = exports.getCapacitorCookieProxyPath = exports.getCapacitorConfig = exports.getCapCliPackage = exports.getIosAssetsPathCapacitor = exports.getAndroidAssetsPathCapacitor = exports.getIosPlistPathCapacitor = exports.getAndroidPathCapacitor = exports.getIosPathCapacitor = exports.getDynatracePluginGradleFile = exports.getDynatraceGradleFile = exports.getLogPath = exports.getCurrentLogPath = exports.getCookieProxyPath = exports.getSwallowApiPath = exports.getDownloadJSAgentPath = exports.getIOSAssetsPath = exports.getAndroidAssetsPath = exports.getConfigFilePath = exports.getDefaultConfig = exports.getAndroidGradleVersionNewer = exports.getAndroidGradleVersion = exports.dynatraceConfigExists = exports.isIonic = exports.getIonicConfig = exports.getDoctorLogPath = exports.getAndroidGradleFile = exports.getPluginPath = exports.getPluginPackage = exports.getAndroidPath = exports.getIosPath = exports.getApplicationPackage = exports.getApplicationPath = exports.setRoot = exports.FILE_CAPACITOR_COOKIE_PROXY = exports.FILE_COOKIE_PROXY = exports.FILE_SWALLOW_API = exports.FILE_JSAGENT = exports.FOLDER_ASSETS = void 0;
 var path_1 = require("path");
 var fs_1 = require("fs");
 var FOLDER_PLATFORMS = 'platforms';
@@ -14,9 +14,12 @@ var FOLDER_NODE_MODULES = 'node_modules';
 var FILE_PACKAGE = 'package.json';
 var FILE_CONFIG = 'dynatrace.config.js';
 var FILE_CURRENT_LOG = 'currentLog.txt';
+var FILE_CAPACITOR_CONFIG_TS = (0, path_1.join)(__dirname, '..', '..', '..', '..', '..', 'capacitor.config.ts');
+var FILE_CAPACITOR_CONFIG_JSON = (0, path_1.join)(__dirname, '..', '..', '..', '..', '..', 'capacitor.config.json');
 exports.FILE_JSAGENT = 'dtAgent.js';
 exports.FILE_SWALLOW_API = 'dtrum-swallow-api.js';
 exports.FILE_COOKIE_PROXY = 'dt-cookie-proxy.js';
+exports.FILE_CAPACITOR_COOKIE_PROXY = 'dt-cookie-proxy-cap.js';
 var rootPath = __dirname;
 var setRoot = function (newRoot) {
     rootPath = (0, path_1.resolve)(newRoot);
@@ -82,6 +85,8 @@ var getSwallowApiPath = function () { return (0, path_1.join)(getPluginPath(), F
 exports.getSwallowApiPath = getSwallowApiPath;
 var getCookieProxyPath = function () { return (0, path_1.join)(getPluginPath(), FOLDER_SCRIPTS, 'snippets', exports.FILE_COOKIE_PROXY); };
 exports.getCookieProxyPath = getCookieProxyPath;
+var getCapacitorCookieProxyPath = function () { return (0, path_1.join)(getPluginPath(), FOLDER_SCRIPTS, 'snippets', exports.FILE_CAPACITOR_COOKIE_PROXY); };
+exports.getCapacitorCookieProxyPath = getCapacitorCookieProxyPath;
 var getCurrentLogPath = function () { return (0, path_1.join)(getLogPath(), FILE_CURRENT_LOG); };
 exports.getCurrentLogPath = getCurrentLogPath;
 var getLogPath = function () { return (0, path_1.join)(getPluginPath(), FOLDER_LOGS); };
@@ -124,8 +129,13 @@ var getIosAssetsPathCapacitor = function () {
 };
 exports.getIosAssetsPathCapacitor = getIosAssetsPathCapacitor;
 var getCapacitorConfig = function (checkForTs) {
-    return (checkForTs === true) ? (0, path_1.join)(__dirname, '..', '..', '..', '..', '..', 'capacitor.config.ts')
-        : (0, path_1.join)(__dirname, '..', '..', '..', '..', '..', 'capacitor.config.json');
+    if ((0, fs_1.existsSync)(FILE_CAPACITOR_CONFIG_TS) || checkForTs === true) {
+        return FILE_CAPACITOR_CONFIG_TS;
+    }
+    else if ((0, fs_1.existsSync)(FILE_CAPACITOR_CONFIG_JSON)) {
+        return FILE_CAPACITOR_CONFIG_JSON;
+    }
+    return '';
 };
 exports.getCapacitorConfig = getCapacitorConfig;
 var isCapacitorApp = function () { return (0, fs_1.existsSync)(getCapacitorConfig()) || (0, fs_1.existsSync)(getCapacitorConfig(true)); };

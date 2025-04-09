@@ -41,15 +41,15 @@ var Logger_1 = require("../logger/Logger");
 var HtmlModifier_1 = require("./HtmlModifier");
 var HtmlUtil_1 = require("./HtmlUtil");
 var HTMLInstrumentation = (function () {
-    function HTMLInstrumentation(folder, jsAgentContent, cookieProxyEnabled, htmlPathsConfigured) {
+    function HTMLInstrumentation(folder, jsAgentContent, cookieProxySource, htmlPathsConfigured) {
         this.folder = folder;
         this.jsAgentContent = jsAgentContent;
-        this.cookieProxyEnabled = cookieProxyEnabled;
+        this.cookieProxySource = cookieProxySource;
         this.htmlPathsConfigured = htmlPathsConfigured;
     }
     HTMLInstrumentation.prototype.instrument = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var htmlFiles, _a, _b, _i, htmlFiles_1, htmlFile, htmlModifier;
+            var htmlFiles, _a, _b, instrumentationLogMessage, _i, htmlFiles_1, htmlFile, htmlModifier;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0: return [4, (0, HtmlUtil_1.searchHTMLFiles)(this.folder)];
@@ -63,6 +63,18 @@ var HTMLInstrumentation = (function () {
                         Logger_1.Logger.getInstance().logInfo('No HTML files to instrument!');
                         return [3, 8];
                     case 3:
+                        instrumentationLogMessage = '\n\nSuccessfully added JSAgent ';
+                        if (this.cookieProxySource !== undefined) {
+                            if (this.cookieProxySource.includes('-cap.js')) {
+                                instrumentationLogMessage = instrumentationLogMessage + 'and Capacitor Cookie Proxy to HTML file(s):';
+                            }
+                            else {
+                                instrumentationLogMessage = instrumentationLogMessage + 'and Cookie Proxy to HTML file(s):';
+                            }
+                        }
+                        else {
+                            instrumentationLogMessage = instrumentationLogMessage + 'to HTML file(s):';
+                        }
                         _i = 0, htmlFiles_1 = htmlFiles;
                         _c.label = 4;
                     case 4:
@@ -71,16 +83,17 @@ var HTMLInstrumentation = (function () {
                         htmlModifier = new HtmlModifier_1.HTMLModifier(htmlFile);
                         htmlModifier.setJSAgentContent(this.jsAgentContent);
                         htmlModifier.setSwallowAPIEnabled(true);
-                        htmlModifier.setCookieProxyEnabled(this.cookieProxyEnabled);
+                        htmlModifier.setCookieProxySource(this.cookieProxySource);
                         return [4, htmlModifier.modify()];
                     case 5:
                         _c.sent();
+                        instrumentationLogMessage = instrumentationLogMessage + "\n\t".concat(htmlFile.getPath());
                         _c.label = 6;
                     case 6:
                         _i++;
                         return [3, 4];
                     case 7:
-                        Logger_1.Logger.getInstance().logInfo('Successfully updated the JSAgent in HTML file!');
+                        Logger_1.Logger.getInstance().logInfo(instrumentationLogMessage + '\n');
                         _c.label = 8;
                     case 8: return [2, htmlFiles];
                 }

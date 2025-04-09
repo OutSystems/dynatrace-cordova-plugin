@@ -71,8 +71,8 @@ var HTMLReader = (function () {
                         return [4, (0, FileHelper_1.readTextFromFile)(this.htmlFile)];
                     case 2:
                         data = _a.sent();
-                        return [2, new HtmlFile_1.HTMLFile(this.htmlFile, new jsdom_1.JSDOM(data))];
-                    case 3: return [2, new HtmlFile_1.HTMLFile(this.htmlFile, new jsdom_1.JSDOM(''))];
+                        return [2, new HtmlFile_1.HTMLFile(this.htmlFile, new jsdom_1.JSDOM(data), data)];
+                    case 3: return [2, new HtmlFile_1.HTMLFile(this.htmlFile, new jsdom_1.JSDOM(''), "")];
                 }
             });
         });

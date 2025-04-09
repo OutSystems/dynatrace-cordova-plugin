@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setBuildProperties = exports.setCliBuildArgs = void 0;
+exports.getCookieProxyProps = exports.setBuildProperties = exports.setCliBuildArgs = void 0;
 var path_1 = require("path");
 var FileHelper_1 = require("../helpers/FileHelper");
 var PathHelper_1 = require("../helpers/PathHelper");
@@ -71,3 +71,20 @@ var setBuildProperties = function (argv) {
     return buildProperties;
 };
 exports.setBuildProperties = setBuildProperties;
+var getCookieProxyProps = function (cookieProxySource) {
+    var cookieProxyProps = cookieProxySource.includes('-cap') ?
+        {
+            path: (0, PathHelper_1.getCapacitorCookieProxyPath)(),
+            name: 'capacitor cookie proxy',
+            fileName: PathHelper_1.FILE_CAPACITOR_COOKIE_PROXY,
+            errorLog: 'Error while copying capacitor cookie proxy to platforms folder: '
+        } :
+        {
+            path: (0, PathHelper_1.getCookieProxyPath)(),
+            name: 'cookie proxy',
+            fileName: PathHelper_1.FILE_COOKIE_PROXY,
+            errorLog: 'Error while copying cookie proxy to platforms folder: '
+        };
+    return cookieProxyProps;
+};
+exports.getCookieProxyProps = getCookieProxyProps;

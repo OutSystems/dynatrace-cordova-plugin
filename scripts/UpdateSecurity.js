@@ -40,7 +40,8 @@ exports.checkForPolicy = exports.updateSecurity = void 0;
 var FileHelper_1 = require("./helpers/FileHelper");
 var Logger_1 = require("./logger/Logger");
 var SEC_POLICY_IDENTIFIER = 'Content-Security-Policy';
-var HTML_IDENTIFIER = ['src="cordova.js"', '<ion-app>'];
+var HTML_IDENTIFIER = ['src="cordova.js"', '<ion-app>', '<app-root>'];
+var HTML_REQUIRED = ['<!doctype html', '<html', '</html>', '<head', '</head>'];
 var CONNECT_SRC = 'connect-src';
 var updateSecurity = function (htmlFiles, configuration) { return __awaiter(void 0, void 0, void 0, function () {
     var _i, htmlFiles_1, htmlFile;
@@ -117,9 +118,14 @@ var checkForPolicy = function (htmlFile) {
     if (content.indexOf(SEC_POLICY_IDENTIFIER) > -1) {
         for (var _i = 0, HTML_IDENTIFIER_1 = HTML_IDENTIFIER; _i < HTML_IDENTIFIER_1.length; _i++) {
             var identifer = HTML_IDENTIFIER_1[_i];
-            if (content.indexOf(identifer)) {
+            if (content.toLowerCase().indexOf(identifer) > -1) {
+                Logger_1.Logger.getInstance().logInfo('Successfully updated the CSP: ' + htmlFile);
                 return true;
             }
+        }
+        if (HTML_REQUIRED.every(function (value) { return content.toLowerCase().includes(value); })) {
+            Logger_1.Logger.getInstance().logInfo('Successfully updated the CSP: ' + htmlFile);
+            return true;
         }
     }
     return false;
