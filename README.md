@@ -3,6 +3,8 @@
 This plugin is based on the code published by Dynatrace as an NPM package at [this location](https://www.npmjs.com/package/@dynatrace/cordova-plugin).
 It gives you the ability to use the Dynatrace instrumentation in your hybrid application.
 
+**For development workflow, setup, and coding standards, see [CONTRIBUTING.md](./CONTRIBUTING.md).**
+
 ## Dynatrace Cordova plugin version
 
 This is based on @dynatrace/cordova-plugin version 2.309.1.
