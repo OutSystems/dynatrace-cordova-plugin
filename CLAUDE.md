@@ -13,8 +13,8 @@ This is an OutSystems wrapper of the Dynatrace Cordova plugin that enables mobil
 ## Related Documentation
 
 - **[ARCHITECTURE.md](./ARCHITECTURE.md)** - System architecture, external integrations table, and architectural tenets including build-time vs runtime separation, platform-specific native bridge pattern, and OutSystems customization layer
-- **[CONTRIBUTING.md](./CONTRIBUTING.md)** - Development setup, workflow, code standards, linting/formatting configuration, and the complete wrapper update procedure
-- **[README.md](./README.md)** - Step-by-step instructions for updating this wrapper with new upstream Dynatrace versions, including native code modifications for iOS and Android
+- **[CONTRIBUTING.md](./CONTRIBUTING.md)** - Development setup, workflow, code standards, linting/formatting configuration, and the complete wrapper update procedure including native code modifications for iOS and Android
+- **[README.md](./README.md)** - User-facing documentation with installation, usage, and plugin overview
 
 ## Quick Command Reference
 
@@ -127,7 +127,7 @@ When modifying native bridges:
 
 ### Updating the Wrapper
 
-Complete step-by-step procedure in [README.md](./README.md) under "How to Update this Wrapper". High-level steps:
+Complete step-by-step procedure in [CONTRIBUTING.md](./CONTRIBUTING.md#updating-the-plugin-wrapper). High-level steps:
 
 1. Install new `@dynatrace/cordova-plugin` version via Cordova
 2. Copy OutSystems customizations (`scripts/Outsystems/`, `other/IdentifyUserNative.js`)
@@ -135,7 +135,7 @@ Complete step-by-step procedure in [README.md](./README.md) under "How to Update
 4. Modify native code (Android Java, iOS Objective-C) to add `identifyUser` action
 5. Update version numbers in `package.json`, `plugin.xml`, and README.md
 
-**Always consult README.md for the authoritative update procedure.**
+**Always consult CONTRIBUTING.md for the authoritative update procedure.**
 
 ### Versioning and Branching
 
@@ -164,7 +164,7 @@ To expose a new native Dynatrace SDK method to JavaScript:
 4. Add method declaration in `other/DynatraceCordovaPlugin.h` and implementation in `.m` (iOS)
 5. Test on both platforms
 
-See README.md "Identify users in the native side" section for a complete worked example.
+See [CONTRIBUTING.md - "Identify users in the native side"](./CONTRIBUTING.md#identify-users-in-the-native-side) section for a complete worked example.
 
 ### Diagnosing Plugin Issues
 
