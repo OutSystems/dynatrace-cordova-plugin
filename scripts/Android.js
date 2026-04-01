@@ -30,33 +30,43 @@ exports.instrumentAndroidPlatform = instrumentAndroidPlatform;
 var changeCordovaBuildGradleFile = function (pathToGradle, remove) {
     var gradleFileContent = (0, FileHelper_1.readTextFromFileSync)(pathToGradle);
     var gradleFileContentLines = gradleFileContent.split('\n');
-    var gradlePluginFileIndex = -1;
-    var gradleDynatraceFileIndex = -1;
-    for (var i = 0; i < gradleFileContentLines.length && (gradleDynatraceFileIndex === -1 || gradlePluginFileIndex === -1); i++) {
-        if (gradleFileContentLines[i].indexOf('plugin.gradle') > -1) {
-            gradlePluginFileIndex = i;
-        }
-        else if (gradleFileContentLines[i].indexOf('dynatrace.gradle') > -1) {
-            gradleDynatraceFileIndex = i;
-        }
-    }
-    var modified = false;
+    var modifiedPluginGradle = handlePluginGradle(gradleFileContentLines, remove);
+    var modifiedDynatraceGradle = handleDynatraceGradle(gradleFileContentLines, remove);
+    var modified = modifiedPluginGradle || modifiedDynatraceGradle;
     if (remove) {
-        if (gradlePluginFileIndex !== -1) {
-            gradleFileContentLines.splice(gradlePluginFileIndex, 1);
-            modified = true;
-        }
-        if (gradleDynatraceFileIndex !== -1) {
-            gradleFileContentLines.splice(gradleDynatraceFileIndex - (modified ? 1 : 0), 1);
-            modified = true;
-        }
         if (modified) {
             Logger_1.Logger.getInstance().logInfo('Removed Dynatrace modifications from build.gradle: ' + pathToGradle);
         }
     }
     else {
+        if (modified) {
+            Logger_1.Logger.getInstance().logInfo('Added Dynatrace plugin.gradle to the build.gradle: ' + pathToGradle);
+        }
+        else {
+            Logger_1.Logger.getInstance().logInfo('Dynatrace plugin & agent already added to build.gradle');
+        }
+    }
+    if (modified) {
+        var fullGradleFile = gradleFileContentLines.join('\n');
+        (0, FileHelper_1.writeTextToFileSync)(pathToGradle, fullGradleFile);
+    }
+};
+var handlePluginGradle = function (gradleFileContentLines, remove) {
+    var gradlePluginFileIndex = -1;
+    for (var i = 0; i < gradleFileContentLines.length; i++) {
+        if (gradleFileContentLines[i].indexOf('plugin.gradle') > -1) {
+            gradlePluginFileIndex = i;
+            break;
+        }
+    }
+    if (remove) {
+        if (gradlePluginFileIndex !== -1) {
+            gradleFileContentLines.splice(gradlePluginFileIndex, 1);
+            return true;
+        }
+    }
+    else {
         var oldPluginValue = gradleFileContentLines[gradlePluginFileIndex];
-        var oldDynatraceValue = gradleFileContentLines[gradleDynatraceFileIndex];
         if (gradlePluginFileIndex === -1 || (oldPluginValue !== undefined && oldPluginValue.includes(OLD_DYNATRACE_PLUGIN))) {
             if (oldPluginValue !== undefined && oldPluginValue.includes(OLD_DYNATRACE_PLUGIN)) {
                 gradleFileContentLines.splice(gradlePluginFileIndex, 1);
@@ -72,26 +82,36 @@ var changeCordovaBuildGradleFile = function (pathToGradle, remove) {
                 throw new Error('Could not find Buildscript block in build.gradle.');
             }
             gradleFileContentLines.splice(gradleFileCordovaIndex + 1, 0, (0, exports.getGradleApplyBuildScript)());
-            modified = true;
+            return true;
         }
+    }
+    return false;
+};
+var handleDynatraceGradle = function (gradleFileContentLines, remove) {
+    var gradleDynatraceFileIndex = -1;
+    for (var i = 0; i < gradleFileContentLines.length; i++) {
+        if (gradleFileContentLines[i].indexOf('dynatrace.gradle') > -1) {
+            gradleDynatraceFileIndex = i;
+            break;
+        }
+    }
+    if (remove) {
+        if (gradleDynatraceFileIndex !== -1) {
+            gradleFileContentLines.splice(gradleDynatraceFileIndex, 1);
+            return true;
+        }
+    }
+    else {
+        var oldDynatraceValue = gradleFileContentLines[gradleDynatraceFileIndex];
         if (gradleDynatraceFileIndex === -1 || (oldDynatraceValue !== undefined && oldDynatraceValue.includes(OLD_DYNATRACE_PLUGIN))) {
             if (oldDynatraceValue !== undefined && oldDynatraceValue.includes(OLD_DYNATRACE_PLUGIN)) {
                 gradleFileContentLines.splice(gradleDynatraceFileIndex, 1);
             }
             gradleFileContentLines.splice(gradleFileContentLines.length, 0, (0, exports.getGradleApplyDynatraceScript)());
-            modified = true;
-        }
-        if (modified) {
-            Logger_1.Logger.getInstance().logInfo('Added Dynatrace plugin.gradle to the build.gradle: ' + pathToGradle);
-        }
-        else {
-            Logger_1.Logger.getInstance().logInfo('Dynatrace plugin & agent already added to build.gradle');
+            return true;
         }
     }
-    if (modified) {
-        var fullGradleFile = gradleFileContentLines.join('\n');
-        (0, FileHelper_1.writeTextToFileSync)(pathToGradle, fullGradleFile);
-    }
+    return false;
 };
 var writeGradleConfig = function (androidConfig) {
     if (!androidConfig.isConfigurationAvailable()) {

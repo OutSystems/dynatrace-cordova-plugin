@@ -10,7 +10,7 @@ interface DynatraceNativeRequestCookies {
  */
 interface DynatraceNativeRequestHeaders {
     "x-dtpc": string;
-    "x-dynatrace": string;
+    "x-dtc": string;
     "x-dtreferer": string;
 }
 

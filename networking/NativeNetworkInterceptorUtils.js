@@ -2,11 +2,21 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NativeNetworkInterceptorUtils = void 0;
 var sessionStoragePrefix = '_dt.';
+var parseDtAdkFromUserAgent = function (userAgent) {
+    var match = userAgent.match(/dtAdk=([^;\s)]+)/);
+    return match ? match[1] : '';
+};
 var getDTC = function (actionId) {
     var referer = getReferer(actionId);
     var dtAdk = getCookieValue('dtAdk', false);
+    var userAgent = navigator.userAgent || '';
     if (dtAdk === '') {
-        dtAdk = getLocalStorageValue('dtAdk');
+        if (userAgent.indexOf("dtAdk=") >= 0) {
+            dtAdk = parseDtAdkFromUserAgent(userAgent);
+        }
+        else {
+            dtAdk = getLocalStorageValue('dtAdk');
+        }
     }
     return "sn=\"".concat(getSessionNumber(getCookieValue('dtCookie', true)), "\", pc=\"").concat(patchPageContext(getCookieValue('dtPC', true), actionId), "\"")
         + ", v=\"".concat(getCookieValue('rxVisitor', true), "\", r=\"").concat(referer, "\", app=\"").concat(getApplicationId(), "\", adk=\"").concat(dtAdk, "\"");
@@ -80,7 +90,6 @@ exports.NativeNetworkInterceptorUtils = {
             console.log('Missing Dynatrace Javascript Agent API!');
             return headers;
         }
-        headers['x-dynatrace'] = '';
         headers['x-dtc'] = getDTC(actionId);
         return headers;
     },

@@ -20,13 +20,13 @@ extension SwiftUICore.View {
   
 }
 @available(iOS 13.0, *)
+extension SwiftUICore.View {
+  @_Concurrency.MainActor @preconcurrency public func uiKitBridge(_ index: Swift.Int, _ responder: Swift.Bool = false) -> some SwiftUICore.View
+  
+}
+@available(iOS 13.0, *)
 public enum SwiftUIInstrumentationConfigParam {
-  case skipInstrumentation, useDefaultControlName, doNotReportStateVariable
-  public static func == (a: SwiftUIInstrumentationConfigParam, b: SwiftUIInstrumentationConfigParam) -> Swift.Bool
-  public func hash(into hasher: inout Swift.Hasher)
-  public var hashValue: Swift.Int {
-    get
-  }
+  case skipInstrumentation, useDefaultControlName, doNotReportStateVariable, useControlName(Swift.String)
 }
 @available(iOS 13.0, *)
 @_Concurrency.MainActor @preconcurrency public struct instrument<Content> : Swift.Sendable, SwiftUICore.View where Content : SwiftUICore.View {
@@ -37,7 +37,3 @@ public enum SwiftUIInstrumentationConfigParam {
   @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, *)
   public typealias Body = @_opaqueReturnTypeOf("$s9Dynatrace10instrumentV4bodyQrvp", 0) __<Content>
 }
-@available(iOS 13.0, *)
-extension SwiftUIInstrumentationConfigParam : Swift.Equatable {}
-@available(iOS 13.0, *)
-extension SwiftUIInstrumentationConfigParam : Swift.Hashable {}

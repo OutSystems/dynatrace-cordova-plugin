@@ -10,11 +10,11 @@
 		</data>
 		<key>Headers/Dynatrace.h</key>
 		<data>
-		gefiVnwaxIFwn9FoM9d5xNMFZbY=
+		zdJ4gO+nNm1T0/bim/GsNi2fDX8=
 		</data>
 		<key>Headers/DynatraceSwiftUI.h</key>
 		<data>
-		ipzUdCe3PGUWxeLFjWMqgcKfSdU=
+		InGoiPXhUJKuENFvTWduvla2xHE=
 		</data>
 		<key>Headers/Framework.h</key>
 		<data>
@@ -22,15 +22,15 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		JWYrr28/2ZK7RjKZPApTozlQDAQ=
+		fA6JNTAVg2geIwB+VKZCN3WU0v8=
 		</data>
 		<key>Modules/Dynatrace.swiftmodule/Project/arm64-apple-tvos-simulator.swiftsourceinfo</key>
 		<data>
-		Lyg9v7jCsqkuCIR5yfRJuchbgpw=
+		f5Op38ZsKmxeuUpv7e027e0uUGo=
 		</data>
 		<key>Modules/Dynatrace.swiftmodule/Project/x86_64-apple-tvos-simulator.swiftsourceinfo</key>
 		<data>
-		KrzqTWNYb+9CjFkM3Zfeze3Bkv4=
+		ATieVZa8ArTdqfYq6weOeYvpx8U=
 		</data>
 		<key>Modules/Dynatrace.swiftmodule/arm64-apple-tvos-simulator.abi.json</key>
 		<data>
@@ -50,7 +50,7 @@
 		</data>
 		<key>Modules/Dynatrace.swiftmodule/arm64-apple-tvos-simulator.swiftmodule</key>
 		<data>
-		Fq92j5RtvzvitL7IZ8HWjHvA2pk=
+		S1ggVEK+FosfXRShB0uq6Yb2MHI=
 		</data>
 		<key>Modules/Dynatrace.swiftmodule/x86_64-apple-tvos-simulator.abi.json</key>
 		<data>
@@ -70,7 +70,7 @@
 		</data>
 		<key>Modules/Dynatrace.swiftmodule/x86_64-apple-tvos-simulator.swiftmodule</key>
 		<data>
-		oZ2gvaCXO14TvOEPCEujkFO7MN8=
+		iIPrA8+0D8ceQCaobyNIBU9r7tk=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -94,14 +94,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			qSGMJnNYVByMMcujAs/eGlx3L5sfk0rLpYCQLAhZEv4=
+			ckC4PqSJvRxA91V5E+lHPbCp8BCMxDjlFwkdgEm9WA8=
 			</data>
 		</dict>
 		<key>Headers/DynatraceSwiftUI.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			72+zp5rfQagGPuk1fmThFTzNh8A2qTjdYAQGYXZtUOs=
+			VKoISoyTpOH7z/eaRg5GyC3SUAGwOf0yQw/66gNVSJY=
 			</data>
 		</dict>
 		<key>Headers/Framework.h</key>
@@ -115,14 +115,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			43pl1Um7LY5nQORtpLrHmZXFu+khnwPWONjP3tcYKVI=
+			4nrS4N0AlXlxGUj1w8SrBa6kVyfwD2PCa+Aq9UFNL70=
 			</data>
 		</dict>
 		<key>Modules/Dynatrace.swiftmodule/Project/x86_64-apple-tvos-simulator.swiftsourceinfo</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			GG92EaCvWevMDyWWacZDGHX0We/AQ63bF8fGrh+WVo4=
+			EEkSXg+mHxcbYHFlCIfFDxlt8SEYsyj3y9ieCQ3HTYM=
 			</data>
 		</dict>
 		<key>Modules/Dynatrace.swiftmodule/arm64-apple-tvos-simulator.abi.json</key>
@@ -157,7 +157,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			kSFcFQ4c10EHP6cKQGlDDJMRdsmVD9K4ZyUPEqszV1I=
+			Mxy7Wvu0LJ+KGmRFw5+svn6nF65NG8/JVlpb3Tda63U=
 			</data>
 		</dict>
 		<key>Modules/Dynatrace.swiftmodule/x86_64-apple-tvos-simulator.abi.json</key>
@@ -192,7 +192,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			R28FkmNOoW19uBVUyjTeT9pN2g4Fc2cJYKGHq/Y7nd8=
+			LRodieQe0FU53kkSPlW4gVqkTzIv7IBukJqqlW+1SQo=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>

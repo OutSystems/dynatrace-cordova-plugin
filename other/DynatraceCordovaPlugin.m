@@ -21,7 +21,6 @@
     [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 }
 
-
 - (void) getUserPrivacyOptions:(CDVInvokedUrlCommand*)command
 {
     NSMutableDictionary *privacyDict = [[NSMutableDictionary alloc] init];
@@ -56,24 +55,21 @@
 }
 
 - (void)identifyUser:(CDVInvokedUrlCommand*)command
-{  
-   CDVPluginResult* pluginResult;
+{
+    CDVPluginResult* pluginResult;
 
+    if ([command.arguments objectAtIndex:0]) {
 
-   if ([command.arguments objectAtIndex:0]) {
+        NSString* userId = [[command.arguments objectAtIndex:0] valueForKey:@"userId"];
 
+        DTX_StatusCode result = [Dynatrace identifyUser:userId];
 
-       NSString* userId = [[command.arguments objectAtIndex:0] valueForKey:@"userId"];
-      
-       DTX_StatusCode result = [Dynatrace identifyUser:userId];
-       pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@("Success")];
-   } else {
-       pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-   }
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@("Success")];
+    } else {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+    }
 
-
-   [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
-
 
 @end
