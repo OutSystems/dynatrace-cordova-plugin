@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isOptOut = exports.parsedNpmConfig = exports.parsedCapPackageJson = exports.parsedPluginPackageJson = exports.parsedApplicationPackageJson = exports.removeScriptHookAndDeps = exports.addScriptHook = exports.isCapVersionThreeOneOrHigher = exports.removePListModification = exports.removeGradleModification = exports.modifyPackageJsonCap = exports.CAP_HOOK = exports.IONIC_HOOK = void 0;
+exports.moveIosFilesForSPM = exports.replacePackageSwiftWithOriginal = exports.isOptOut = exports.parsedNpmConfig = exports.parsedCapPackageJson = exports.parsedPluginPackageJson = exports.parsedApplicationPackageJson = exports.removeScriptHookAndDeps = exports.addScriptHook = exports.removePListModification = exports.removeGradleModification = exports.modifyPackageJsonCap = exports.CAP_HOOK = exports.IONIC_HOOK = void 0;
 var path_1 = require("path");
 var fs_1 = require("fs");
 var Android_1 = require("../Android");
@@ -75,14 +75,9 @@ var modifyPackageJsonCap = function (install, isOptOut, path) { return __awaiter
                     if (packageJsonParsed.scripts === undefined) {
                         packageJsonParsed.scripts = {};
                     }
-                    if ((0, exports.isCapVersionThreeOneOrHigher)(capPackageJsonParsed)) {
-                        packageJsonParsed = (0, exports.addScriptHook)(packageJsonParsed, exports.CAP_HOOK, capHookValue);
-                        if (packageJsonParsed.scripts[exports.IONIC_HOOK] && packageJsonParsed.scripts[exports.CAP_HOOK]) {
-                            delete packageJsonParsed.scripts[exports.IONIC_HOOK];
-                        }
-                    }
-                    else {
-                        packageJsonParsed = (0, exports.addScriptHook)(packageJsonParsed, exports.IONIC_HOOK, capHookValue);
+                    packageJsonParsed = (0, exports.addScriptHook)(packageJsonParsed, exports.CAP_HOOK, capHookValue);
+                    if (packageJsonParsed.scripts[exports.IONIC_HOOK]) {
+                        delete packageJsonParsed.scripts[exports.IONIC_HOOK];
                     }
                 }
                 else {
@@ -167,11 +162,6 @@ var removePListModification = function () { return __awaiter(void 0, void 0, voi
     });
 }); };
 exports.removePListModification = removePListModification;
-var isCapVersionThreeOneOrHigher = function (packageJson) {
-    var version = packageJson.version;
-    return Number(version.substring(0, version.lastIndexOf('.'))) >= 3.1;
-};
-exports.isCapVersionThreeOneOrHigher = isCapVersionThreeOneOrHigher;
 var addScriptHook = function (packageJsonParsed, hook, value) {
     if (packageJsonParsed.scripts[hook] !== value) {
         packageJsonParsed.scripts[hook] = value;
@@ -226,7 +216,11 @@ var parsedCapPackageJson = function () { return __awaiter(void 0, void 0, void 0
 exports.parsedCapPackageJson = parsedCapPackageJson;
 var parsedNpmConfig = function () {
     try {
-        return JSON.parse((0, child_process_1.execSync)('npm config list --json').toString());
+        var npmBin = process.platform === 'win32'
+            ? (0, path_1.join)((0, path_1.dirname)(process.execPath), 'npm.cmd')
+            : (0, path_1.join)((0, path_1.dirname)(process.execPath), 'npm');
+        var result = (0, child_process_1.spawnSync)(npmBin, ['config', 'list', '--json'], { encoding: 'utf8' });
+        return JSON.parse(result.stdout);
     }
     catch (e) {
         Logger_1.Logger.getInstance().logWarning('Error in parsedNpmConfig => \n' + e + '\nUnable to retrieve npm config list!');
@@ -237,3 +231,69 @@ var isOptOut = function (parsedNpmConfig) {
     return parsedNpmConfig !== undefined && parsedNpmConfig[NPM_CONFIG_OPT_OUT] !== undefined ? parsedNpmConfig[NPM_CONFIG_OPT_OUT] : false;
 };
 exports.isOptOut = isOptOut;
+var replacePackageSwiftWithOriginal = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var originalPackageSwiftContent, e_5;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                if (!(0, PathHelper_1.isCapacitorUsingSPM)()) return [3, 6];
+                if (!(0, fs_1.existsSync)((0, PathHelper_1.getIosPackageSwiftCapacitor)())) {
+                    Logger_1.Logger.getInstance().logWarning('Cannot replace Package.swift file, as it does not exist in the DynatraceCordovaPlugin folder inside the iOS Platform.');
+                    return [2];
+                }
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 4, , 5]);
+                return [4, (0, FileHelper_1.readTextFromFile)((0, PathHelper_1.getOriginalPackageSwiftCapacitor)())];
+            case 2:
+                originalPackageSwiftContent = _a.sent();
+                return [4, (0, FileHelper_1.writeTextToFile)((0, PathHelper_1.getIosPackageSwiftCapacitor)(), originalPackageSwiftContent)];
+            case 3:
+                _a.sent();
+                return [3, 5];
+            case 4:
+                e_5 = _a.sent();
+                Logger_1.Logger.getInstance().logError("Unable to replace the Package.swift file! " + e_5);
+                return [3, 5];
+            case 5: return [3, 7];
+            case 6:
+                Logger_1.Logger.getInstance().logInfo('Capacitor iOS project is not using Swift Package Manager. There is no Package.swift file to replace.');
+                _a.label = 7;
+            case 7: return [2];
+        }
+    });
+}); };
+exports.replacePackageSwiftWithOriginal = replacePackageSwiftWithOriginal;
+var moveIosFilesForSPM = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var dirPath, e_6;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                if (!(0, PathHelper_1.isCapacitorUsingSPM)()) return [3, 7];
+                dirPath = (0, path_1.join)((0, PathHelper_1.getIosSPMCordovaPluginCapacitor)(), 'ios');
+                return [4, (0, FileHelper_1.createDirectory)(dirPath)];
+            case 1:
+                _a.sent();
+                _a.label = 2;
+            case 2:
+                _a.trys.push([2, 5, , 6]);
+                return [4, (0, FileHelper_1.renameFile)((0, path_1.join)((0, PathHelper_1.getIosSPMCordovaPluginCapacitor)(), PathHelper_1.FILE_IOS_HEADER), (0, path_1.join)(dirPath, PathHelper_1.FILE_IOS_HEADER))];
+            case 3:
+                _a.sent();
+                return [4, (0, FileHelper_1.renameFile)((0, path_1.join)((0, PathHelper_1.getIosSPMCordovaPluginCapacitor)(), PathHelper_1.FILE_IOS_IMPL), (0, path_1.join)(dirPath, PathHelper_1.FILE_IOS_IMPL))];
+            case 4:
+                _a.sent();
+                return [3, 6];
+            case 5:
+                e_6 = _a.sent();
+                Logger_1.Logger.getInstance().logError("Moving of iOS files for SPM failed! " + e_6);
+                return [3, 6];
+            case 6: return [3, 8];
+            case 7:
+                Logger_1.Logger.getInstance().logInfo('Capacitor iOS project is not using Swift Package Manager. There are no iOS files to move.');
+                _a.label = 8;
+            case 8: return [2];
+        }
+    });
+}); };
+exports.moveIosFilesForSPM = moveIosFilesForSPM;

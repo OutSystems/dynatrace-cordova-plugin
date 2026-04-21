@@ -1,5 +1,5 @@
 // Dynatrace.h
-// Version: 8.309.1.1009
+// Version: 8.335.1.1009
 //
 // These materials contain confidential information and
 // trade secrets of Dynatrace Corporation. You shall
@@ -86,7 +86,7 @@ typedef NS_ENUM(int, DTX_StatusCode) {
  @discussion It can be used to modify an event scheduled to be sent.
  */
 @interface DTXModifyableEvent : NSObject
-@property (nonatomic, readwrite) NSMutableDictionary<NSString*,id> * _Nonnull attributes;
+@property (nonatomic, readwrite) NSMutableDictionary<NSString*,id> * _Nonnull fields;
 @end
 
 /*!
@@ -452,11 +452,214 @@ typedef NS_ENUM(int, DTX_StatusCode) {
 
 /*************************************************************************************************/
 
+/*!
+ @brief Provides the ability to manually create web request events.
+
+ The DTXHttpRequestEventData class provides the ability to manually create web request events.
+ */
+@interface DTXHttpRequestEventData : NSObject
+
+/*!
+ @brief Intialises a http web request data object with the mandatory properties. Invalid properties will
+ cause the event to be dropped.
+
+ @param url The url including the scheme. Only http and https are supported.
+
+ @param method The method used for the request.
+*/
+- (instancetype _Nonnull)initWithURL:(NSString* _Nonnull)url method:(NSString* _Nonnull)method;
+
+/*!
+ @brief Adds the duration of the web request. The duration is measured in milliseconds.
+
+ @param duration The duration of the request in milliseconds.
+*/
+- (DTXHttpRequestEventData* _Nonnull)withDuration:(NSNumber* _Nonnull)duration;
+
+/*!
+ @brief Adds the status code. The status code has to be greater than or equal to 0.
+
+ @param statusCode The status code of the request.
+*/
+- (DTXHttpRequestEventData* _Nonnull)withStatusCode:(NSNumber* _Nonnull)statusCode;
+
+/*!
+ @brief Adds reason phrase.
+
+ @param reasonPhrase The reason phrase of the request.
+*/
+- (DTXHttpRequestEventData* _Nonnull)withReasonPhrase:(NSString* _Nonnull)reasonPhrase;
+
+/*!
+ @brief Adds an error to the web request.
+
+ @param error The error to be added to the request.
+*/
+- (DTXHttpRequestEventData* _Nonnull)withError:(NSError* _Nonnull)error;
+
+/*!
+ @brief Adds the bytes sent to the web request. This value has to be bigger or equal to 0.
+
+ @param bytesSent the number of bytes sent for the request.
+*/
+- (DTXHttpRequestEventData* _Nonnull)withBytesSent:(NSNumber* _Nonnull)bytesSent;
+
+/*!
+ @brief Adds the bytes received to the web request. This value has to be bigger or equal to 0.
+
+ @param bytesReceived the number of bytes received for the request.
+*/
+- (DTXHttpRequestEventData* _Nonnull)withBytesReceived:(NSNumber* _Nonnull)bytesReceived;
+
+/*!
+ @brief Adds the given traceparent header. The traceparent header must follow the [specification](https://www.w3.org/TR/trace-context/#traceparent-header), otherwise it will be dropped.
+
+ @param traceparent the traceparent header.
+*/
+- (DTXHttpRequestEventData* _Nonnull)withTraceparentHeader:(NSString* _Nonnull)traceparent;
+
+/*!
+ @brief Adds an event property with the given value. Note that event properties have to be prefixed with `event_properties.`, otherwise they will be dropped.
+
+ @param property The name of the event property.
+ @param value The response phrase of the request.
+*/
+- (DTXHttpRequestEventData* _Nonnull)addEventProperty:(NSString* _Nonnull)property value:(id _Nullable)value;
+
+@end
+
+/*!
+ @brief Provides the ability to manually create custom events.
+
+ The DTXEventData class provides the ability to manually create custom events with optional duration and event properties.
+ */
+@interface DTXEventData : NSObject
+
+/*!
+ @brief Initialises a custom event data object.
+*/
+- (instancetype _Nonnull)init;
+
+/*!
+ @brief Adds the duration of the event. The duration is measured in milliseconds.
+
+ @param duration The duration of the event in milliseconds.
+*/
+- (DTXEventData* _Nonnull)withDuration:(NSNumber* _Nonnull)duration;
+
+/*!
+ @brief Adds an event property with the given value. Note that event properties have to be prefixed with `event_properties.`, otherwise they will be dropped.
+
+ @param property The name of the event property.
+ @param value The value of the event property.
+*/
+- (DTXEventData* _Nonnull)addEventProperty:(NSString* _Nonnull)property value:(id _Nullable)value;
+
+@end
+
+/*!
+ @brief Provides the ability to manually create exception events.
+
+ The DTXExceptionEventData class provides the ability to manually create exception events with optional duration and event properties.
+ */
+@interface DTXExceptionEventData : NSObject
+
+/*!
+ @brief Initialises an exception event data object with the mandatory exception.
+
+ @param exception The exception that has been caught.
+*/
+- (instancetype _Nonnull)initWithException:(NSException* _Nonnull)exception;
+
+/*!
+ @brief Adds an event property with the given value. Note that event properties have to be prefixed with `event_properties.`, otherwise they will be dropped.
+
+ @param property The name of the event property.
+ @param value The value of the event property.
+*/
+- (DTXExceptionEventData* _Nonnull)addEventProperty:(NSString* _Nonnull)property value:(id _Nullable)value;
+
+@end
+
+/*!
+ @brief Provides the ability to create session property events.
+
+ The DTXSessionPropertyEventData class provides the ability to create session property events that apply to all events in the current session.
+ */
+@interface DTXSessionPropertyEventData : NSObject
+
+/*!
+ @brief Initialises a session property event data object.
+*/
+- (instancetype _Nonnull)init;
+
+/*!
+ @brief Adds a session property with the given value. Note that session properties have to be prefixed with `session_properties.`, otherwise they will be dropped.
+
+ @param property The name of the session property.
+ @param value The value of the session property.
+*/
+- (DTXSessionPropertyEventData* _Nonnull)addSessionProperty:(NSString* _Nonnull)property value:(id _Nullable)value;
+
+@end
+/*************************************************************************************************/
+
+/*! 
+ @brief Encapsulates contextual data for a single captured web request.
+ @property request The request associated with the web request event.
+ @property response The response returned by the server. Nil if no response was obtained.
+ @property responseBody Raw response body data (may be nil or truncated based on configuration).
+ @property error Transport or protocol error if the request failed. Nil on success.
+*/
+
+@interface DTXHttpRequestEventContext : NSObject
+
+@property (nonatomic, strong, readonly, nonnull) NSURLRequest *request;
+@property (nonatomic, strong, readonly, nullable) NSURLResponse *response;
+@property (nonatomic, strong, readonly, nullable) NSData *responseBody;
+@property (nonatomic, strong, readonly, nullable) NSError *error;
+
+/**
+ @brief Designated initializer.
+
+ @param request The NSURLRequest associated with the event.
+ @param response The NSURLResponse (if available) or nil.
+ @param responseBody The raw body payload (if available) or nil.
+ @param error The error encountered (nil for successful responses).
+ */
+- (instancetype _Nonnull)initWithRequest:(NSURLRequest *_Nonnull)request
+                        response:(NSURLResponse * _Nullable)response
+                    responseBody:(NSData * _Nullable)responseBody
+                           error:(NSError * _Nullable)error;
+
+/// Unavailable. Use the designated initializer.
+- (instancetype _Nonnull)init NS_UNAVAILABLE;
+
+@end
+/*************************************************************************************************/
+
+/*!
+ @brief Encapsulates W3C trace context headers for distributed tracing.
+ @discussion This object contains the traceparent and tracestate headers as defined by the W3C Trace Context specification.
+ Use these values to propagate trace context to downstream services by adding them as HTTP headers to outgoing requests.
+ @property traceparent The W3C traceparent header value identifying the request as part of a distributed trace.
+ @property tracestate The W3C tracestate header value containing vendor-specific trace information.
+ @seealso https://www.w3.org/TR/trace-context
+*/
+
+@interface DTXTraceContext : NSObject
+
+@property (nonatomic, strong, readonly, nonnull) NSString *traceparent;
+@property (nonatomic, strong, readonly, nonnull) NSString *tracestate;
+
+@end
+
+/*************************************************************************************************/
 
 /*!
 @brief DTXUserPrivacyOptions protocol should be implemented by objects passed to applyUserPrivacyOptions:completion: method.
 @property crashReportingOptedIn current privacy setting for crash reporting
-@property crashReplayOptedIn current privacy setting for crash Session Replay
+@property crashReplayOptedIn (DEPRECATED in version >= 8.321) current privacy setting for crash Session Replay
 @property screenRecordOptedIn current privacy setting for Session Replay
 @property dataCollectionLevel the current data collection level.
 */
@@ -464,7 +667,7 @@ typedef NS_ENUM(int, DTX_StatusCode) {
 @protocol DTXUserPrivacyOptions <NSObject>
 @required
 @property (nonatomic) BOOL crashReportingOptedIn;
-@property (nonatomic) BOOL crashReplayOptedIn;
+@property (nonatomic) BOOL crashReplayOptedIn __deprecated_msg("use screenRecordOptedIn instead");
 @property (nonatomic) NSNumber* _Nullable screenRecordOptedIn;
 @property (nonatomic) DTX_DataCollectionLevel dataCollectionLevel;
 @end
@@ -653,12 +856,11 @@ typedef NS_ENUM(int, DTX_SwiftUIViewType) {
 /*!
  @brief Enable Dynatrace crash reporting.
 
- The Dynatrace OneAgent can report on application crashes using the KSCrash framework. Call this
+ The Dynatrace OneAgent can report on application crashes using the PLCrashReporter framework. Call this
  method after startup to enable crash reporting to Dynatrace.
 
  When using auto-start use the Info.plist value DTXCrashReportingEnabled to control whether this
- method is invoked automatically. You must disable the automatic invocation of this method if
- you wish to use one of the following methods to enable third party crash reporting.
+ method is invoked automatically.
 
  @param sendCrashReport YES to send complete crash report to Dynatrace. NO to
  send only minimal information.
@@ -806,8 +1008,7 @@ When the user optin feature is not used:
  With sendBizEvent, you can report a business event. These standalone events are being sent detached from user actions or sessions.
  The 'dt' key, as well as all 'dt.' prefixed keys are considered reserved by Dynatrace and will be stripped from the passed in attributes.
  Note: Business events are only supported on Dynatrace SaaS deployments currently.
- https://www.dynatrace.com/support/help/how-to-use-dynatrace/business-analytics/ba-events-capturing#get-business-events-from-rum
-
+ https://docs.dynatrace.com/docs/observe/business-observability/bo-events-capturing#report-business-event-rum
  @param type type of the event being sent
  @param attributes dictionary of attributes being attached to the sent event
 */
@@ -823,14 +1024,56 @@ When the user optin feature is not used:
 + (void)shareLogsFileOnViewController:(UIViewController* _Nonnull)viewController;
 
 /*!
- * @brief Sends an event with the fields specified. A context can be added to provide information for later modification.
+ * @brief Sends a RUM event with the fields set in the data object. Use the data object to add data to the event.
+ *
+ * The keys of the fields added via addEventProperty() have to be prefixed with `event_properties.` in order to be handled by the agent. All other fields will be dropped.
  *
  * Note: This feature is currently only supported for Real User Monitoring powered by Grail on Dynatrace SaaS deployments.
  *
- * @param fields fields of the event being sent
- * @param eventContext context of the event being sent provided for potential later modification
+ * @param data the data object used to create the event
  */
-+ (void)sendEventWithFields:(NSDictionary<NSString*,id>* _Nullable)fields eventContext:(id _Nullable)eventContext NS_SWIFT_NAME(sendEvent(fields:eventContext:));
++ (void)sendEvent:(DTXEventData* _Nullable)data;
+
+/*!
+ * @brief Generates W3C trace context headers for distributed tracing.
+ *
+ * Creates a new trace context or enriches an existing one with Dynatrace-specific data. The returned object
+ * contains both `traceparent` and `tracestate` headers that should be added to outgoing HTTP requests.
+ *
+ * Returns `nil` when:
+ * - Capture is off (agent is not running)
+ * - Privacy settings prevent web request tagging (data collection level doesn't permit tagging)
+ * - Traffic control has disabled the current session
+ * - The provided `traceparent` is invalid or the agent cannot build a complete trace context
+ *
+ * @seealso https://www.w3.org/TR/trace-context
+ * @param traceparent The W3C `traceparent` header value identifying the web request as part of a trace, or `nil` to generate a new trace
+ * @param tracestate The existing W3C `tracestate` header value of the request, or `nil` if no other tracing vendor is used
+ * @return A `DTXTraceContext` object containing both `traceparent` and `tracestate` header values, or `nil` if the trace context cannot be created.
+ */
++ (DTXTraceContext* _Nullable)generateTraceContext:(NSString* _Nullable)traceparent tracestate:(NSString* _Nullable)tracestate; 
+
+/*!
+ * @brief Sends a web request event with the fields set in the data object. Use the data object to add data to the request event.
+ *
+ * The keys of the fields added via addEventProperty() have to be prefixed with `event_properties.` in order to be handled by the agent. All other fields will be dropped.
+ *
+ * Note: This feature is currently only supported for Real User Monitoring powered by Grail on Dynatrace SaaS deployments.
+ *
+ * @param data the data object used to create the event
+ */
++ (void)sendHttpRequestEvent:(DTXHttpRequestEventData* _Nonnull)data;
+
+/*!
+ * @brief Sends an exception event with the fields set in the data object. Use the data object to add data to the exception event.
+ *
+ * The keys of the fields added via addEventProperty() have to be prefixed with `event_properties.` in order to be handled by the agent. All other fields will be dropped.
+ *
+ * Note: This feature is currently only supported for Real User Monitoring powered by Grail on Dynatrace SaaS deployments.
+ *
+ * @param data the data object used to create the exception event
+ */
++ (void)sendExceptionEvent:(DTXExceptionEventData* _Nonnull)data;
 
 /*!
  * @brief A view refers to a view/screen/window which a user is presented with at any one time. On every opening of a view
@@ -845,15 +1088,6 @@ When the user optin feature is not used:
 + (void)startViewWithName:(NSString* _Nonnull)name NS_SWIFT_NAME(startView(name:));
 
 /*!
- * @brief Method clears the previous view context, if set.
- *
- * Note: This feature is currently only supported for Real User Monitoring powered by Grail on Dynatrace SaaS deployments.
- *
- * See startViewWithName(NSString*)name
- */
-+ (void)stopView;
-
-/*!
  * @brief Adds a modifier that enriches future events by applying the modifier function to them.
  *
  * Note: This feature is currently only supported for Real User Monitoring powered by Grail on Dynatrace SaaS deployments.
@@ -861,7 +1095,18 @@ When the user optin feature is not used:
  * @param eventModifier the modification function that is applied to each event
  * @return An event subscriber that can be used to remove the subscription
  */
-+ (DTXModifyEventSubscriber* _Nonnull)addEventModifier:(DTXModifyableEvent* _Nullable (^ _Nonnull)(DTXModifyableEvent* _Nonnull event, id _Nullable eventContext))eventModifier;
++ (DTXModifyEventSubscriber* _Nonnull)addEventModifier:(DTXModifyableEvent* _Nullable (^ _Nonnull)(DTXModifyableEvent* _Nonnull event))eventModifier;
+
+/*!
+ * @brief Adds a modifier that enriches future web request events by applying the modifier function to them.
+ * The modifier function receives a context object containing `URLRequest`, `URLResponse`, `Data` and `NSError` if available for each web request.
+ *
+ * Note: This feature is currently only supported for Real User Monitoring powered by Grail on Dynatrace SaaS deployments.
+ *
+ * @param eventModifier the modification function that is applied to each event
+ * @return An event subscriber that can be used to remove the subscription
+ */
++ (DTXModifyEventSubscriber* _Nonnull)addHttpEventModifier:(DTXModifyableEvent* _Nullable (^ _Nonnull)(DTXModifyableEvent* _Nonnull event, DTXHttpRequestEventContext* _Nullable eventContext))eventModifier;
 
 /*!
  * @brief Removes a previously added event modifier.
@@ -873,14 +1118,25 @@ When the user optin feature is not used:
 + (void)removeEventModifier:(DTXModifyEventSubscriber* _Nonnull)subscriber;
 
 /*!
- * @brief Sends a session properties event. Any custom properties must be added in the `session_properties.*` namespace,
+ * @brief Sends a session properties event with the fields set in the data object. Use the data object to add session properties.
+ *
+ * Any custom properties added via addSessionProperty() must be added in the `session_properties.*` namespace,
  * otherwise they will be dropped. Only one session properties event may be active for every session.
  *
  * Note: This feature is currently only supported for Real User Monitoring powered by Grail on Dynatrace SaaS deployments.
  *
- * @param properties properties that apply to all events in the current session
+ * @param data the data object used to create the session properties event
  */
-+ (void)sendSessionPropertyEvent:(NSDictionary<NSString*,id>* _Nullable)properties;
++ (void)sendSessionPropertyEvent:(DTXSessionPropertyEventData* _Nullable)data;
+
+/*!
+ * @brief Set the URLSession used by the agent for network requests.
+ *
+ * Note: This feature is currently only supported for Real User Monitoring powered by Grail on Dynatrace SaaS deployments.
+ *
+ * @param urlSession new URLSession to be used by the agent for network requests.
+ */
++ (void)setURLSession:(NSURLSession* _Nonnull)urlSession;
 
 @end
 #endif
@@ -943,7 +1199,15 @@ extern NSString *_Nonnull const kDTXAutoStart;
  The default value is false. Set the value to true if you have a Hybrid application.
  This is necessary to share the same visit for user actions created by the JavaScript agent.
  */
-extern NSString *_Nonnull const kDTXHybridApplication;
+extern NSString *_Nonnull const k;
+
+/*!
+ @const kDTXHybridApplicationMode
+ The default value is cookies. Set the value to useragent if you have a Hybrid application and want to use a different 
+ approach (i.e. modifying the UserAgent header to pass information to the JavaScript Agent) instead of injecting a script 
+ into the webview. This will also allow Apple Pay to work properly with Webkit.
+ */
+extern NSString *_Nonnull const kDTXHybridApplicationMode;
 
 /*!
  @const kDTXSetCookiesForDomain
@@ -1110,7 +1374,7 @@ extern NSString *_Nonnull const kDTXDetectRageTaps;
 @const kDTXInstrumentFrameworks
  Flag to force the agent to also look for viewControllers inside the frameworks linked with the application
 */
-extern NSString *_Nonnull const kDTXInstrumentFrameworks;
+extern NSString *_Nonnull const kDTXInstrumentFrameworks __deprecated_msg("Deprecated as of version 8.331 with no replacement, do not use this flag anymore, it will be ignored.");
 /*!
 @const kDTXUIActionNamePrivacy
  If set to true, a label or accessibility identifier of a view will be replaced by the view class name when reporting a touch event.

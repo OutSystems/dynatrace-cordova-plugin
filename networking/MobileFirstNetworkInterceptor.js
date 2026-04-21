@@ -16,20 +16,17 @@ var origWLResourceRequest;
 var isNetworkIntercepted = false;
 var mfpServerURL;
 var tagSendRequest = function (request) {
-    var headerValue = request.getHeader('x-dynatrace');
-    if (headerValue === undefined || headerValue === null) {
-        var actionId = NativeNetworkInterceptorUtils.enterNativeRequestAction(mfpServerURL + request.getUrl(), 'Mobile First');
-        var headers = NativeNetworkInterceptorUtils.getHeadersForNativeRequest(actionId);
-        for (var headerProp in headers) {
-            if (typeof headers[headerProp] === 'string' || headers[headerProp] instanceof String) {
-                request.setHeader(headerProp, headers[headerProp]);
-            }
+    var actionId = NativeNetworkInterceptorUtils.enterNativeRequestAction(mfpServerURL + request.getUrl(), 'Mobile First');
+    var headers = NativeNetworkInterceptorUtils.getHeadersForNativeRequest(actionId);
+    for (var headerProp in headers) {
+        if (typeof headers[headerProp] === 'string' || headers[headerProp] instanceof String && headerProp === 'x-dtc') {
+            request.setHeader(headerProp, headers[headerProp]);
         }
-        return actionId;
+        else {
+            console.log('x-dtc header not found. Cannot add the x-dtc header to the request.');
+        }
     }
-    else {
-        return -1;
-    }
+    return actionId;
 };
 exports.MobileFirstRequestInterceptor = {
     isInterceptorEnabled: function () { return isNetworkIntercepted; },

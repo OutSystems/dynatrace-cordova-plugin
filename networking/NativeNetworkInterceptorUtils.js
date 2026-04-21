@@ -2,11 +2,21 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NativeNetworkInterceptorUtils = void 0;
 var sessionStoragePrefix = '_dt.';
+var parseDtAdkFromUserAgent = function (userAgent) {
+    var match = userAgent.match(/dtAdk=([^;\s)]+)/);
+    return match ? match[1] : '';
+};
 var getDTC = function (actionId) {
     var referer = getReferer(actionId);
     var dtAdk = getCookieValue('dtAdk', false);
+    var userAgent = navigator.userAgent || '';
     if (dtAdk === '') {
-        dtAdk = getLocalStorageValue('dtAdk');
+        if (userAgent.indexOf("dtAdk=") >= 0) {
+            dtAdk = parseDtAdkFromUserAgent(userAgent);
+        }
+        else {
+            dtAdk = getLocalStorageValue('dtAdk');
+        }
     }
     return "sn=\"".concat(getSessionNumber(getCookieValue('dtCookie', true)), "\", pc=\"").concat(patchPageContext(getCookieValue('dtPC', true), actionId), "\"")
         + ", v=\"".concat(getCookieValue('rxVisitor', true), "\", r=\"").concat(referer, "\", app=\"").concat(getApplicationId(), "\", adk=\"").concat(dtAdk, "\"");
@@ -23,7 +33,7 @@ var getReferer = function (actionId) {
 };
 var patchPageContext = function (pcCookie, actionId) {
     if (pcCookie != null && pcCookie.length > 0) {
-        var groups = pcCookie.match(/(.+)[h](.+)[v](.+)/);
+        var groups = pcCookie.match(/^([^h]+)h([^v]+)v(.+)$/);
         if (groups != null && groups.length === 4) {
             return "".concat(groups[1], "h").concat(actionId, "v").concat(groups[3]);
         }
@@ -36,7 +46,7 @@ var patchPageContext = function (pcCookie, actionId) {
 var getApplicationId = function () { return typeof dT_ !== 'undefined' && typeof dT_.scv !== 'undefined' ? dT_.scv('app') : ''; };
 var getSessionNumber = function (dtCookie) {
     if (dtCookie !== undefined) {
-        var groups = dtCookie.match(/v_(.+)_srv_(.+)_sn_(.+?)[_](.+)/);
+        var groups = dtCookie.match(/^v_([^_]+)_srv_([^_]+)_sn_([^_]+)_(.+)$/);
         if (groups != null && groups.length === 5) {
             return "v_".concat(groups[1], "_srv_").concat(groups[2], "_sn_").concat(groups[3]);
         }
@@ -80,7 +90,6 @@ exports.NativeNetworkInterceptorUtils = {
             console.log('Missing Dynatrace Javascript Agent API!');
             return headers;
         }
-        headers['x-dynatrace'] = '';
         headers['x-dtc'] = getDTC(actionId);
         return headers;
     },
