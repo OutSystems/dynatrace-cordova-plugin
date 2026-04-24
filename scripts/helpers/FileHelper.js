@@ -67,7 +67,7 @@ var _searchFilePatternInDirectory = function (searchPath, foundFiles, pattern, f
         return [2, new Promise(function (resolve, reject) {
                 (0, fs_1.readdir)(searchPath, function (err, files) {
                     if (err) {
-                        reject('Directory could not be read: ' + (0, path_1.resolve)(searchPath));
+                        reject(new Error('Directory could not be read: ' + (0, path_1.resolve)(searchPath)));
                         return;
                     }
                     var promiseArr = [];
@@ -145,7 +145,7 @@ var readTextFromFile = function (_file) { return __awaiter(void 0, void 0, void 
         return [2, new Promise(function (resolve, reject) {
                 (0, fs_1.readFile)(_file, 'utf8', function (err, data) {
                     if (err) {
-                        reject(err + 'Could not read the file: ' + (0, path_1.resolve)(_file));
+                        reject(new Error(err.message + ' Could not read the file: ' + (0, path_1.resolve)(_file)));
                     }
                     resolve(data);
                 });
@@ -158,7 +158,7 @@ var writeTextToFile = function (_file, _text) { return __awaiter(void 0, void 0,
         return [2, new Promise(function (resolve, reject) {
                 (0, fs_1.writeFile)(_file, _text, function (err) {
                     if (err) {
-                        reject(err + ' Could not write to file: ' + (0, path_1.resolve)(_file));
+                        reject(new Error(err.message + ' Could not write to file: ' + (0, path_1.resolve)(_file)));
                     }
                     resolve(_file);
                 });
@@ -238,7 +238,7 @@ exports.deleteDirectory = deleteDirectory;
 var deleteDirectorySync = function (dir) {
     (0, fs_1.accessSync)(dir);
     var files = (0, fs_1.readdirSync)(dir);
-    files.map(function (file) { return (0, exports.deleteFileSync)((0, path_1.join)(dir, file)); });
+    files.forEach(function (file) { return (0, exports.deleteFileSync)((0, path_1.join)(dir, file)); });
     (0, fs_1.rmdirSync)(dir);
 };
 var deleteFile = function (filePath) { return __awaiter(void 0, void 0, void 0, function () {

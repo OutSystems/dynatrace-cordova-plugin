@@ -27,7 +27,7 @@
 /*!
  @brief Gets invoked automatically by the SwiftUI instrumentor when a SwiftUI view has disappeared.
  */
-+ (void)swiftUIViewDidDisappear:(id _Nonnull)view with:(id _Nonnull)lifecycleHolder;
++ (void)swiftUIViewDidDisappear:(id _Nonnull)view viewName:(NSString* _Nonnull)viewName with:(id _Nonnull)lifecycleHolder;
 
 /*!
  @brief Gets invoked automatically by the SwiftUI instrumentor when a touch action must be reported.
@@ -38,6 +38,21 @@
  @brief Gets invoked automatically by the SwiftUI instrumentor when a touch action must be reported.
  */
 + (DTXAction* _Nonnull)touchActionWith:(NSDictionary * _Nonnull)reportValues delayTimeout:(bool)delayTimout;
+
+/*!
+ @brief Gets invoked automatically by the SwiftUI instrumentor when a tap action must be reported.
+*/
++ (void)handleTapWith:(NSDictionary* _Nonnull)reportValues;
+
+/*!
+ @brief Gets invoked automatically by the SwiftUI instrumentor when a frame is updated.
+*/
++ (void)updateFrame:(NSString*_Nonnull)uuid frame:(CGRect)frame;
+
+/*!
+ @brief Gets invoked automatically by the SwiftUI instrumentor when a frame is removed.
+*/
++ (void)removeFrame:(NSString*_Nonnull)uuid;
 
 /*!
  @brief Gets invoked automatically by the SwiftUI instrumentor when an action is left.
