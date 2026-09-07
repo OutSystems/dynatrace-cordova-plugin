@@ -37,6 +37,7 @@ module.exports = function (context) {
         var candidates = [
             path.join(projectRoot, "platforms", "android", "app", "src", "main", "assets", "www", FOLDER_CONFIG),
             path.join(projectRoot, "platforms", "android", "assets", "www", FOLDER_CONFIG),
+            path.join(projectRoot, "platforms", "ios", "www", FOLDER_CONFIG),
             path.join(projectRoot, "www", FOLDER_CONFIG)
         ];
         for(var i = 0; i < candidates.length; i++){
