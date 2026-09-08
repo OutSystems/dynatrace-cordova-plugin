@@ -35,8 +35,7 @@ module.exports = function (context) {
     // (for example an iOS-only build, or before the first prepare).
     function resolveConfigSource (projectRoot) {
         var candidates = [
-            path.join(projectRoot, "platforms", "android", "app", "src", "main", "assets", "www", FOLDER_CONFIG),
-            path.join(projectRoot, "platforms", "android", "assets", "www", FOLDER_CONFIG),
+            path.join(projectRoot, "platforms", "android", FOLDER_CONFIG),
             path.join(projectRoot, "platforms", "ios", "www", FOLDER_CONFIG),
             path.join(projectRoot, "www", FOLDER_CONFIG)
         ];
