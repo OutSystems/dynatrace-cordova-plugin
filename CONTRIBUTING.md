@@ -176,12 +176,19 @@ This section details the complete procedure for updating this wrapper with a new
 
 ### Add Hooks to plugin.xml
 1. Go to the folder *node_modules\\@dynatrace\cordova-plugin* under your temp folder and open file *plugin.xml* in a code editor
-2. Add these two lines
+2. Add these three lines
 ```
   <hook src="scripts/Outsystems/npmInstall.js" type="before_plugin_install"/>
   <hook src="scripts/Outsystems/copyConfig.js" type="before_prepare"/>
+  <hook src="scripts/Outsystems/copyScript.js" type="after_prepare"/>
 
 ```
+
+> **All three are required.** `copyScript.js` must be registered *after* the
+> `instrument.js` `after_prepare` hook - it places the per-environment JavaScript agent
+> into the platform assets folder, and omitting it does not fail the build. The app simply
+> ships the JavaScript agent baked into the module, so every environment silently reports
+> to whichever Dynatrace application that copy points at.
 
 Before
 ```
@@ -201,6 +208,7 @@ After
   <hook src="scripts/uninstall.js" type="before_plugin_rm"/>
   <hook src="scripts/Outsystems/copyConfig.js" type="before_prepare"/>
   <hook src="scripts/instrument.js" type="after_prepare"/>
+  <hook src="scripts/Outsystems/copyScript.js" type="after_prepare"/>
   <hook src="scripts/close-log.js" type="after_build"/>
   <hook src="scripts/close-log.js" type="after_run"/>
 ```

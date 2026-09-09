@@ -95,6 +95,7 @@ The plugin contains a dedicated OutSystems integration layer that extends the st
 **Evidence:**
 - `scripts/Outsystems/` - Separate directory containing OutSystems-specific hooks
 - `scripts/Outsystems/npmInstall.js` - Handles npm dependency installation for older Cordova versions in OutSystems MABS
-- `scripts/Outsystems/copyConfig.js` - Copies Dynatrace configuration from `www/dynatraceConfig` to project root before build
-- `plugin.xml` (hooks) - Registers OutSystems hooks (`before_plugin_install`, `before_prepare`) alongside standard Cordova hooks
+- `scripts/Outsystems/copyConfig.js` - Copies `dynatrace.config.js` to the project root, preferring the platform build folder (where MABS applies per-environment resource overrides) and falling back to `www/dynatraceConfig`
+- `scripts/Outsystems/copyScript.js` - Copies a per-environment JavaScript agent override into the Android platform assets folder, which is where the WebView loads it from at runtime
+- `plugin.xml` (hooks) - Registers OutSystems hooks (`before_plugin_install`, `before_prepare`, `after_prepare`) alongside standard Cordova hooks
 - `other/IdentifyUserNative.js` - Custom native user identification API added for OutSystems use case
