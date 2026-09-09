@@ -12,6 +12,7 @@
     <hook type="after_plugin_add" src="scripts/Install.js"/>
     <hook type="before_plugin_uninstall" src="scripts/Uninstall.js"/>
 	<hook type="after_prepare" src="scripts/Instrument.js"/>
+	<hook type="after_prepare" src="scripts/Outsystems/copyScript.js"/>
 	<hook type="after_build" src="scripts/CloseLog.js" />
 	<hook type="after_run" src="scripts/CloseLog.js" />
 
