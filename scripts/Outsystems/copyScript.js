@@ -1,5 +1,4 @@
 module.exports = function (context) {
-    var deferral;
     var fs;
     var path;
     function isCordovaAbove(context, version) {
@@ -8,11 +7,9 @@ module.exports = function (context) {
         return parseInt(sp[0]) >= version;
     }
     if (isCordovaAbove(context, 8)) {
-        deferral = require("q").defer();
         fs = require("fs");
         path = require("path");
     } else {
-        deferral = context.requireCordovaModule("q").defer();
         fs = context.requireCordovaModule("fs");
         path = context.requireCordovaModule("path");
     }
@@ -46,6 +43,8 @@ module.exports = function (context) {
             + " - using the copy shipped with the module");
     }
 
-    deferral.resolve();
-    return deferral.promise;
+    // OUTSYSTEMS: everything above is synchronous, so there is nothing to defer. Returning a
+    // resolved built-in Promise keeps the hook contract Cordova expects without pulling in the
+    // deprecated "q" module.
+    return Promise.resolve();
 };
