@@ -70,7 +70,8 @@ Note: There is no traditional "build" step for this Cordova plugin. The plugin h
 │   ├── DownloadAgent.js    # JavaScript agent download from Dynatrace API
 │   ├── Doctor.js           # Diagnostic CLI tool
 │   ├── Outsystems/         # OutSystems-specific hooks
-│   │   ├── copyConfig.js   # Copies dynatrace.config.js from www/dynatraceConfig
+│   │   ├── copyConfig.js   # Copies dynatrace.config.js to project root (platform folder first, www/ fallback)
+│   │   ├── copyScript.js   # Copies a JavaScript agent override into the Android platform assets
 │   │   └── npmInstall.js   # npm dependency installation for older Cordova
 │   ├── config/             # Configuration reading/parsing
 │   ├── helpers/            # Instrumentation helpers
@@ -92,9 +93,11 @@ This repository wraps the official `@dynatrace/cordova-plugin` and adds OutSyste
 
 1. **Core Dynatrace functionality** lives in the upstream package - do not modify unless adding OutSystems integration points
 2. **OutSystems customizations** include:
-   - `scripts/Outsystems/` directory with pre-build hooks
+   - `scripts/Outsystems/` directory with build hooks
    - `other/IdentifyUserNative.js` for native user identification
-   - Configuration file copying from `www/dynatraceConfig` to project root
+   - Configuration file copying to the project root, preferring the platform build folder so
+     MABS per-environment resource overrides are picked up (`copyConfig.js`)
+   - JavaScript agent override copying into the Android platform assets (`copyScript.js`)
    - npm installation handling for older MABS Cordova versions
 
 ### Build-Time vs Runtime Execution
@@ -175,9 +178,10 @@ Run `npx doctorDynatrace` in a consuming application to diagnose configuration p
 Check `plugin.xml` for hook registration. Current order:
 1. `before_plugin_install` - OutSystems npm installation
 2. `after_plugin_add` - Standard installation
-3. `before_prepare` - OutSystems config copy
-4. `after_prepare` - HTML instrumentation
-5. `after_build` / `after_run` - Log cleanup
+3. `before_prepare` - OutSystems config copy (`Outsystems/copyConfig.js`)
+4. `after_prepare` - HTML instrumentation (`Instrument.js`)
+5. `after_prepare` - OutSystems JavaScript agent copy (`Outsystems/copyScript.js`), registered after `Instrument.js`
+6. `after_build` / `after_run` - Log cleanup
 
 ## External Dependencies
 
